@@ -1,0 +1,49 @@
+#!/usr/bin/python
+
+
+# Hans Deragon
+# Consultant en informatique/Software Consultant
+#
+# Deragon Informatique inc.
+# Copyright 2004
+#
+# http://www.deragon.biz
+# mailto:hans@deragon@biz
+#
+# 2004/01/02, 09:16 EST
+# 
+# This scripts upgrades the /etc/autopoweroff.conf file automatically.
+# auconfig.read() function supports old formats.  So we read the old
+# configuration file and then call the auconfig.write() fonction to
+# write over the file with the newest format.
+
+import sys
+testmode = 0
+testmode = "@production@" != "true"
+
+if testmode:
+  # We are in test mode.  Using relative values.
+  sharedir = ".."
+else:
+  sharedir = "@autopoweroff_sharedir@"
+
+sys.path.append(sharedir + '/python/modules')
+
+import auconfig
+
+configuration = auconfig.Configuration(None, None, None, None)
+try:
+  configuration.read()
+except auconfig.APOWarning, message:
+  # We ignore warning messages.
+  pass
+except auconfig.APOError, exception:
+  if exception.errorcode != 1:
+    print exception.msg
+    sys.exit(1)
+
+try:
+  configuration.save()
+except Exception, message:
+  print message
+  sys.exit(2)

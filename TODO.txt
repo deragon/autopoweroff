@@ -1,0 +1,20 @@
+COPYING
+
+======================================================================
+Test canceling/disabling.  Ca ne semble pas marché.
+
+======================================================================
+Stop SPAMING SYSLOG
+
+======================================================================
+Restrict running autopoweroff to root.
+
+======================================================================
+Try to find out how to prevent Makefile to call "configure --no-create".
+This causes apoinstall not being "chmod +x" and the installation fails.
+
+======================================================================
+Essayer autopoweroff sur SuSE.
+
+======================================================================
+Redo the interface.

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+SHAREDIR="@datadir@"
+
+[ ! -d "${SHAREDIR}" ] && mkdir -p ${SHAREDIR}
+
+UNINSTALL="${SHAREDIR}/@PACKAGE_NAME@.uninstall"
+
+if [ -x "/usr/bin/install" ]; then
+  INSTALL="/usr/bin/install"
+fi
+
+# ${!#} is the last parameter, which is always the destination.
+echo "${!#}" >>${UNINSTALL}
+${INSTALL} $*

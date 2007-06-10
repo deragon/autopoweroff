@@ -1,0 +1,247 @@
+#!/usr/bin/python
+
+# Autopoweroff, version @version@
+
+import sys
+testmode = "@production@" != "true"
+
+if testmode:
+  # We are in test mode.  Using relative values.
+  sharedir = ".."
+  etcdir = "../etc"
+else:
+  sharedir = "@autopoweroff_sharedir@"
+  etcdir = "@autopoweroff_etcdir@"
+
+sys.path.append(sharedir + '/python/modules')
+
+import commands
+import os
+import syslog
+import time
+import auconfig
+import re
+import signal
+
+scriptname = os.path.basename(sys.argv[0])
+pidfile    = "@autopoweroff_vardir@/run/" + scriptname + ".pid"
+cancelfile = "@autopoweroff_ctrldir@/"     + scriptname + ".cancel"
+conffile   = etcdir + "/" + scriptname + ".conf"
+previousmousetick=-1
+previouskeyboardtick=-1
+
+def sendmsg(msg, priority=syslog.LOG_INFO):
+  print msg
+  syslog.syslog(scriptname + ":  " + msg)
+
+def debug(msg):
+  if testmode:
+    print msg
+    
+# The "No shutdown range" is the range, expressed in hours, during which no
+# shutdown is to be performed.
+# Expressed in local time, not UTC.
+
+if os.path.exists(pidfile):
+  fdPidFile=open(pidfile)
+  pid=fdPidFile.readline()
+  fdPidFile.close()
+  try:
+    os.kill(int(pid), signal.SIGTERM)
+    sendmsg("Currently running instance killed.", syslog.LOG_ALERT)
+  except OSError, (errno, msg):
+    if errno != 3:  # errno #3 means that the process does not exist.
+                    # if such is the case, we ignore the exception.
+      raise
+
+configuration = auconfig.Configuration(None, None, None, None)
+try:
+  configuration.read()
+except auconfig.APOWarning, message:
+  sendmsg(message)
+except auconfig.APOError, message:
+  sendmsg(message)
+
+debug("idletime=" + str(configuration.idletime))
+
+if not testmode and os.fork() != 0:
+  sys.exit(0)
+
+sendmsg("Successfully started as PID: " + str(os.getpid()))
+
+
+######################################################################
+# Lock file creation to ensure only one instance of this script is running.
+file=open(pidfile, 'w')
+file.write(str(os.getpid()))
+file.close()
+
+
+######################################################################
+# The system must remain on for at least the 'startupdelay' first minutes
+# it was started.
+if not testmode:
+  sendmsg("Startup sleep of " + str(configuration.startupdelay) + " minutes.")
+  time.sleep(configuration.startupdelay*60)
+
+
+######################################################################
+# Loading kernel power management module.
+# For the moment, not required.
+#commands.getstatusoutput("/sbin/modprobe apm")
+
+fdMouse=None
+fdKeyboard=None
+if configuration.idletime > 0:
+  try:
+    fdMouse=open("/dev/mouse","r")
+  except:
+    pass # fdMouse is already set to None.
+
+  try:
+    global reKeyboard
+    fdKeyboard=open("/proc/interrupts","r")
+    reKeyboard=re.compile(" *\d+: +(\d+) +.+ +keyboard")
+  except:
+    pass # fdKeyboard is already set to None.
+
+
+######################################################################
+isToBeSuspended = 0
+finish = 0
+while not finish:
+
+  # Checking if the current hour is within the poweroff shutdown range.
+  # Now contains the current hour.
+
+  now = time.time()
+  #debug("UTC:  ", time.gmtime(now))
+  #debug("LOCAL:  ", time.localtime(now))
+  nowtuple = time.localtime(now)
+  nowhour = nowtuple[3]
+  #debug(nowhour)
+
+  if nowhour >= configuration.noshutdownrange[0] and \
+     nowhour < configuration.noshutdownrange[1]:
+    shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2],
+                   configuration.noshutdownrange[1],
+                   0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
+    #debug(shutdowntuple)
+    #debug(nowtuple)
+    sleeptime=time.mktime(shutdowntuple)-now
+
+    # Using gmtime(sleeptime) here because localtime(0) is actually
+    # 1969/12/31 19h00, thus if using localtime(sleeptime), we actually
+    # print the sleeptime minus 5 hours, which is wrong.
+    sendmsg("Currently not in time range " + \
+            str(configuration.noshutdownrange) + \
+            " for system shutdown.\nSleeping for " + \
+            time.strftime("%H:%M:%S", time.gmtime(sleeptime)),".")
+    time.sleep(sleeptime)
+    continue
+
+  if os.path.exists(cancelfile):
+    if not isToBeSuspended:
+      isToBeSuspended = 1
+      sendmsg("Suspended as requested.")
+    time.sleep(15)
+    continue
+  else:
+    isToBeSuspended = 0
+
+  onestillalive=0
+
+  # Eventually, the following code for pinging hosts should be threaded
+  # so this could be done in the background.
+  for host in configuration.hosts:
+    #debug("Pinging host:  >>" + host + "<<")
+    status = commands.getstatusoutput("ping -c 1 -w 10 " + host)[0]
+    #debug(status)
+    #signal = status & 0xFF
+    exitcode = (status >> 8) & 0xFF
+    #debug(exitcode)
+    if exitcode == 0:
+      onestillalive=1
+      break
+
+  # Checking if anybody is working on the server.  No shutdown if there
+  # is activity on the keyboard or on the mouse.
+  #
+  # Not sure if this works with USB mices.
+  userIsActive=0
+
+  if fdMouse != None:
+    result=os.fstat(fdMouse.fileno())
+    mousetick=result[7]
+
+    # Not sure if this works with USB keyboards.
+    debug("mousetick=" + str(mousetick) + \
+          "  previous=" + str(previousmousetick))
+    if mousetick != previousmousetick:
+      # Mouse activity detected.
+      debug("Mouse activity detected.")
+      previousmousetick=mousetick
+      userIsActive=1
+
+  # Not sure if this works with USB keyboards.
+  if fdKeyboard != None:
+    fdKeyboard.seek(0)
+    fdKeyboardContent=fdKeyboard.readlines()
+    result=None
+    keyboardtick=-1
+    for line in fdKeyboardContent:
+      result=reKeyboard.match(line)
+      if result:
+        keyboardtick=result.group(1)
+        #debug("Match:  >>" + keyboardtick + "<<")
+        break
+    
+    if keyboardtick >= 0:
+      debug("keyboardtick=" + str(keyboardtick) + \
+            "  previous=" + str(previouskeyboardtick))
+      if keyboardtick != previouskeyboardtick:
+        # Keyboard activity detected.
+        debug("Keyboard activity detected.")
+        previouskeyboardtick=keyboardtick
+        userIsActive=1
+
+  if userIsActive:
+    debug("User is active on server.")
+    sleeptime=None
+    if testmode:
+      sleeptime=configuration.idletime*5
+    else:
+      sleeptime=configuration.idletime*60
+    debug("Sleeping for " + str(sleeptime) + "s.")
+    time.sleep(sleeptime)
+    continue
+  elif onestillalive:
+    sendmsg("At least one host is still alive.")
+    time.sleep(5)
+    continue
+  else:
+    sendmsg("All the conditions for shutdown are met.  System shutdown.", \
+            syslog.LOG_ALERT)
+    finish = 1
+
+# The while loop can end when finish > 0 or if autopoweroff
+# receives a SIGTERM signal.
+
+if fdMouse != None:
+  fdMouse.close()
+
+if fdKeyboard != None:
+  fdKeyboard.close()
+
+os.remove(pidfile)
+sendmsg("Ending.")
+
+# Only poweroff if it has been determined that this is the action to do.
+# Remember, autopoweroff could have received a SIGTERM (CTRL-C).
+if finish == 1:
+  if testmode:
+    print "Powering off at " + time.strftime("%H:%M:%S", \
+      (time.localtime(time.time())))
+  else:
+    #commands.getstatusoutput("nohup poweroff");
+    commands.getstatusoutput("nohup /sbin/shutdown -h now");

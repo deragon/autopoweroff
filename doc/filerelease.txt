@@ -1,0 +1,66 @@
+----------------------------------------------------------------------
+EMAIL TEMPLATE
+
+Subject:  [ANN] Autopoweroff version 2.1.0 released.
+
+Version 2.1.0 of Autopoweroff has been released.
+
+
+Autopoweroff is a python script that is started at boot
+time, and which function is to shutdown the computer at a
+specific time, but only if some conditions are met.
+
+The computer will shutdown if all the above conditions are met:
+
+   1. Any hosts that the computer is dependant on is not
+      answering ping anymore.
+
+   2. No keyboard nor mouse activity is detected on the computer.
+
+   3. The user has not disabled Autopoweroff.
+
+One good use of Autopoweroff is for home use, on a
+firewall/router server. You can setup Autopoweroff to
+shutdown the server every evening at say, 22:00.  However,
+your server might serve other computers in your home.
+Autopoweroff will shutdown the server after 22:00 only if no
+other computer on the network is responding to ping. For
+example, if at 22:43 you are still working on your thin
+client in the living room, the server in your baseman will
+remain up. As soon as you shutdown the workstation, the
+server will go down.
+
+A Gnome configuration tool is provided.
+
+Installation and deinstallation is made is easy with an RPM
+and a script to uninstall everything.
+
+
+For details, follow these links:
+
+Changes in 2.1.0          http://autopoweroff.sourceforge.net/#changes_2.1.0
+User Guide                http://autopoweroff.sourceforge.net
+Description               http://autopoweroff.sourceforge.net/#what_is
+Screenshots               http://autopoweroff.sourceforge.net/#config_autopoweroff_gui
+Download                  http://autopoweroff.sourceforge.net/#download
+
+
+Hans Deragon
+-- 
+Deragon Informatique inc.         Open source:
+http://www.deragon.biz            http://autopoweroff.sourceforge.net
+mailto://hans@deragon.biz         ((Automatically poweroff home servers)
+----------------------------------------------------------------------
+SOURCEFORGE TEMPLATE
+
+Following are texts to cut&paste when releasing files at SourceForge.
+
+Notes:
+
+Click <a href="http://autopoweroff.sourceforge.net/">here</a>
+for documentation.
+
+Change log:
+
+Click <a href="http://autopoweroff.sourceforge.net/#change_history">here</a>
+for changelog.

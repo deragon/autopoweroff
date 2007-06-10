@@ -1,0 +1,3 @@
+mkdir -p out
+aurigadoc.sh -html -XML autopoweroff.xml -OUT out/autopoweroff.html
+#aurigadoc.sh -pdf  -XML autopoweroff.xml -OUT out/autopoweroff.pdf

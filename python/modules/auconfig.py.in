@@ -1,0 +1,196 @@
+#!/usr/bin/python
+
+import commands
+import os
+import sys
+import time
+import ConfigParser
+import re
+
+if "@production@" == "true":
+  conffile = "@autopoweroff_etcdir@/autopoweroff.conf"
+else:
+  conffile = "/etc/autopoweroff.conf"
+
+# Default values.
+#class Error(Exception):
+#  pass
+
+class APOError(Exception):
+  def __init__(self, msg, errorcode):
+    self.msg=msg
+    self.errorcode=errorcode
+
+class APOWarning(Exception):
+  pass
+
+class Configuration:
+
+  def __init__(self, noshutdownrange, idletime, startupdelay, hosts):
+    if noshutdownrange == None:
+      self.noshutdownrange=[4, 23] # hours
+    else:
+      self.noshutdownrange=noshutdownrange
+
+    if startupdelay == None:
+      self.startupdelay=15 # minutes
+    else:
+      self.startupdelay=startupdelay
+
+    if idletime == None:
+      self.idletime=5 # minutes.
+    else:
+      self.idletime=idletime
+
+    if hosts == None:
+      self.hosts=range(0)
+    else:
+      self.hosts=hosts
+
+    self.warnings=""
+    self.errors=""
+    self.configParser = ConfigParser.ConfigParser()
+
+  def read(self):
+
+    try:
+      fd=open(conffile)
+      self.configParser.readfp(fd)
+      fd.close()
+      #print self.configParser.sections()
+      #print "conffile=" + conffile
+
+      # Shutdown range
+      try:
+        self.noshutdownrange[0]=self.configParser.getint("NO_SHUTDOWN_TIME_RANGE", "start")
+        try:
+          self.noshutdownrange[1]=self.configParser.getint("NO_SHUTDOWN_TIME_RANGE", "end")
+        except ConfigParser.NoOptionError:
+          self.warnings = self.warnings + "  No \"end\" option defined in section NO_SHUTDOWN_TIME_RANGE.\n"
+      except ConfigParser.NoOptionError:
+        self.warnings = self.warnings + "  No \"start\" option defined in section NO_SHUTDOWN_TIME_RANGE.\n"
+      except ConfigParser.NoSectionError:
+        self.warnings = self.warnings + "  No \"NO_SHUTDOWN_TIME_RANGE\" section defined.\n"
+
+      # Startup delay
+      try:
+        self.startupdelay=self.configParser.getint("TIMEOUTS", "startup_delay")
+      except ConfigParser.NoOptionError:
+        self.warnings=self.warnings + "  No \"startup_delay\" option " + \
+          "defined in section TIMEOUTS.\n"
+      except ConfigParser.NoSectionError:
+        # Did not find any TIMEOUTS section.  We try STARTUP which was
+        # used for Autopoweroff version 2.0.0 and older.
+        try:
+          self.startupdelay=self.configParser.getint("STARTUP", "delay")
+        except ConfigParser.NoOptionError:
+          self.warnings=self.warnings + "  No \"delay\" option defined in section STARTUP.\n"
+        except ConfigParser.NoSectionError:
+          self.warnings=self.warnings + "  No \"TIMEOUTS\" section defined.\n"
+
+      try:
+        self.idletime=self.configParser.getint("TIMEOUTS", "idle_time")
+      except ConfigParser.NoOptionError:
+        self.warnings=self.warnings + "  No \"idle_time\" option " + \
+          "defined in section TIMEOUTS.\n"
+      except ConfigParser.NoSectionError:
+        self.warnings=self.warnings + "  No \"TIMEOUTS\" section defined.\n"
+
+      # Dependants
+      try:
+        # Removing whitespaces in list before performing the split.
+        self.hosts=re.sub("\s*", "", self.configParser.get("DEPENDANTS", "hosts")).split(',')
+        # If the configuration files contains a line like "hosts=" with no
+        # actual hosts defined, an empty host shows up, which is wrong.
+        # we eliminate this.
+        if self.hosts[0] == '':
+          # Got an empty host.  Getting ride of it.
+          self.hosts = self.hosts[1:]
+
+      except ConfigParser.NoOptionError:
+        self.warnings=self.warnings +"  No \"hosts\" option in DEPENDANTS defined.\n"
+      except ConfigParser.NoSectionError:
+        self.warnings=self.warnings + "  No \"DEPENDANTS\" section defined.\n"
+
+      if self.warnings != "":
+        raise APOWarning("Following warnings occured in file " + conffile + \
+                      "\n\n" + self.warnings)
+
+    except IOError:
+      self.errors = "Could not open configuration file " + conffile + \
+                    "\nUsing default values."
+      raise APOError(self.errors, 1)
+
+  def save(self):
+
+    fd=open(conffile, 'w')
+    fd.write("""# Autopoweroff @version@ configuration file.
+
+# WARNING:  If you decide to edit this file, edit only the values of the
+#           parameters.  If you add comments, they will be lost at the
+#           next software upgrade or when the GUI configurator is being
+#           used to update the file.  Only values persists.
+
+
+# start and end parameters (expressed in hours):
+#
+#   Following is the time range where the computer should not shutdown
+#   even if all conditions are met.  In this example where start=5 and
+#   end=22, the computer will not shut down between 05:00 and 22:00,
+#   local time.
+
+[NO_SHUTDOWN_TIME_RANGE]
+""")
+    fd.write("start=" + str(int(self.noshutdownrange[0])) + "\n")
+    fd.write("end="   + str(int(self.noshutdownrange[1])) + "\n")
+
+    fd.write("""
+
+# startup_delay parameter (expressed in minutes):
+#
+#   When the computer is booting up, if all the conditions are met and
+#   the computer is in the shutdown time range, as soon as Autopoweroff
+#   is started, the computer will shutdown.  Thus, the user will never
+#   have the chance to boot into the computer.  This is where the
+#   "delay" parameter comes in.  If "delay" is set to 15 for example,
+#   Autopoweroff will not poweroff the computer even if all the
+#   conditions are met, for a period of 15 minutes after the computer
+#   has booted.  This allows the user to login and change Autopoweroff's
+#   configuration.
+#
+#
+# idle_time parameter (expressed in minutes):
+#
+#   Like a screensaver, Autopoweroff detects keyboard and mouse
+#   activity, and if there is any activity on the server, it would not
+#   be powered off regardless if all the other conditions are met.  If
+#   set to 0, user activity on the server will be ignored.
+#  
+#   PS/2 keyboards and PS/2 & serial mices are supported.  AT keyboards
+#   will probably work too (if you can confirm this, please write to me).
+#   Unfortunatly, USB keyboards and mices are not supported yet 
+#   (I do not know how to detect activity on USB devices).
+
+[TIMEOUTS]
+""")
+    fd.write("startup_delay=" + str(int(self.startupdelay)) + "\n")
+    fd.write("idle_time=" + str(int(self.idletime))  + "\n")
+
+    fd.write("""
+
+# host parameter (list of hostnames or IPs, separated by commas):
+#
+#   Here you list the list of hosts your machine is dependant, i.e. this
+#   computer should not shutdown if any of the hosts declared here is
+#   still up (responding to ping).
+
+[DEPENDANTS]
+""")
+    fd.write("hosts=")
+
+    for index in range(len(self.hosts)):
+      fd.write(self.hosts[index])
+      if index != len(self.hosts)-1:
+        fd.write(", ")
+    fd.write("\n")
+    fd.close();

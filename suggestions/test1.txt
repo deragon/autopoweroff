@@ -1,0 +1,33 @@
+Hello,
+I took the liberty and redesigned your UI for your application,
+AutorPowerOff. Please find my mockup suggestion attached.
+
+My suggestion is in line with Gnome's HIG and includes a "top-down" logic
+for the user to follow. It all fits on a single window. Here are my changes:
+
+1. Window's content (view) should be more bigger than 520x460, so it would
+fit nicely on a 800x600 screen.
+2. There are at least between 8 and 12 pixels of space between ANY elements
+in the screen (inclduing the window borders, buttons, widgets and text). By
+putting this space between elements, the UI doesn't feel crammed.
+3. According to the Gnome HIG, rectangle boxes should be avoided where
+possible, and bold header text should be used.
+4. The Start/End Hour should be a drop-down combo box with all the 24 hours
+filled in (includes all entries for every 15 minutes)
+5. The "Enable" the daemon should just be a checkbox, not a "enable/disable"
+radio.
+6. Put all widgets inside a box and give that header the name of the
+machine, so the user knows as to which machine he has the power to do stuff.
+7. Moved the About tab as a button at the botton.
+8. There is no reason for a revert/save button, just an "Apply" button
+should do the job nicely. The buttons have the order as defined on the Gnome
+HIG.
+9. Added a Help button, would be nice to load Gnome's help application with
+the help for this application
+10. Made the listview smaller, it was way too wide before...
+
+I hope you like it and use it for the next version. Please let me know if
+you have any questions.
+
+Rgds,
+Eugenia

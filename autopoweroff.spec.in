@@ -1,0 +1,201 @@
+%define name        @PACKAGE@
+%define version     @VERSION@
+%define release     1
+%define arch        @ARCH@
+%define _sysconfdir /etc
+
+Summary   : Automatically poweroff a server given some conditions (great for home usage).
+Name      : %{name}
+Version   : %{version}
+Vendor    : Deragon Informatique inc. (www.deragon.biz)
+Packager  : Hans Deragon <hans@deragon.biz>
+Release   : %{release}
+License   : GPL
+Group     : System Environment/Daemons
+Source    : /usr/src/redhat/SOURCES/@PACKAGE_TARNAME@-@PACKAGE_VERSION@.tar.gz
+BuildRoot : /var/tmp/%{name}-buildroot
+# SysVinit provides /sbin/shutdown
+#   sysvinit for SuSe
+#   SysVinit for RH
+# iputils  provides /bin/ping
+# usermode provides /usr/bin/consolehelper
+# python   provides /usr/bin/python
+# libgnomesu - consolehelper for SuSE..
+# See configure.in for list of requirements, per platform.
+# This spec file is meant to work for multiple distributions.
+Requires  : @autopoweroff_rpm_requirements@
+BuildArch : %{arch}
+URL       : autopoweroff.sourceforge.net
+#Source    : http://autopoweroff.sourceforge.net
+
+%description
+Autopoweroff is a python script that is started at boot time, and which
+function is to shutdown the computer at a specific time, but only if
+some conditions are met.
+
+The computer will shutdown if all the above conditions are met:
+
+  1. Any hosts that the computer is dependant on is not answering ping
+     anymore.
+
+  2. There is no more keyboard and mouse activity on the computer.
+
+  3. The user has not disabled Autopoweroff.
+
+One good use of Autopoweroff is for home use, on a firewall/router
+server. You can setup Autopoweroff to shutdown the server every evening
+at say, 22:00. However, your server might serve other computers in your
+home. Autopoweroff will shutdown the server after 22:00 only when no
+other computer on the network is responding to ping. For example, if at
+22:43 you are still working on your thin client in the living room, the
+server in your baseman will remain up. As soon as you shutdown the
+workstation, the server will go down.
+
+The server can boot automatically every morning by setting its BIOS
+properly. Autopoweroff has nothing to do with this process. But with
+this setting, your home server does not need to run 24/7; you can save
+electricity and noise without the hassle of having to shut down and
+start up the server manually.
+
+Contact:
+
+  Project website:   http://autopoweroff.sourceforge.net
+  Business website:  http://www.deragon.biz
+  Email:             hans@dergon.biz
+%prep
+%setup -q
+
+######################################################################
+%install
+
+rm -rf ${RPM_BUILD_ROOT}
+
+#automake
+autoconf
+configure --prefix=${RPM_BUILD_ROOT} \
+          --datadir=${RPM_BUILD_ROOT}/usr/share/autopoweroff  \
+          --enable-install-for-rpm
+make install
+
+# Removing unnecessary executables for an RPM.
+rm ${RPM_BUILD_ROOT}/%{_sbindir}/autopoweroff_uninstall
+
+######################################################################
+%clean
+#rm -rf ${RPM_BUILD_ROOT}
+
+%post
+# Upgrading or creating currently installed configuration file.
+%{_sbindir}/autopoweroff_upgrade
+
+
+REDHATCOMPATIBLE=0
+SUSECOMPATIBLE=0
+
+if [ -f /etc/fedora-release ]; then
+  REDHATCOMPATIBLE=1
+  echo -e "\nFedora system detected."
+elif [ -f /etc/redhat-release ]; then
+  REDHATCOMPATIBLE=1
+  echo -e "\nRed Hat system detected."
+elif [ -f /etc/mandrake-release ]; then
+  REDHATCOMPATIBLE=1
+  echo -e "\nMandrake system detected."
+elif [ -f /etc/SuSE-release ]; then
+  SUSECOMPATIBLE=1
+  echo -e "\nSuSE system detected."
+fi
+
+if ((${REDHATCOMPATIBLE})); then
+
+  # Setting up run level 3 and 5 to startup autopoweroff.
+  # See /etc/inittab for explanation of these run levels.
+  chkconfig --add autopoweroff
+  chkconfig --level 35 autopoweroff on
+cat <<EOF
+
+Autopoweroff has been added to the boot process.  It will start
+automatically next time this machine is rebooted.
+
+WARNING:  Since Autopoweroff will start next time this machine is
+          rebooted, it has to be configured now.
+
+          You can configure Autopoweroff by clicking on
+          "Application/System Tools/Autopoweroff" on the desktop, or run
+          in a terminal the command "autopoweroff".
+
+          Another alternative is to edit
+          %{_sysconfdir}/autopoweroff.conf directly.  This configuration
+          file contains the instructions on how to setup each section.
+
+
+To start Autopoweroff now instead of waiting for the next reboot, run:
+
+  %{_initrddir}/autopoweroff start
+
+EOF
+fi
+
+if [ -x %{_bindir}/consolehelper ]; then
+  # Deleting autopoweroff binary if one already exist, just in case.
+  rm -f %{_bindir}/autopoweroff >/dev/null 2>&1
+  ln -s consolehelper %{_bindir}/autopoweroff 
+fi
+
+chmod +x %{_initrddir}/autopoweroff
+
+%preun
+if [ -f /etc/fedora-release ]; then
+  REDHATCOMPATIBLE=1
+  echo -e "Fedora system detected."
+elif [ -f /etc/redhat-release ]; then
+  REDHATCOMPATIBLE=1
+  echo -e "Red Hat system detected."
+elif [ -f /etc/mandrake-release ]; then
+  REDHATCOMPATIBLE=1
+  echo -e "Mandrake system detected."
+fi
+
+if ((${REDHATCOMPATIBLE})); then
+  chkconfig --del autopoweroff
+  echo "Removed Autopoweroff from boot process."
+fi
+
+/etc/init.d/autopoweroff stop
+echo "Autopoweroff stopped."
+
+# Since we do not include /etc/autopoweroff.conf in the %files section,
+# we most manually perform the operation that rpm -e would otherwise
+# perform.
+mv /etc/autopoweroff.conf /etc/autopoweroff.conf.rpmsave
+echo "warning: /etc/autopoweroff.conf saved as /etc/autopoweroff.conf.rpmsave"
+
+%postun
+
+# Deleting symlink to consolehelper if there is one.
+rm -rf %{_bindir}/autopoweroff >dev/null 2>&1
+
+%files
+%defattr(-,root,root)
+#%doc doc/index.html doc/style.css doc/COPYING
+# Since autopoweroff.conf is now a generated file, we do not want RPM
+# to move the old autopoweroff.conf to autopoweroff.conf.rpmsave when
+# upgrading.  Therefore, we do not define /etc/autopoweroff.conf as
+# a configuration file.
+#%config /etc/autopoweroff.conf
+
+# sbindir == /urs/sbin, not /sbin
+
+%{_sysconfdir}/autopoweroff.conf
+%{_sysconfdir}/pam.d/autopoweroff
+%{_sysconfdir}/rc.d/init.d/autopoweroff
+%{_sysconfdir}/security/console.apps/autopoweroff
+#%{_bindir}/*
+%{_sbindir}/*
+%{_datadir}/*
+#%{_initrddir}/*
+
+%changelog
+* Wed Nov 12 2003 Hans Deragon <hans@deragon.biz>
+- See http://autopoweroff.sourceforge.net/#change_history for full history
+of Autopoweroff.
