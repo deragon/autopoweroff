@@ -6,12 +6,9 @@ import sys
 import time
 import ConfigParser
 import re
+from __main__ import *
 
-if "@production@" == "true":
-  conffile = "@autopoweroff_etcdir@/autopoweroff.conf"
-else:
-  conffile = "/etc/autopoweroff.conf"
-
+conffile = etcdir + "/autopoweroff.conf"
 # Default values.
 #class Error(Exception):
 #  pass
@@ -124,7 +121,7 @@ class Configuration:
   def save(self):
 
     fd=open(conffile, 'w')
-    fd.write("""# Autopoweroff @version@ configuration file.
+    fd.write("""# Autopoweroff """ + version + """ configuration file.
 
 # WARNING:  If you decide to edit this file, edit only the values of the
 #           parameters.  If you add comments, they will be lost at the
