@@ -4,11 +4,15 @@ import sys
 
 if "@production@" == "true":
   sharedir = "@autopoweroff_sharedir@"
-  initdir = "@autopoweroff_initdir@"
+  initdir  = "@autopoweroff_initdir@"
+  etcdir   = "@autopoweroff_etcdir@"
+  version  = "@version@"
 else:
   # We are in test mode.  Using relative values.
   sharedir = ".."
-  initdir = "../rc"
+  initdir  = "../rc"
+  etcdir   = "../etc"
+  version  = "Test version"
 
 sys.path.append(sharedir + '/python/modules')
 
