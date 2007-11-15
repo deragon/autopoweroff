@@ -227,7 +227,6 @@ AC_CONFIG_FILES([ \
   sbin/autopoweroff_uninstall \
   etc/security/console.apps/autopoweroff \
   etc/rc.d/init.d/autopoweroff \
-  python/modules/auconfig.py \
   desktop/autopoweroff.desktop \
   apoinstall \
   ])

@@ -17,7 +17,7 @@ EXTRA_DIST = \
 	sbin/autopoweroff.in \
 	sbin/autopoweroff_uninstall.in \
 	sbin/autopoweroff_upgrade.in \
-	python/modules/auconfig.py.in \
+	python/modules/auconfig.py \
 	etc/rc.d/init.d/autopoweroff \
 	glade/autopoweroff.glade \
 	glade/autopoweroff.gladep \
