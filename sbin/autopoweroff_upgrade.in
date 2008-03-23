@@ -13,8 +13,8 @@
 # 2004/01/02, 09:16 EST
 # 
 # This scripts upgrades the /etc/autopoweroff.conf file automatically.
-# auconfig.read() function supports old formats.  So we read the old
-# configuration file and then call the auconfig.write() fonction to
+# apoconfig.read() function supports old formats.  So we read the old
+# configuration file and then call the apoconfig.write() fonction to
 # write over the file with the newest format.
 
 import sys
@@ -29,15 +29,15 @@ else:
 
 sys.path.append(sharedir + '/python/modules')
 
-import auconfig
+import apoconfig
 
-configuration = auconfig.Configuration(None, None, None, None)
+configuration = apoconfig.Configuration(None, None, None, None)
 try:
   configuration.read()
-except auconfig.APOWarning, message:
+except apoconfig.APOWarning, message:
   # We ignore warning messages.
   pass
-except auconfig.APOError, exception:
+except apoconfig.APOError, exception:
   if exception.errorcode != 1:
     print exception.msg
     sys.exit(1)
