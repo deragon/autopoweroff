@@ -2,11 +2,13 @@
 
 import sys
 
-if "@production@" == "true":
+testmode = "@production@" != "true"
+
+if not testmode:
   sharedir = "@autopoweroff_sharedir@"
   initdir  = "@autopoweroff_initdir@"
   etcdir   = "@autopoweroff_etcdir@"
-  version  = "@version@"
+  version  = "@VERSION@"
 else:
   # We are in test mode.  Using relative values.
   sharedir = ".."
@@ -19,7 +21,7 @@ sys.path.append(sharedir + '/python/modules')
 
 import os
 import ConfigParser
-import auconfig
+import apoconfig
 import commands
 
 #errors=""
@@ -264,12 +266,12 @@ def on_DlgError_close(*args):
 def readConfiguration():
   global LMConfigHosts 
 
-  configuration = auconfig.Configuration(None, None, None, None)
+  configuration = apoconfig.Configuration(None, None, None, None)
   try:
     configuration.read()
-  except auconfig.APOWarning:
+  except apoconfig.APOWarning:
     pass
-  except auconfig.APOError, exception:
+  except apoconfig.APOError, exception:
     xml.get_widget("LblDialogError").set_text(str(exception.msg))
     xml.get_widget("DlgError").show()
 
@@ -314,7 +316,7 @@ def saveConfiguration():
     iter = LMConfigHosts.iter_next(iter)
     index = index+1
   
-  configuration = auconfig.Configuration( \
+  configuration = apoconfig.Configuration( \
                     noshutdownrange, idletime, startupdelay, hosts)
   configuration.save()
   
