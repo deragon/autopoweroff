@@ -1,0 +1,48 @@
+#!/bin/bash -x
+
+{
+#ARCH=`uname -i`
+RELEASE=`perl -ne "print if s/.*?@Version@-(\d+)/\1/g;" control.in`
+ARCH="noarch"
+
+if [ "$1" != '--make' ]; then
+  cd ../..
+  make deb
+  exit
+else
+  # Calling configure with --enable-install-for-deb so that the spec file
+  # is properly generated.
+  echo "======================================================================"
+  echo "== builddeb:  ./configure called for setting everything properly"
+
+  BUILD=`pwd`"/build"
+  rm -rf build
+  mkdir -p build/DEBIAN
+
+  cd ../..
+  ./configure --prefix=${BUILD} \
+              --datarootdir=${BUILD}/usr/share \
+              --docdir=${BUILD}/usr/share \
+              --datadir=${BUILD}/usr/share/autopoweroff \
+              --enable-install-for-deb
+
+  make install
+  cd -
+
+  # Setting up the proper init file for Ubuntu/Debian.
+  cd ${BUILD}/etc/init.d
+  rm autopoweroff.redhat
+  mv autopoweroff.lsb autopoweroff
+  cd -
+
+  rm -rf build/etc/pam.d build/etc/security  # Removing Fedora stuff
+  mv control build/DEBIAN
+  chmod 755 postinst prerm
+  cp -p conffiles build/DEBIAN/.
+  mv postinst prerm build/DEBIAN/.
+  fakeroot dpkg-deb --build build  # Build package with files owned by root:root
+  dpkg -c build.deb  # Simply show content of debian package.
+  lintian build.deb  # Check if package is properly setup.
+  mv build.deb ${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb
+fi
+} 2>&1 | tee builddeb.log

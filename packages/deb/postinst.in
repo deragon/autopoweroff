@@ -1,0 +1,10 @@
+#!/bin/bash
+
+update-rc.d autopoweroff defaults
+
+cat >@autopoweroff_bindir@/autopoweroff <<EOS
+#!/bin/bash
+gksu @autopoweroff_sbindir@/autopoweroff
+EOS
+
+chmod 755 @autopoweroff_bindir@/autopoweroff

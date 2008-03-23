@@ -1,0 +1,9 @@
+Package: @PACKAGE@
+Version: @VERSION@-1
+Section: admin
+Priority: optional
+Architecture: all
+Depends: python,gksu
+Maintainer: Hans Deragon <hans@deragon.biz>
+Description: @DESCRIPTION_SHORT@
+@DESCRIPTION_LONG_DEB@
