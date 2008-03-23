@@ -6,6 +6,11 @@
 AUTOMAKE_OPTIONS = gnu
 CLEANFILES = *.rpm *.gz *.bz2 aclocal.m4 glade/*.bak configure Makefile.in *.out
 
+DESCRIPTION_SHORT = "Unused:  Defined here so the multi-line defintion will not break 'Makefile'"
+
+DESCRIPTION_LONG     = $(DESCRIPTION_SHORT)
+DESCRIPTION_LONG_DEB = $(DESCRIPTION_SHORT)
+
 sbin_SCRIPTS = \
 	sbin/autopoweroff \
 	sbin/autopoweroffd \
@@ -17,11 +22,13 @@ EXTRA_DIST = \
 	sbin/autopoweroff.in \
 	sbin/autopoweroff_uninstall.in \
 	sbin/autopoweroff_upgrade.in \
-	python/modules/auconfig.py \
-	etc/rc.d/init.d/autopoweroff \
+	python/modules/apodoc.py \
+	python/modules/apoconfig.py \
+	etc/init.d/autopoweroff.lsb \
+	etc/init.d/autopoweroff.redhat \
 	glade/autopoweroff.glade \
 	glade/autopoweroff.gladep \
-	glade/autpoweroff.trans \
+	glade/autopoweroff.trans \
 	desktop/autopoweroff.desktop.in \
 	pixmaps/autopoweroff.png \
 	etc/pam.d/autopoweroff \
@@ -31,19 +38,20 @@ EXTRA_DIST = \
 	doc/autopoweroff_cfg-statusandcmd.png \
 	doc/autopoweroff.xml \
 	doc/COPYING \
-  buildrpm \
+  packages/rpm/buildrpm \
   postinstall \
-  ${PACKAGE}.spec.in
+  packages/rpm/${PACKAGE}.spec.in
 
 pythondir=${datadir}/python/modules
 python_DATA = \
-	python/modules/auconfig.py
+	python/modules/apodoc.py \
+	python/modules/apoconfig.py
 
 gladedir=${datadir}/glade
 glade_DATA = \
-	glade/autopoweroff.glade
-	glade/autopoweroff.gladep
-	glade/autpoweroff.trans
+	glade/autopoweroff.glade \
+	glade/autopoweroff.gladep \
+	glade/autopoweroff.trans
 
 desktopdir=${autopoweroff_desktopdir}
 desktop_DATA = desktop/autopoweroff.desktop
@@ -62,9 +70,11 @@ security_DATA = etc/security/console.apps/autopoweroff
 
 # No need to setup initdir = ... here.  This variable is setup automatically
 # by configure.in  If you set it up here, you will cause problems.
-init_SCRIPTS = etc/rc.d/init.d/autopoweroff
+init_SCRIPTS = \
+	etc/init.d/autopoweroff.lsb \
+	etc/init.d/autopoweroff.redhat
 
-docdir_base = $(datadir)/doc
+docdir_base = $(datarootdir)/doc
 docdir = $(docdir_base)/$(PACKAGE)-$(VERSION)
 doc_DATA = \
   AUTHORS \
@@ -74,10 +84,20 @@ doc_DATA = \
   NEWS \
   README
 
+deb:
+	export PACKAGE=${PACKAGE}; \
+	export VERSION=${VERSION}; \
+	cd packages/deb; \
+	builddeb --make
+
 rpm: dist
 	export PACKAGE=${PACKAGE}; \
 	export VERSION=${VERSION}; \
+	mv ${PACKAGE}-${VERSION}.tar.gz packages/rpm; \
+	cd packages/rpm; \
 	buildrpm --make
+
+pkg: deb rpm
 
 clean-generic:
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
