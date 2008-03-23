@@ -1,9 +1,48 @@
-Process this file with autoconf to produce a configure script.
+process this file with autoconf to produce a configure script.
 
-AC_INIT(autopoweroff, 2.0.0, hans@deragon.biz)
-AM_INIT_AUTOMAKE(autopoweroff, 2.0.0)
+AC_INIT(autopoweroff, 3.0.0, hans@deragon.biz)
+AM_INIT_AUTOMAKE(autopoweroff, 3.0.0)
 AC_REVISION($Revision: 1.4 $)
-AC_COPYRIGHT([Hans Deragon, Copyright 2003-2007, under the GPL 2.0 license.])
+AC_COPYRIGHT([Hans Deragon, Copyright 2003-2008, under the GPL 2.0 license.])
+
+DESCRIPTION_SHORT="Automatically power off a computer if not used."
+
+DESCRIPTION_LONG="Autopoweroff is a python script that is started at boot time, and which
+function is to shutdown the computer at a specific time, but only if
+some conditions are met.
+
+The computer will shutdown if all the above conditions are met:
+
+  1. Any hosts that the computer is dependent on is not answering ping
+     anymore.
+
+  2. There is no more keyboard and mouse activity on the computer.
+
+  3. The user has not disabled Autopoweroff.
+
+One good use of Autopoweroff is for home use, on a firewall/router
+server. You can setup Autopoweroff to shutdown the server every evening
+at say, 22:00. However, your server might serve other computers in your
+home. Autopoweroff will shutdown the server after 22:00 only when no
+other computer on the network is responding to ping.  For example, if at
+22:43 you are still working on your thin client in the living room, the
+server in your baseman will remain up. As soon as you shutdown the
+workstation, the server will wait for some time (configurable) and
+then go down.
+
+By setting the BIOS properly, the server can come up by itself every
+morning.  Autopoweroff has nothing to do with this process.  But with
+this setting, your home server does not need to run 24/7; you can save
+electricity and noise without the hassle of having to shut down and
+start the server manually.
+
+Contact:
+
+  Project website:   http://autopoweroff.sourceforge.net
+  Business website:  http://www.deragon.biz
+  Email:             hans@deragon.biz"
+
+DESCRIPTION_LONG_DEB=`echo "$DESCRIPTION_LONG" | sed "s/^/ /g;s/^\s*$/ ./g"`
 
 INSTALLTYPE=""
 INSTALLICON=0
@@ -25,7 +64,7 @@ elif [[ -f /etc/SuSE-release ]]; then
   echo "SuSE distribution detected."
 elif [[ -f /etc/lsb-release ]]; then
   . /etc/lsb-release
-  if [ "${DISTRIB_ID}" = "Ubuntu" ]; then
+  if [[ "${DISTRIB_ID}" = "Ubuntu" ]]; then
     UBUNTUCOMPATIBLE=1
     echo "Ubuntu distribution detected."
   fi
@@ -74,6 +113,22 @@ AC_ARG_ENABLE(
      Please avoid calling configure with this option.
  ],
  [INSTALLTYPE="RPM"]
+)
+
+AC_ARG_ENABLE(
+ [install-for-deb],
+ [
+  --enable-install-for-deb
+
+     Installs all files under the same directory hierarchy, but
+     some files are configured to point to resources outside
+     the directory.  This option should not be used by the users.
+     This option is only available for the mecanism used to
+     build an deb version of the software.
+
+     Please avoid calling configure with this option.
+ ],
+ [INSTALLTYPE="DEB"]
 )
 
 AC_ARG_ENABLE(
@@ -126,8 +181,8 @@ else
   autopoweroff_rpm_requirements="python, iputils, SysVinit"
 fi
 
-if [[ "${INSTALLTYPE}" = "RPM" ]]; then
-  echo "Autopoweroff:  configure called for RPM building."
+if [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
+  echo "Autopoweroff:  'configure' called for ${INSTALLTYPE} building."
 
   exec_prefix='${prefix}/usr'
 
@@ -140,7 +195,7 @@ if [[ "${INSTALLTYPE}" = "RPM" ]]; then
   autopoweroff_vardir="/var"
   autopoweroff_logdir=${autopoweroff_vardir}/log
   autopoweroff_ctrldir="${autopoweroff_vardir}/autopoweroff"
-  autopoweroff_initdir="${autopoweroff_etcdir}/rc.d/init.d"
+  autopoweroff_initdir="${autopoweroff_etcdir}/init.d"
 
 else
 
@@ -170,12 +225,13 @@ else
   autopoweroff_ctrldir="${autopoweroff_vardir}"
   autopoweroff_bindir=${bindir}
   autopoweroff_sbindir=${sbindir}
-  autopoweroff_initdir=${sysconfdir}/rc.d/init.d
+  autopoweroff_initdir=${sysconfdir}/init.d
 fi
 
 if [[ "${prefix}" = "NONE" -a "${GNOMECONFIG}" = "found" ]]; then
   autopoweroff_desktopdir=`gnome-config --datadir`
-elif (( ${INSTALLICON} )) || [[ "${INSTALLTYPE}" == "RPM" ]]; then
+elif (( ${INSTALLICON} )) || \
+  [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
   if [[  -d /usr/share/applications ]]; then
     autopoweroff_desktopdir="${prefix}/usr/share/applications"
   fi
@@ -205,7 +261,7 @@ eval "eval sysconfdir_expanded=$sysconfdir"
 # real production settings instead of test settings.
 production=true
 
-initdir=${sysconfdir_expanded}/rc.d/init.d
+initdir=${sysconfdir_expanded}/init.d
 
 gnome_appldir=${autopoweroff_desktopdir}/applications
 
@@ -220,25 +276,31 @@ ARCH=noarch
 
 AC_CONFIG_FILES([ \
   Makefile \
-  autopoweroff.spec \
+  packages/rpm/autopoweroff.spec \
+  packages/deb/control \
+  packages/deb/postinst \
+  packages/deb/prerm \
   sbin/autopoweroffd \
   sbin/autopoweroff \
   sbin/autopoweroff_upgrade \
   sbin/autopoweroff_uninstall \
   etc/security/console.apps/autopoweroff \
-  etc/rc.d/init.d/autopoweroff \
+  etc/init.d/autopoweroff.lsb \
+  etc/init.d/autopoweroff.redhat \
   desktop/autopoweroff.desktop \
   apoinstall \
   ])
 
-INSTALL=apoinstall
+INSTALLER=apoinstall
 #AC_SUBST(datadir_expanded)
 #AC_SUBST(sysconfdir_expanded)
 AC_SUBST(ARCH)
+AC_SUBST(DESCRIPTION_SHORT)
+AC_SUBST(DESCRIPTION_LONG)
+AC_SUBST(DESCRIPTION_LONG_DEB)
 AC_SUBST(gnome_appldir)
 AC_SUBST(initdir)
 AC_SUBST(consolehelperpath)
-AC_SUBST(INSTALLTYPE)
 AC_SUBST(production)
 AC_SUBST(autopoweroff_sharedir)
 AC_SUBST(autopoweroff_etcdir)
@@ -252,7 +314,8 @@ AC_SUBST(autopoweroff_sbindir)
 AC_SUBST(autopoweroff_initdir)
 AC_SUBST(autopoweroff_desktopdir)
 AC_SUBST(autopoweroff_rpm_requirements)
-AC_SUBST(INSTALL)
+AC_SUBST(INSTALLTYPE)
+AC_SUBST(INSTALLER)
 
 AC_OUTPUT
 
@@ -261,5 +324,6 @@ chmod a+x \
   sbin/autopoweroff \
   sbin/autopoweroff_uninstall \
   sbin/autopoweroff_upgrade \
-  etc/rc.d/init.d/autopoweroff \
+  etc/init.d/autopoweroff.lsb \
+  etc/init.d/autopoweroff.redhat \
   apoinstall
