@@ -6,12 +6,29 @@ import sys
 import time
 import ConfigParser
 import re
+import syslog
+from types import *
 from __main__ import *
+import apodoc
+
+scriptname = os.path.basename(sys.argv[0])
+
+def sendmsg(msg, priority=syslog.LOG_INFO):
+  print msg
+  syslog.syslog(scriptname + ":  " + str(msg))
+
+def debug(msg):
+  if testmode:
+    print msg
+
+def commentString(text):
+  regexp=re.compile("(?m)^")
+  return regexp.sub("# ", text.rstrip().lstrip())
+
+#print commentString(apodoc.get('IdleTime'))
+#print apodoc.get('IdleTime')
 
 conffile = etcdir + "/autopoweroff.conf"
-# Default values.
-#class Error(Exception):
-#  pass
 
 class APOError(Exception):
   def __init__(self, msg, errorcode):
@@ -48,6 +65,56 @@ class Configuration:
     self.errors=""
     self.configParser = ConfigParser.ConfigParser()
 
+  def warn(self, msg):
+    self.warnings = self.warnings + "  - " + msg + "\n"
+
+  def deprecated(self, old, new):
+    self.warn("\"" + old + "\" is deprecated.  Please use \"" + new + "\".")
+
+  def optionalConfig(self, type, defaultValue, section, *options):
+    regex=re.compile("(\w+)\|(\w)")
+    validOption = None
+    validWarn = None
+    value = None
+    for entry in options:
+      mo=regex.search(entry)
+      option=mo.group(1)
+      validity=mo.group(2)
+
+      if validity == "v":
+        validOption = option
+
+      try:
+        if type == IntType:
+          value = self.configParser.getint(section, option)
+        elif type == StringType:
+          value = self.configParser.get(section, option)
+
+        if validity != "v":
+          self.deprecated(option, validOption)
+          validWarn = None  # Reseting warning, as deprecated option is
+                            # available and is being used.
+        if value != None:
+          break
+
+      except ConfigParser.NoOptionError:
+        value = defaultValue
+        if validity == "v":
+          # Setting a warning, but do not print it out yet.  If a deprecated
+          # token is found later, then we ignore this warning by reseting
+          # validWarn to None.
+          validWarn = "No \"" + option + "\" option defined in section \"" + \
+                       section + "\"."
+
+      except ConfigParser.NoSectionError:
+        self.warn("No \"" + section + "\" section defined.")
+
+    if validWarn:
+        self.warn(validWarn)
+
+    debug("configuration:  " + option + " = " + str(value))
+    return value
+
   def read(self):
 
     try:
@@ -58,60 +125,30 @@ class Configuration:
       #print "conffile=" + conffile
 
       # Shutdown range
-      try:
-        self.noshutdownrange[0]=self.configParser.getint("NO_SHUTDOWN_TIME_RANGE", "start")
-        try:
-          self.noshutdownrange[1]=self.configParser.getint("NO_SHUTDOWN_TIME_RANGE", "end")
-        except ConfigParser.NoOptionError:
-          self.warnings = self.warnings + "  No \"end\" option defined in section NO_SHUTDOWN_TIME_RANGE.\n"
-      except ConfigParser.NoOptionError:
-        self.warnings = self.warnings + "  No \"start\" option defined in section NO_SHUTDOWN_TIME_RANGE.\n"
-      except ConfigParser.NoSectionError:
-        self.warnings = self.warnings + "  No \"NO_SHUTDOWN_TIME_RANGE\" section defined.\n"
 
-      # Startup delay
-      try:
-        self.startupdelay=self.configParser.getint("TIMEOUTS", "startup_delay")
-      except ConfigParser.NoOptionError:
-        self.warnings=self.warnings + "  No \"startup_delay\" option " + \
-          "defined in section TIMEOUTS.\n"
-      except ConfigParser.NoSectionError:
-        # Did not find any TIMEOUTS section.  We try STARTUP which was
-        # used for Autopoweroff version 2.0.0 and older.
-        try:
-          self.startupdelay=self.configParser.getint("STARTUP", "delay")
-        except ConfigParser.NoOptionError:
-          self.warnings=self.warnings + "  No \"delay\" option defined in section STARTUP.\n"
-        except ConfigParser.NoSectionError:
-          self.warnings=self.warnings + "  No \"TIMEOUTS\" section defined.\n"
+      self.noshutdownrange[0]=self.optionalConfig( \
+          IntType, 0, "NO_SHUTDOWN_TIME_RANGE", "StartHour|v", "start|d")
 
-      try:
-        self.idletime=self.configParser.getint("TIMEOUTS", "idle_time")
-      except ConfigParser.NoOptionError:
-        self.warnings=self.warnings + "  No \"idle_time\" option " + \
-          "defined in section TIMEOUTS.\n"
-      except ConfigParser.NoSectionError:
-        self.warnings=self.warnings + "  No \"TIMEOUTS\" section defined.\n"
+      self.noshutdownrange[1]=self.optionalConfig( \
+          IntType, 0, "NO_SHUTDOWN_TIME_RANGE", "EndHour|v", "end|d")
 
-      # Dependants
-      try:
-        # Removing whitespaces in list before performing the split.
-        self.hosts=re.sub("\s*", "", self.configParser.get("DEPENDANTS", "hosts")).split(',')
+      self.idletime=self.optionalConfig( \
+          IntType, 0, "TIMEOUTS", "IdleTime|v", "idle_time|d")
+
+      self.startupdelay=self.optionalConfig( \
+          IntType, 0, "TIMEOUTS", "StartupDelay|v", "startup_delay|d")
+
+      tmphosts=self.optionalConfig( \
+          StringType, 0, "DEPENDANTS", "Hosts|v", "hosts|d")
+
+      # Removing whitespaces in list before performing the split.
+      self.hosts=re.sub("\s*", "", tmphosts).split(',')
         # If the configuration files contains a line like "hosts=" with no
         # actual hosts defined, an empty host shows up, which is wrong.
         # we eliminate this.
-        if self.hosts[0] == '':
-          # Got an empty host.  Getting ride of it.
-          self.hosts = self.hosts[1:]
-
-      except ConfigParser.NoOptionError:
-        self.warnings=self.warnings +"  No \"hosts\" option in DEPENDANTS defined.\n"
-      except ConfigParser.NoSectionError:
-        self.warnings=self.warnings + "  No \"DEPENDANTS\" section defined.\n"
-
-      if self.warnings != "":
-        raise APOWarning("Following warnings occured in file " + conffile + \
-                      "\n\n" + self.warnings)
+      if self.hosts[0] == '':
+        # Got an empty host.  Getting ride of it.
+        self.hosts = self.hosts[1:]
 
     except IOError:
       self.errors = "Could not open configuration file " + conffile + \
@@ -129,21 +166,21 @@ class Configuration:
 #           used to update the file.  Only values persists.
 
 
-# start and end parameters (expressed in hours):
+# StartHour and EndHour parameters (expressed in hours):
 #
 #   Following is the time range where the computer should not shutdown
-#   even if all conditions are met.  In this example where start=5 and
-#   end=22, the computer will not shut down between 05:00 and 22:00,
-#   local time.
+#   even if all conditions are met.  In this example where StartHour=5
+#   and EndHour=22, the computer will not shut down between 05:00 and
+#   22:00, local time.
 
 [NO_SHUTDOWN_TIME_RANGE]
 """)
-    fd.write("start=" + str(int(self.noshutdownrange[0])) + "\n")
-    fd.write("end="   + str(int(self.noshutdownrange[1])) + "\n")
+    fd.write("StartHour=" + str(int(self.noshutdownrange[0])) + "\n")
+    fd.write("EndHour="   + str(int(self.noshutdownrange[1])) + "\n")
 
     fd.write("""
 
-# startup_delay parameter (expressed in minutes):
+# StartupDelay parameter (expressed in minutes):
 #
 #   When the computer is booting up, if all the conditions are met and
 #   the computer is in the shutdown time range, as soon as Autopoweroff
@@ -156,26 +193,21 @@ class Configuration:
 #   configuration.
 #
 #
-# idle_time parameter (expressed in minutes):
+# IdleTime parameter (expressed in minutes):
 #
 #   Like a screensaver, Autopoweroff detects keyboard and mouse
 #   activity, and if there is any activity on the server, it would not
 #   be powered off regardless if all the other conditions are met.  If
 #   set to 0, user activity on the server will be ignored.
-#  
-#   PS/2 keyboards and PS/2 & serial mices are supported.  AT keyboards
-#   will probably work too (if you can confirm this, please write to me).
-#   Unfortunatly, USB keyboards and mices are not supported yet 
-#   (I do not know how to detect activity on USB devices).
 
 [TIMEOUTS]
 """)
-    fd.write("startup_delay=" + str(int(self.startupdelay)) + "\n")
-    fd.write("idle_time=" + str(int(self.idletime))  + "\n")
+    fd.write("StartupDelay=" + str(int(self.startupdelay)) + "\n")
+    fd.write("IdleTime=" + str(int(self.idletime))  + "\n")
 
     fd.write("""
 
-# host parameter (list of hostnames or IPs, separated by commas):
+# Hosts parameter (list of hostnames or IPs, separated by commas):
 #
 #   Here you list the list of hosts your machine is dependant, i.e. this
 #   computer should not shutdown if any of the hosts declared here is
@@ -183,7 +215,7 @@ class Configuration:
 
 [DEPENDANTS]
 """)
-    fd.write("hosts=")
+    fd.write("Hosts=")
 
     for index in range(len(self.hosts)):
       fd.write(self.hosts[index])
