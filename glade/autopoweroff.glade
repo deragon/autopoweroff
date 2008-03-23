@@ -764,11 +764,9 @@
 			      <property name="width_request">40</property>
 			      <property name="height_request">24</property>
 			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">Idle Time parameter (expressed in minutes):
+			      <property name="tooltip" translatable="yes">IdleTime parameter (expressed in minutes):
 
-Like a screensaver, Autopoweroff detects keyboard and mouse activity, and if there is any activity on the server, it would not be powered off regardless if all the other conditions are met.  If set to 0, user activity on the server will be ignored.
-
-For the moment, PS/2 keyboards and serial mices have been tested. PS/2 mices probably would work too.  Not sure if USB keyboards would be detected and USB mices are not supported.</property>
+Like a screensaver, Autopoweroff detects keyboard and mouse activity, and if there is any activity on the server, it would not be powered off regardless if all the other conditions are met.  If set to 0, user activity on the server will be ignored.</property>
 			      <property name="can_focus">True</property>
 			      <property name="climb_rate">1</property>
 			      <property name="digits">0</property>
@@ -2011,7 +2009,7 @@ For the moment, PS/2 keyboards and serial mices have been tested. PS/2 mices pro
   <property name="destroy_with_parent">False</property>
   <property name="name" translatable="yes">Autopoweroff</property>
   <property name="copyright" translatable="yes">Hans Deragon,
-(c) Copyright 2006</property>
+(c) Copyright 2006-2008</property>
   <property name="comments" translatable="yes">Poweroff your computer automatically when conditions you set are met.</property>
   <property name="license" translatable="yes">GPL 2.0</property>
   <property name="website">http://autopoweroff.sourceforge.net</property>
