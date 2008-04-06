@@ -228,14 +228,6 @@ while not finish:
     debug("Sleeping for " + str(sleeptime) + "s.")
     time.sleep(sleeptime)
     continue
-  elif isOneStillAlive:
-    sendmsg("At least one host is still alive.")
-    time.sleep(5)
-    continue
-  else:
-    sendmsg("All the conditions for shutdown are met.  System shutdown.", \
-            syslog.LOG_ALERT)
-    finish = True
 
   isOneStillAlive=False
 
@@ -252,6 +244,14 @@ while not finish:
       isOneStillAlive=True
       break
 
+  if isOneStillAlive:
+    sendmsg("At least one host is still alive.")
+    time.sleep(5)
+    continue
+  else:
+    sendmsg("All the conditions for shutdown are met.  System shutdown.", \
+            syslog.LOG_ALERT)
+    finish = True
   # Checking if anybody is working on the server.  No shutdown if there
   # is activity on the keyboard or on the mouse.
 

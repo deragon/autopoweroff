@@ -22,6 +22,7 @@ sys.path.append(sharedir + '/python/modules')
 import os
 import ConfigParser
 import apoconfig
+import apodoc
 import commands
 
 #errors=""
@@ -353,6 +354,11 @@ xml.get_widget("DlgSavedConfirmed").connect("delete_event", on_DlgSavedConfirmed
 xml.get_widget("DlgEditHost").connect("delete_event", on_DlgEditHost_close)
 xml.get_widget("DlgAddHost").connect("delete_event", on_DlgAddHost_close)
 xml.get_widget("DlgError").connect("delete_event", on_DlgError_close)
+tooltip=gtk.Tooltips()
+tooltip.set_tip(xml.get_widget("SbStartHour"), \
+                apodoc.get("config-StartHour&EndHour"))
+tooltip.set_tip(xml.get_widget("SbEndHour"), \
+                apodoc.get("config-StartHour&EndHour"))
 
 # Setting up the single column for TVDependants
 tvDependants=xml.get_widget("TVDependants")
