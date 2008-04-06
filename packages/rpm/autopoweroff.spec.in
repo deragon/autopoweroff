@@ -54,7 +54,7 @@ mv ${RPM_BUILD_ROOT}/@autopoweroff_initdir@/autopoweroff.redhat \
    ${RPM_BUILD_ROOT}/@autopoweroff_initdir@/autopoweroff
 
 # Removing unnecessary executables for an RPM.
-rm ${RPM_BUILD_ROOT}/%{_sbindir}/autopoweroff_uninstall
+rm ${RPM_BUILD_ROOT}/%{_sbindir}/autopoweroff-uninstall
 
 ######################################################################
 %clean
@@ -62,7 +62,7 @@ rm ${RPM_BUILD_ROOT}/%{_sbindir}/autopoweroff_uninstall
 
 %post
 # Upgrading or creating currently installed configuration file.
-%{_sbindir}/autopoweroff_upgrade
+%{_sbindir}/autopoweroff-upgrade
 
 
 REDHATCOMPATIBLE=0
