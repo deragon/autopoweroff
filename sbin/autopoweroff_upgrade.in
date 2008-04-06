@@ -23,9 +23,13 @@ testmode = "@production@" != "true"
 
 if testmode:
   # We are in test mode.  Using relative values.
+  etcdir   = "../etc"
   sharedir = ".."
+  version  = "Test version"
 else:
+  etcdir   = "@autopoweroff_etcdir@"
   sharedir = "@autopoweroff_sharedir@"
+  version  = "@VERSION@"
 
 sys.path.append(sharedir + '/python/modules')
 
