@@ -1,23 +1,40 @@
+INTERSTING READING
+======================================================================
+
+  http://beranger.org/index.php?article=1958&page=3k
+
+
+DEVICE READING:
+======================================================================
+  Synaptic touchpad driver:  http://web.telia.com/~u89404340/touchpad/
+
+
 CONSOLEHELPER
 ======================================================================
-man consolehelper on info how to get consolehelper running.
+  man consolehelper on info how to get consolehelper running.
 
-cd /usr/bin
-ln -s autopoweroff_cfg consolehelper
+  cd /usr/bin
+  ln -s autopoweroff_cfg consolehelper
 
-cat >/etc/security/console.apps/autopoweroff_cfg <<EOF
-USER=root
-PROGRAM=/usr/sbin/autopoweroff_cfg
-SESSION=true
+  cat >/etc/security/console.apps/autopoweroff_cfg <<EOF
+  USER=root
+  PROGRAM=/usr/sbin/autopoweroff_cfg
+  SESSION=true
 EOF
 
-cat >/etc/pam.d/autopoweroff_cfg <<EOF
-#%PAM-1.0
-auth       sufficient   pam_rootok.so
-auth       sufficient   pam_timestamp.so
-auth       required     pam_stack.so service=system-auth
-session    required     pam_permit.so
-session    optional     pam_xauth.so
-session    optional     pam_timestamp.so
-account    required     pam_permit.so
+  cat >/etc/pam.d/autopoweroff_cfg <<EOF
+  #%PAM-1.0
+  auth       sufficient   pam_rootok.so
+  auth       sufficient   pam_timestamp.so
+  auth       required     pam_stack.so service=system-auth
+  session    required     pam_permit.so
+  session    optional     pam_xauth.so
+  session    optional     pam_timestamp.so
+  account    required     pam_permit.so
 EOF
+
+
+
+GNOMESU
+======================================================================
+  /usr/bin/gnomesu -c autopoweroff
