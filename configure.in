@@ -282,8 +282,8 @@ AC_CONFIG_FILES([ \
   packages/deb/prerm \
   sbin/autopoweroffd \
   sbin/autopoweroff \
-  sbin/autopoweroff_upgrade \
-  sbin/autopoweroff_uninstall \
+  sbin/autopoweroff-upgrade \
+  sbin/autopoweroff-uninstall \
   etc/security/console.apps/autopoweroff \
   etc/init.d/autopoweroff.lsb \
   etc/init.d/autopoweroff.redhat \
@@ -322,8 +322,8 @@ AC_OUTPUT
 chmod a+x \
   sbin/autopoweroffd \
   sbin/autopoweroff \
-  sbin/autopoweroff_uninstall \
-  sbin/autopoweroff_upgrade \
+  sbin/autopoweroff-uninstall \
+  sbin/autopoweroff-upgrade \
   etc/init.d/autopoweroff.lsb \
   etc/init.d/autopoweroff.redhat \
   apoinstall
