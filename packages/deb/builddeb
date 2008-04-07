@@ -44,5 +44,7 @@ else
   dpkg -c build.deb  # Simply show content of debian package.
   lintian build.deb  # Check if package is properly setup.
   mv build.deb ${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb
+  ln -s ${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb \
+        ${PACKAGE}.${ARCH}.deb
 fi
 } 2>&1 | tee builddeb.log
