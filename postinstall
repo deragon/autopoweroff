@@ -1,19 +1,20 @@
 #!/bin/bash
 
 if [ "${INSTALLTYPE}" != "RPM" ]; then 
-  echo -e "\nProceeding with the installation.\n"; 
-  [ ! -e ${gladedir}/autopoweroff.png ] && \
-    ln -s ${pixmapsdir}/autopoweroff.png ${gladedir}/.
-  echo "${gladedir}/autopoweroff.png" \
-    >>${autopoweroff_sharedir}/autopoweroff.uninstall
+  echo -e "\n$0:  Proceeding with the installation.\n"; 
+  if [ ! -e ${gladedir}/autopoweroff.png ]; then
+    cd ${gladedir}
+    ln -s ../pixmaps/autopoweroff.png .
+    cd -
+  fi
 
   # Comment by Hans Deragon, 2006/09/27, 17:07 EDT
   #
   # consolehelper will only work if the configuration files for it are
-  # enabled in /etc.  This if ${sysconfdir} is not setup to /etc,
+  # enabled in /etc.  Thus if ${sysconfdir} is not setup to /etc,
   # consolehelper will not work and there would be no point installing
   # it.  When the user will execute it, and error message would show up
-  # (it is "Unkown error."; not very useful) and useless bug reports
+  # (it is "Unknown error."; not very useful) and useless bug reports
   # will be filed in.
   #
   # This is why we install the consolehelper symlink only if
@@ -26,4 +27,5 @@ if [ "${INSTALLTYPE}" != "RPM" ]; then
 fi
 
 # "make" requires that this script exits with '0' if everything went well.
+#  We make sure here that we quit with "0".
 exit 0
