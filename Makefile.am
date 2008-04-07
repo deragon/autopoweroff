@@ -14,14 +14,14 @@ DESCRIPTION_LONG_DEB = $(DESCRIPTION_SHORT)
 sbin_SCRIPTS = \
 	sbin/autopoweroff \
 	sbin/autopoweroffd \
-	sbin/autopoweroff_uninstall \
-	sbin/autopoweroff_upgrade
+	sbin/autopoweroff-uninstall \
+	sbin/autopoweroff-upgrade
 
 EXTRA_DIST = \
 	sbin/autopoweroffd.in \
 	sbin/autopoweroff.in \
-	sbin/autopoweroff_uninstall.in \
-	sbin/autopoweroff_upgrade.in \
+	sbin/autopoweroff-uninstall.in \
+	sbin/autopoweroff-upgrade.in \
 	python/modules/apodoc.py \
 	python/modules/apoconfig.py \
 	etc/init.d/autopoweroff.lsb \
