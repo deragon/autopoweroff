@@ -13,7 +13,7 @@
 
 <!-- formating info -->
 <document-formatting-info>
-  <stylesheet url="style.css" />
+  <stylesheet url="style-new.css" />
   <left-margin>40pt</left-margin>
   <right-margin>40pt</right-margin>
   <top-margin>20pt</top-margin>
@@ -46,7 +46,7 @@
 <td valign="middle" align="right">
 <b>Autopoweroff: User Guide</b>
 <br/>
-<a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=77254&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo"/></a>
+<a href="http://autopoweroff.sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=77254&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo"/></a>
 </td></tr>
 </table>
 <hr size="1" color="red" noshade="true" />
@@ -55,21 +55,27 @@
 <document-body>
 <!-- meta info -->
 <table-of-content>
-<link href="#what_is">What is Autopoweroff</link>
-<link href="#distributions">Supported distributions</link>
+<link href="#what_is">About Autopoweroff</link>
+<link href="#distributions">Supported Linux distributions</link>
 <link href="#download">Download</link>
-<link href="#config_autopoweroff_gui">Screenshots</link>
-<link href="#installation">Installation</link>
-<link href="#deinstallation">Deinstallation</link>
-<link href="#configuration">Configuration
+<link href="#configuration">Screenshots &amp; Configuration
   <link href="#config_autopoweroff">Autopoweroff configuration
     <link href="#config_autopoweroff_gui">Autopoweroff GUI configuration tool</link>
     <link href="#config_autopoweroff_file">Autopoweroff configuration file (autopoweroff.conf)</link>
   </link>
   <link href="#config_bios">BIOS configuration</link>
 </link>
+<link href="#installation">Installation</link>
+<link href="#uninstallation">Uninstallation</link>
+<link href="#license">License</link>
+<link href="#troubleshooting">Troubleshooting
+  <link href="#troubleshooting_glade">Troubleshooting Glade warnings
+  </link>
+</link>
+<link href="#developers">For developers</link>
 <link href="#todo">To do</link>
 <link href="#change_history">Change History
+  <link href="#changes_3.0.0">Version 2.9.0</link>
   <link href="#changes_2.1.0">Version 2.1.0</link>
   <link href="#changes_2.0.0">Version 2.0.0</link>
   <link href="#changes_1.2.0">Version 1.2.0</link>
@@ -77,11 +83,11 @@
   <link href="#changes_1.1.0">Version 1.1.0</link>
   <link href="#changes_1.0.1">Version 1.0.1</link>
 </link>
-<link href="#license">License</link>
+<link href="#misc">Miscelleanous</link>
 <link href="#contact">Contact</link>
 </table-of-content>
 
-<section name="what_is" label="What is Autopoweroff">
+<section name="what_is" label="About Autopoweroff">
 
 <p>
 
@@ -97,7 +103,7 @@
 
 </p>
 
-<ol>
+<ul>
 
     <li>
 
@@ -109,8 +115,7 @@
     <li>
 
     No keyboard or mouse activity has been detected on the computer for
-    a while (this only works for PS/2 keyboards and PS/2 &amp; serial mices;
-    USB devices are not yet supported, unfortunatly).
+    a while.
 
     </li>
 
@@ -120,7 +125,7 @@
 
     </li>
 
-</ol>
+</ul>
 
 <p>
 
@@ -142,7 +147,7 @@
   this setting, your home server does not need to run 24/7.  The advantages
   such a setting offers are:
 
-  <ol>
+  <ul>
 
     <li>
 
@@ -165,7 +170,7 @@
       manually.
 
     </li>
-  </ol>
+  </ul>
 
 </p>
 <p>
@@ -181,6 +186,7 @@
 
 </p>
 
+<!--
 <table width="100%">
   <tr>
     <td valign="top" width="130">
@@ -203,11 +209,12 @@
     </td>
   </tr>
 </table>
+-->
 
 
 </section>
 
-<section name="distributions" label="Supported distributions">
+<section name="distributions" label="Supported Linux distributions">
 
 <p>
 
@@ -220,18 +227,21 @@
 </p>
 <p>
 
-  Fully supported distributions include:  <b>Red Hat</b> and
-  <b>Mandrake</b>.  Download the rpm and everything will be installed
-  and enabled automatically.  This include a <code>chkconfig --add
-  autopoweroff</code> that will be performed upon installation, and
-  which will enable Autopoweroff at booting time.  Off course, it is
-  removed if you remove the RPM.
+  Fully supported distributions include:  <b>Ubuntu</b>, <b>Fedora</b>,
+  <b>Red Hat</b>.  It should also work with <b>Debian</b> and
+  <b>Mandrake</b>.  Download the .rpm or .deb package and everything
+  will be installed and enabled automatically.  This include setting up
+  Autopoweroff to start at the next computer boot.  And if you decide
+  to remove Autopoweroff, everything gets removed.
 
 </p>
 <p>
 
-  With the rpm, you will only have to run the GUI configuration tool or
+  With a package, you will only have to run the GUI configuration tool or
   edit <code>/etc/autopoweroff.conf</code> to your particular needs.
+
+  Autopoweroff will be submitted to Ubuntu's and Fedora's repositories,
+  making it even easier to install it.
 
 </p>
 <table width="100%">
@@ -245,26 +255,9 @@
 
     <p>
 
-    If you are running a distribution based on Red Hat, but that is not
-    yet supported by Autopoweroff, write to me.  I will ask you some
-    questions about your distribution and probably be able to add
-    support for it in the next RPM release.
-
-    </p>
-    <p>
-
-    This is particularly the case for Fedora.  If you use Fedora, please
-    send me the equivalent of /etc/redhat-release file.  I might then be
-    able to add this distribution to the list of supported
-    distributions.
-
-    </p>
-
-    <p>
-
-    I am seeking someone that could write a debian package for this
-    application.  Once the package definition file created, I will
-    maintain it if its not too complicated.  Any volunteers?
+    If you are running a distribution that is not yet supported by
+    Autopoweroff, write to me.  I will ask you some questions about your
+    distribution and probably be able to add support for it.
 
     </p>
 
@@ -283,91 +276,36 @@
   <a href="http://sourceforge.net/project/showfiles.php?group_id=74727">
   SourceForge</a>.
 
-</p>
-
-</section>
-
-<section name="installation" label="Installation">
-
-<p>
-
-  To install the RPM, simply run:
-
-</p>
-
-<blockquote>
-  <code>
-  rpm -Uhv autopoweroff.rpm
-  </code>
-</blockquote>
-
-<p>
-
-  For the tarball, extract it and run <code>configure</code> followed
-  by <code>make install</code>.
-
-</p>
-
-<blockquote>
-  <code>
-
-  tar xvzf autopoweroff.tar.gz
-<br/>
-  cd autopoweroff
-<br/>
-  configure
-<br/>
-  make install
-
-  </code>
-</blockquote>
-
-</section>
-
-<section name="deinstallation" label="Deinstallation">
-
-<p>
-
-  To deinstall the RPM, simply run:
-
-</p>
-
-<blockquote>
-  <code>
-  rpm -e autopoweroff.rpm
-  </code>
-</blockquote>
-
-<p>
-
-  If you installed from the tarball, run
-</p>
-
-<blockquote>
-  <code>
-  autopoweroff_uninstall
-  </code>
-</blockquote>
-
-<p>
-
 <table width="100%">
-<tr>
-<td valign="top" width="130">
-  <p class="warning">
-  DEVELOPERS
-  </p>
-  </td>
-  <td>
-  <p>
+  <tr>
+    <td valign="top" width="130">
 
-    Take this project as an example.  If you distribute your software with
-    a tarball, provide an easy solution to de-install it.  Either
-    provide a script like Autopoweroff is doing, or provide a "make
-    uninstall" target.
+      <p class="warning">
+        ALPHA VERSION AVAILABLE.
+      </p>
 
-  </p>
-  </td>
+    </td>
+    <td>
+
+      <p>
+
+        Version 2.9.0 is an alpha version (3.0.0 will be the stable
+        release).  I need people to test it.  Unknown bugs might cause
+        your system to shutdown even if someone is making use of it.
+        However, 2.9.0 appears stable and I suggest people to try it
+        out.
+
+      <p>
+      </p>
+
+        Please provide feedback by writing to me at
+        <a href="mailto:hans@deragon.biz">hans@deragon.biz</a>
+        If enough people report to me that this version is stable, I
+        will release it as such.
+
+      </p>
+
+    </td>
   </tr>
 </table>
 
@@ -376,7 +314,6 @@
 </section>
 
 <section name="configuration" label="Configuration">
-
 <br/>
 
   Following are subsections that explains how to configure your system for
@@ -389,7 +326,7 @@
 <p>
   There are two ways to configure Autopoweroff.
 
-  <ol>
+  <ul>
     <li>
       Use the <section-link href="#config_autopoweroff_gui">GUI configuration tool</section-link>.
 
@@ -397,7 +334,7 @@
     <li>
       Edit manually the configuration file <section-link href="#config_autopoweroff_file"><code>autopoweroff.conf</code></section-link>.
     </li>
-  </ol>
+  </ul>
 </p>
 
 Following, the list of sub-sections.
@@ -562,6 +499,180 @@ hosts=snahwin, snah
 </section>
 
 
+
+<section name="installation" label="Installation">
+
+<p>
+
+  To install the .deb package, simply run:
+
+</p>
+
+<blockquote>
+  <code>
+  sudo dpkg -i autopoweroff*.deb  
+  </code>
+</blockquote>
+
+<p>
+
+  To install the .rpm package, simply run:
+
+</p>
+
+<blockquote>
+  <code>
+  rpm -Uhv autopoweroff*.rpm
+  </code>
+</blockquote>
+
+<p>
+
+  For the tarball, extract it and run <code>configure</code> followed
+  by <code>make install</code>.
+
+</p>
+
+<blockquote>
+  <code>
+
+  tar xvzf autopoweroff.tar.gz
+<br/>
+  cd autopoweroff
+<br/>
+  configure --prefix="&lt;path to the installation directory&gt;"
+<br/>
+  make install
+
+  </code>
+</blockquote>
+
+<p> 
+
+  You will need to setup the init script properly.  Two versions exists.
+
+</p> 
+</section>
+
+<section name="uninstallation" label="Uninstallation">
+
+<p>
+
+  To uninstall the .deb package, simply run:
+
+</p>
+
+<blockquote>
+  <code>
+  sudo dpkg -r autopoweroff
+  </code>
+</blockquote>
+
+<p>
+
+  To uninstall the .rpm package, simply run:
+
+</p>
+
+<blockquote>
+  <code>
+  rpm -e autopoweroff
+  </code>
+</blockquote>
+
+<p>
+
+  If you installed from the tarball, run
+</p>
+
+<blockquote>
+  <code>
+  autopoweroff_uninstall
+  </code>
+</blockquote>
+</section>
+
+<section name="license" label="License">
+<p>
+
+  This software is covered by the 
+
+  <a href="http://www.gnu.org/licenses/gpl.html#TOC1">GPL 2.0</a>
+
+  license.  For a local copy of the license, see file
+  COPYING.
+
+</p>
+</section>
+
+
+<section name="troubleshooting" label="Troubleshooting">
+<p>
+  Following are troubleshooting sections.
+
+  <ul>
+    <li>
+      <section-link href="#troubleshooting_glade">Troubleshooting Glade warnings</section-link>.
+    </li>
+  </ul>
+</p>
+</section>
+<section name="troubleshooting_glade" label="Troubleshooting Glade warnings">
+
+  <p>
+    Do not be alarmed by glade warning message showing up when you
+    are running the <code>autopoweroff</code> command (the GUI configurator).
+    These warning appears because you are running a different version of
+    Gnome than the one upon which Autopoweroff was built.  Probably you
+    are running an older version, thus some new properties that were
+    introduced are not supported on your older system.  For instance,
+    On a Fedora Core 4 system, you will get the following errors:
+
+  </p>
+  <p><code>
+(autopoweroff:5954): libglade-WARNING **: unknown property `urgency_hint' for class `GtkDialog'
+    </code></p>
+    <p><code>
+(autopoweroff:5954): libglade-WARNING **: unknown property `wrap_license' for class `GtkAboutDialog'
+  </code></p>
+  <p>
+    This is nothing to be concerned about.
+  </p>
+</section>
+
+<section name="developers" label="For Developers">
+  <br/>
+
+  Autopoweroff might be of interest to developers because of the following
+  reasons:
+  
+  <br/>
+  <ul>
+  <li>
+
+    This project is a very nice example on how to write a Python daemon
+    that probes input devices, make use of threads
+
+  </li>
+  <li>
+
+    It is also a very good example about packaging for .deb and .rpm
+    based distributions, and universal tarball.  It makes heavy use of
+    autoconf and automake.
+
+  </li>
+  <li>
+
+    Finally, be this project a lesson;  if you distribute your software
+    with a tarball, provide an easy solution to de-install it.  Either
+    provide a script like Autopoweroff is doing, or provide a "make
+    uninstall" target.
+
+  </li>
+  </ul>
+
+</section>
+
 <section name="todo" label="To do">
 
 <p>
@@ -572,63 +683,35 @@ The following are features to be added in future releases.
 
 <ul>
 
-<li>
+  <li>
 
-<p>
+    Detect activity from a remote login, either it be console or an X session.
+    Currently, if someone is working remotly on the computer, this will go
+    undetected and Autopoweroff will proceed with the shutdown if all other
+    conditions are met.
 
-  Support USB devices (keyboards and mices) for detecting user idle
-  time.  Currently, Autopoweroff detects activity on PS/2 keyboards and
-  PS/2 &amp; serial mices (AT keyboards probably work too).  USB devices are
-  ignored.
+  </li>
+  <li>
 
-</p>
+    Internationalization (i18n).  Autopoweroff is currently available only
+    in English.
 
-<p>
+  </li>
+  <li>
 
-  If anybody knows how to detect user activity on USB devices, please
-  inform me.  I would be mostly happy to implement this.  Myself, I do
-  not own any USB devices, so I cannot figure out how this works.
+    New GUI that follows more closely the Gnome recommendations.
 
-</p>
+  </li>
+  <li>
 
-</li>
-<li>
+    Better documentation, including writing a man page.
 
-  Detect activity from a remote login, either it be console or an X session.
-  Currently, if someone is working remotly on the computer, this will go
-  undetected and Autopoweroff will proceed with the shutdown if all other
-  conditions are met.
+  </li>
+  <li>
 
-</li>
-<li>
+    Support for a wider range of Linux distributions.
 
-  Internationalization (i18n).  The Autopoweroff configurator tool (the
-  GUI) is not translated into french.
-
-</li>
-<li>
-
-  Better documentation, including writing a man page.  Anybody knows of a
-  good tool to write man pages with?
-
-</li>
-<li>
-
-<p>
-  Add detection for other Red Hat compatible distributions when
-  installing with the RPM.  If your system is not Red Hat or Mandrake,
-  tell me what file need to be read on that system to figure out what
-  version is running.  Under redhat, the file is /etc/redhat-release.
-</p>
-
-<p>
-  Particularly, Fedora is yet not supported simply because I do not know the
-  equivalent /etc/redhat-release file for this distribution.  If you can,
-  please email me a copy.
-</p>
- 
-
-</li>
+  </li>
 </ul>
 
 </section>
@@ -640,6 +723,36 @@ The following are features to be added in future releases.
 The following changes have been incorporated in the below mentioned versions:
 
 
+</section>
+
+<section name="changes_3.0.0" label="Version 2.9.0 - 2008/??/??">
+
+<br/>
+This release is a complete overhaul of the project.
+<br/>
+
+<ul>
+
+  <li>
+
+    Ubuntu support introduced.
+
+  </li>
+  <li>
+
+    New technics are used to probe device, which now include USB devices.
+    For the techies, /dev/input/by-path devices get probed.
+    Modern kernels are required.
+
+  </li>
+  <li>
+
+    Subversion is now used instead of CVS for software configuration
+    management.
+
+  </li>
+
+</ul>
 </section>
 
 <section name="changes_2.1.0" label="Version 2.1.0 - 2004/01/19">
@@ -771,7 +884,7 @@ The following changes have been incorporated in the below mentioned versions:
 
   <li>
 
-    Improved the installation and deinstallation of the software from
+    Improved the installation and uninstallation of the software from
     a tarball.
 
   </li>
@@ -800,20 +913,8 @@ The following changes have been incorporated in the below mentioned versions:
 </ul>
 
 </section>
-
-<section name="license" label="License">
-
-<p>
-
-  This software is covered by the 
-
-  <a href="http://www.gnu.org/licenses/gpl.html#TOC1">GPL</a>
-
-  license.  For a local copy of the license, see file
-  COPYING.
-
-</p>
-
+<section name="misc" label="Miscelleanous">
+  This document has been created <a href="http://aurigadoc.sourceforge.net/">AurigaDoc</a>
 </section>
 
 <section name="contact" label="Contact">
