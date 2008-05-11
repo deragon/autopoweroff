@@ -10,8 +10,12 @@ import time
 import re
 import signal
 import threading
+import errno
 
 testmode = "@production@" != "true"
+
+if not testmode and os.fork() != 0:
+  sys.exit(0)
 
 if testmode:
   # We are in test mode.  Using relative values.
@@ -53,9 +57,10 @@ if os.path.exists(pidfile):
   try:
     os.kill(int(pid), signal.SIGTERM)
     sendmsg("Currently running instance killed.", syslog.LOG_ALERT)
-  except OSError, (errno, msg):
-    if errno != 3:  # errno #3 means that the process does not exist.
-                    # if such is the case, we ignore the exception.
+  except OSError, oserror:
+    if oserror.errno != errno.ESRCH:  # No such process
+      # errno ESRCH (#3) means that the process does not exist.
+      # If such is the case, we ignore the exception, else, we raise it.
       raise
 
 configuration = apoconfig.Configuration(None, None, None, None)
@@ -67,9 +72,6 @@ except apoconfig.APOError, message:
   sendmsg(message)
 
 #debug("idletime=" + str(configuration.idletime))
-
-if not testmode and os.fork() != 0:
-  sys.exit(0)
 
 sendmsg("Successfully started as PID: " + str(os.getpid()))
 
@@ -116,7 +118,16 @@ class ApoDeviceObserverThread(threading.Thread):
         time.sleep(self.sleep)
         self.sleep = 0
 
-      fd.read(1)
+      try:
+        fd.read(1)
+      except IOError, ioerror:
+        if ioerror.errno == errno.ENODEV:
+          self.finish=True
+          sendmsg("Device " + self.sDevice + " absent (No such device error)",\
+                  syslog.LOG_NOTICE)
+          continue
+        else:
+          raise
       currentTime=time.time()
       gLastInputEventTime=currentTime
       #print currentTime-lastEventTime
@@ -154,8 +165,8 @@ try:
     aDevices.append(path)
 
 except OSError, oserror:
-  if oserror.errno != errno.ENOENT:
-    raise oserror
+  if oserror.errno != errno.ENOENT:  # No such file or directory
+    raise
 
 for sDevice in aDevices:
   debug("sDevice = " + sDevice)
@@ -167,7 +178,8 @@ for sDevice in aDevices:
 
 ######################################################################
 isToBeSuspended = False
-finish = False
+finish          = False
+alivePrint      = False
 while not finish:
 
   # Checking if the current hour is within the poweroff shutdown range.
@@ -187,7 +199,7 @@ while not finish:
                    0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
     #debug(shutdowntuple)
     #debug(nowtuple)
-    sleeptime=time.mktime(shutdowntuple)-now
+    sleeptime=time.mktime(shutdowntuple)-now+1
 
     # Using gmtime(sleeptime) here because localtime(0) is actually
     # 1969/12/31 19h00, thus if using localtime(sleeptime), we actually
@@ -196,6 +208,7 @@ while not finish:
             str(configuration.noshutdownrange) + \
             " for system shutdown.\nSleeping for " + \
             time.strftime("%H:%M:%S", time.gmtime(sleeptime)),".")
+    alivePrint=False
     time.sleep(sleeptime)
     continue
 
@@ -245,7 +258,9 @@ while not finish:
       break
 
   if isOneStillAlive:
-    sendmsg("At least one host is still alive.")
+    if not alivePrint:
+      sendmsg(host + " is still alive.")
+    alivePrint=True
     time.sleep(5)
     continue
   else:
@@ -272,5 +287,5 @@ if finish:  # No SIGTERM signal received and clean shutdown required.
       (time.localtime(time.time())))
   else:
     #commands.getstatusoutput("nohup poweroff");
-    #commands.getstatusoutput("nohup /sbin/shutdown -h now");
-    print "ERROR:  POWEROFF COMMAND DISABLED FOR DEBUGGING PURPOSES."
+    commands.getstatusoutput("nohup /sbin/shutdown -h now");
+    #print "ERROR:  POWEROFF COMMAND DISABLED FOR DEBUGGING PURPOSES."
