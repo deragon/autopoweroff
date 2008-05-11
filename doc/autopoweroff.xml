@@ -13,7 +13,7 @@
 
 <!-- formating info -->
 <document-formatting-info>
-  <stylesheet url="style-new.css" />
+  <stylesheet url="style.css" />
   <left-margin>40pt</left-margin>
   <right-margin>40pt</right-margin>
   <top-margin>20pt</top-margin>
