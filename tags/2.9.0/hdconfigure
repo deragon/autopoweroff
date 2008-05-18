@@ -1,0 +1,9 @@
+aclocal
+automake
+autoconf
+configure --prefix=/tmp/autopoweroff
+
+# export tmpdir=/tmp/autopoweroff
+# rm -r -f ${tmpdir}
+# mkdir -p ${tmpdir}
+# configure --prefix ${tmpdir} $*

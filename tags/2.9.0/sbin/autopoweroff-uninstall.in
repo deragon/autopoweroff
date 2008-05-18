@@ -1,0 +1,44 @@
+#!/bin/bash
+
+UNINSTALLFILE="@autopoweroff_sharedir@/@PACKAGE_NAME@.uninstall"
+
+cat <<EOF
+You have three options:
+
+  1) Keep a copy of the configuration file autopoweroff.conf.
+  2) Delete all traces of Autopoweroff, including configuration files.
+  q) Quit
+  
+Select [1], [2] or [q].
+EOF
+
+WHILEDONE="no"
+while [[ "${WHILEDONE}" = "no" ]]; do
+  read -s -n 1 OPTION
+  if [[ "${OPTION}" = "1" ]]; then
+    echo -e "\nautpoweroff.conf will not be deleted.\n"
+    WHILEDONE="yes"
+  elif [[ "${OPTION}" = "2" ]]; then
+    echo -e "\nAny trace of Autopoweroff will be removed, including autpoweroff.conf.\n"
+    WHILEDONE="yes"
+  elif [[ "${OPTION}" = "q" ]]; then
+    echo -e "\nAborting.\n"
+    exit
+  fi
+done
+
+for file in `cat ${UNINSTALLFILE}` ${UNINSTALLFILE}; do
+  if [ "${file/*@PACKAGE_NAME@.conf/x}" = "x" -a \
+        ${OPTION} = "1" ]; then
+    # Skipping configuration file, as requested by the user.
+    continue;
+  fi
+  echo "Deleting ${file}"
+  rm -f ${file}
+  dirname=`dirname ${file}`
+  if [ "${dirname/*@PACKAGE_NAME@*/x}" = "x" ]; then
+    rmdir -p --ignore-fail-on-non-empty ${dirname} >/dev/null 2>&1
+  fi
+done
+
+echo "Autopoweroff @PACKAGE_VERSION@ is now uninstalled."

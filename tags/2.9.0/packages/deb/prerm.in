@@ -1,0 +1,4 @@
+#!/bin/bash
+
+update-rc.d autopoweroff remove
+rm -f @autopoweroff_sbindir@/autopoweroff
