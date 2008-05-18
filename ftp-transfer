@@ -1,0 +1,13 @@
+#!/bin/bash
+
+PACKAGE=$1
+VERSION=$2
+
+cat <<EOM | ftp -p upload.sourceforge.net
+cd /incoming
+put ${PACKAGE}-${VERSION}.tar.gz
+lcd packages/rpm
+put ${PACKAGE}-${VERSION}-1.noarch.rpm
+lcd ../deb
+put ${PACKAGE}-${VERSION}-1.noarch.deb
+EOM
