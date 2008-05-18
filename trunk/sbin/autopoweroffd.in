@@ -246,6 +246,8 @@ while not finish:
 
   # Eventually, the following code for pinging hosts should be threaded
   # so this could be done in the background.
+  aInterfaces=commands.getstatusoutput( \
+    "route -n | tail --lines=+3 | awk -F \" \" \"{print \$8}\" | sort -u")[1].split()
   for host in configuration.hosts:
     #debug("Pinging host:  >>" + host + "<<")
     status = commands.getstatusoutput("ping -c 1 -w 10 " + host)[0]
@@ -256,6 +258,19 @@ while not finish:
     if exitcode == 0:
       isOneStillAlive=True
       break
+
+    # Experimental use of arping.
+    debug(aInterfaces)
+    for interface in aInterfaces:
+      status = commands.getstatusoutput( \
+                "arping -w 10 -I " + interface + " " + host)[0]
+      debug(status)
+      #signal = status & 0xFF
+      exitcode = (status >> 8) & 0xFF
+      debug(exitcode)
+      if exitcode == 0:
+        isOneStillAlive=True
+        break
 
   if isOneStillAlive:
     if not alivePrint:
@@ -286,6 +301,6 @@ if finish:  # No SIGTERM signal received and clean shutdown required.
     print "Powering off at " + time.strftime("%H:%M:%S", \
       (time.localtime(time.time())))
   else:
-    #commands.getstatusoutput("nohup poweroff");
-    commands.getstatusoutput("nohup /sbin/shutdown -h now");
+    #commands.getstatusoutput("nohup poweroff")
+    commands.getstatusoutput("nohup /sbin/shutdown -h now")
     #print "ERROR:  POWEROFF COMMAND DISABLED FOR DEBUGGING PURPOSES."
