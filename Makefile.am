@@ -99,6 +99,9 @@ rpm: dist
 
 pkg: deb rpm
 
+transfer:
+	./ftp-transfer ${PACKAGE} ${VERSION}
+
 clean-generic:
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 	rm -rf doc/out autom4te.cache
