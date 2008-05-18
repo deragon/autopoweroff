@@ -81,13 +81,22 @@ def on_BtnConfigSave_clicked(*args):
 def on_BtnAbout_clicked(self, *args):
   xml.get_widget("DlgAbout").show()
 
+def on_DlgAbout_close(self, *args):
+  """
+     This function must be called by both "close" and "response" signals
+     of the Dialog box so that it closes when the user presses "Close" or
+     the closing widget on the window frame.
+  """
+  xml.get_widget("DlgAbout").hide()
+  return gTRUE
+
 ############################################################
 # EditHost Dialog popup
 ########################################
 
 def on_DlgSavedConfirmed_close(*args):
   xml.get_widget("DlgSavedConfirmed").hide()
-  return gtk.TRUE
+  return gTRUE
 
 def on_BtnSavedConfirmedNo_clicked(*args):
   on_DlgSavedConfirmed_close(args)
@@ -152,7 +161,7 @@ def on_BtnEditHostOk_clicked(*args):
 
 def on_DlgEditHost_close(*args):
   xml.get_widget("DlgEditHost").hide()
-  return gtk.TRUE
+  return gTRUE
   
 def on_BtnEditHostCancel_clicked(*args):
   on_DlgEditHost_close(args)
@@ -176,7 +185,7 @@ def on_BtnAddHostOk_clicked(*args):
 
 def on_DlgAddHost_close(*args):
   xml.get_widget("DlgAddHost").hide()
-  return gtk.TRUE
+  return gTRUE
 
 def on_BtnAddHostCancel_clicked(*args):
   on_DlgAddHost_close(args)
@@ -191,7 +200,7 @@ def on_BtnStatusCmdReboot_clicked(*args):
 
 def on_DlgReboot_close(*args):
   xml.get_widget("DlgReboot").hide()
-  return gtk.TRUE
+  return gTRUE
 
 def on_BtnRebootCancel_clicked(*args):
   on_DlgReboot_close(args)
@@ -211,7 +220,7 @@ def on_BtnStatusCmdPoweroff_clicked(*args):
 
 def on_DlgPoweroff_close(*args):
   xml.get_widget("DlgPoweroff").hide()
-  return gtk.TRUE
+  return gTRUE
 
 def on_BtnPoweroffCancel_clicked(*args):
   on_DlgPoweroff_close()
@@ -331,6 +340,7 @@ def saveConfiguration():
 #gnome.init("Autopoweroff", "@version@")
 
 gGtkExtendedFeature = gtk.gtk_version[0] >= 2 and gtk.gtk_version[1] >= 6
+#print gtk.gtk_version
 
 xml = gtk.glade.XML(sharedir + '/glade/autopoweroff.glade')
 xml.signal_autoconnect(locals())
@@ -340,6 +350,12 @@ gtkDialogAbout=xml.get_widget("DlgAbout")
 # .set_version does not exist for Gnome 2.4 used in SuSE.
 if gGtkExtendedFeature:
   gtkDialogAbout.set_version("@VERSION@")
+  if gtk.gtk_version[1] >= 12:
+    # As of somewhere around GTK 2.12:
+    # GtkDeprecationWarning: gtk.TRUE is deprecated, use True instead
+    gTRUE=True
+  else:
+    gTRUE=gtk.True
 
 # Following lines register the delete_event of various dialog boxes to
 # functions that hide them instead of destroying them.  Thus when the
@@ -354,6 +370,7 @@ xml.get_widget("DlgSavedConfirmed").connect("delete_event", on_DlgSavedConfirmed
 xml.get_widget("DlgEditHost").connect("delete_event", on_DlgEditHost_close)
 xml.get_widget("DlgAddHost").connect("delete_event", on_DlgAddHost_close)
 xml.get_widget("DlgError").connect("delete_event", on_DlgError_close)
+xml.get_widget("DlgAbout").connect("delete_event", on_DlgAbout_close)
 tooltip=gtk.Tooltips()
 tooltip.set_tip(xml.get_widget("SbStartHour"), \
                 apodoc.get("config-StartHour&EndHour"))
