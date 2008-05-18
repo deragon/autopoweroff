@@ -689,7 +689,7 @@
 
 		  <child>
 		    <widget class="GtkFrame" id="frame7">
-		      <property name="width_request">150</property>
+		      <property name="width_request">170</property>
 		      <property name="height_request">184</property>
 		      <property name="visible">True</property>
 		      <property name="label_xalign">0</property>
@@ -702,7 +702,7 @@
 
 			  <child>
 			    <widget class="GtkSpinButton" id="SbBootDelay">
-			      <property name="width_request">40</property>
+			      <property name="width_request">50</property>
 			      <property name="height_request">26</property>
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
@@ -715,14 +715,14 @@
 			      <property name="adjustment">1 0 60 1 10 10</property>
 			    </widget>
 			    <packing>
-			      <property name="x">96</property>
+			      <property name="x">104</property>
 			      <property name="y">128</property>
 			    </packing>
 			  </child>
 
 			  <child>
 			    <widget class="GtkSpinButton" id="SbStartHour">
-			      <property name="width_request">40</property>
+			      <property name="width_request">50</property>
 			      <property name="height_request">26</property>
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
@@ -735,14 +735,14 @@
 			      <property name="adjustment">5 0 23 1 8 8</property>
 			    </widget>
 			    <packing>
-			      <property name="x">96</property>
-			      <property name="y">16</property>
+			      <property name="x">104</property>
+			      <property name="y">8</property>
 			    </packing>
 			  </child>
 
 			  <child>
 			    <widget class="GtkSpinButton" id="SbEndHour">
-			      <property name="width_request">40</property>
+			      <property name="width_request">50</property>
 			      <property name="height_request">26</property>
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
@@ -755,15 +755,15 @@
 			      <property name="adjustment">22 0 23 1 8 8</property>
 			    </widget>
 			    <packing>
-			      <property name="x">96</property>
-			      <property name="y">48</property>
+			      <property name="x">104</property>
+			      <property name="y">40</property>
 			    </packing>
 			  </child>
 
 			  <child>
 			    <widget class="GtkSpinButton" id="SbIdleTime">
-			      <property name="width_request">40</property>
-			      <property name="height_request">24</property>
+			      <property name="width_request">50</property>
+			      <property name="height_request">26</property>
 			      <property name="visible">True</property>
 			      <property name="tooltip" translatable="yes">IdleTime parameter (expressed in minutes):
 
@@ -778,14 +778,14 @@ Like a screensaver, Autopoweroff detects keyboard and mouse activity, and if the
 			      <property name="adjustment">1 0 60 1 10 10</property>
 			    </widget>
 			    <packing>
-			      <property name="x">96</property>
+			      <property name="x">104</property>
 			      <property name="y">96</property>
 			    </packing>
 			  </child>
 
 			  <child>
 			    <widget class="GtkLabel" id="label26">
-			      <property name="width_request">64</property>
+			      <property name="width_request">90</property>
 			      <property name="height_request">16</property>
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Start hour:</property>
@@ -794,59 +794,7 @@ Like a screensaver, Autopoweroff detects keyboard and mouse activity, and if the
 			      <property name="justify">GTK_JUSTIFY_RIGHT</property>
 			      <property name="wrap">False</property>
 			      <property name="selectable">False</property>
-			      <property name="xalign">0.5</property>
-			      <property name="yalign">0.5</property>
-			      <property name="xpad">0</property>
-			      <property name="ypad">0</property>
-			      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-			      <property name="width_chars">-1</property>
-			      <property name="single_line_mode">False</property>
-			      <property name="angle">0</property>
-			    </widget>
-			    <packing>
-			      <property name="x">21</property>
-			      <property name="y">20</property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkLabel" id="label53">
-			      <property name="width_request">88</property>
-			      <property name="height_request">16</property>
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Idle time:</property>
-			      <property name="use_underline">False</property>
-			      <property name="use_markup">False</property>
-			      <property name="justify">GTK_JUSTIFY_RIGHT</property>
-			      <property name="wrap">False</property>
-			      <property name="selectable">False</property>
-			      <property name="xalign">0.5</property>
-			      <property name="yalign">0.5</property>
-			      <property name="xpad">0</property>
-			      <property name="ypad">0</property>
-			      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-			      <property name="width_chars">-1</property>
-			      <property name="single_line_mode">False</property>
-			      <property name="angle">0</property>
-			    </widget>
-			    <packing>
-			      <property name="x">11</property>
-			      <property name="y">101</property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkLabel" id="label24">
-			      <property name="width_request">84</property>
-			      <property name="height_request">15</property>
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Boot delay:</property>
-			      <property name="use_underline">False</property>
-			      <property name="use_markup">False</property>
-			      <property name="justify">GTK_JUSTIFY_RIGHT</property>
-			      <property name="wrap">False</property>
-			      <property name="selectable">False</property>
-			      <property name="xalign">0.5</property>
+			      <property name="xalign">0</property>
 			      <property name="yalign">0.5</property>
 			      <property name="xpad">0</property>
 			      <property name="ypad">0</property>
@@ -857,22 +805,48 @@ Like a screensaver, Autopoweroff detects keyboard and mouse activity, and if the
 			    </widget>
 			    <packing>
 			      <property name="x">8</property>
-			      <property name="y">133</property>
+			      <property name="y">14</property>
 			    </packing>
 			  </child>
 
 			  <child>
-			    <widget class="GtkLabel" id="label25">
-			      <property name="width_request">64</property>
+			    <widget class="GtkLabel" id="label53">
+			      <property name="width_request">90</property>
 			      <property name="height_request">16</property>
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">End hour:</property>
+			      <property name="label" translatable="yes">Idle time:</property>
+			      <property name="use_underline">False</property>
+			      <property name="use_markup">True</property>
+			      <property name="justify">GTK_JUSTIFY_RIGHT</property>
+			      <property name="wrap">False</property>
+			      <property name="selectable">False</property>
+			      <property name="xalign">0</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+			      <property name="width_chars">-1</property>
+			      <property name="single_line_mode">True</property>
+			      <property name="angle">0</property>
+			    </widget>
+			    <packing>
+			      <property name="x">8</property>
+			      <property name="y">102</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkLabel" id="label24">
+			      <property name="width_request">90</property>
+			      <property name="height_request">15</property>
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Boot delay:</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_RIGHT</property>
 			      <property name="wrap">False</property>
 			      <property name="selectable">False</property>
-			      <property name="xalign">0.5</property>
+			      <property name="xalign">0</property>
 			      <property name="yalign">0.5</property>
 			      <property name="xpad">0</property>
 			      <property name="ypad">0</property>
@@ -882,8 +856,34 @@ Like a screensaver, Autopoweroff detects keyboard and mouse activity, and if the
 			      <property name="angle">0</property>
 			    </widget>
 			    <packing>
-			      <property name="x">22</property>
-			      <property name="y">52</property>
+			      <property name="x">8</property>
+			      <property name="y">132</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkLabel" id="label25">
+			      <property name="width_request">90</property>
+			      <property name="height_request">16</property>
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">End hour:</property>
+			      <property name="use_underline">False</property>
+			      <property name="use_markup">False</property>
+			      <property name="justify">GTK_JUSTIFY_RIGHT</property>
+			      <property name="wrap">False</property>
+			      <property name="selectable">False</property>
+			      <property name="xalign">0</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+			      <property name="width_chars">-1</property>
+			      <property name="single_line_mode">False</property>
+			      <property name="angle">0</property>
+			    </widget>
+			    <packing>
+			      <property name="x">8</property>
+			      <property name="y">46</property>
 			    </packing>
 			  </child>
 			</widget>
@@ -1153,11 +1153,73 @@ Like a screensaver, Autopoweroff detects keyboard and mouse activity, and if the
 			  <property name="visible">True</property>
 			  <property name="can_default">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label">gtk-about</property>
-			  <property name="use_stock">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
 			  <signal name="clicked" handler="on_BtnAbout_clicked" last_modification_time="Fri, 10 Mar 2006 22:08:52 GMT"/>
+
+			  <child>
+			    <widget class="GtkAlignment" id="alignment11">
+			      <property name="visible">True</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xscale">0</property>
+			      <property name="yscale">0</property>
+			      <property name="top_padding">0</property>
+			      <property name="bottom_padding">0</property>
+			      <property name="left_padding">0</property>
+			      <property name="right_padding">0</property>
+
+			      <child>
+				<widget class="GtkHBox" id="hbox25">
+				  <property name="visible">True</property>
+				  <property name="homogeneous">False</property>
+				  <property name="spacing">2</property>
+
+				  <child>
+				    <widget class="GtkImage" id="image18">
+				      <property name="visible">True</property>
+				      <property name="stock">gtk-about</property>
+				      <property name="icon_size">4</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				    </widget>
+				    <packing>
+				      <property name="padding">0</property>
+				      <property name="expand">False</property>
+				      <property name="fill">False</property>
+				    </packing>
+				  </child>
+
+				  <child>
+				    <widget class="GtkLabel" id="label54">
+				      <property name="visible">True</property>
+				      <property name="label">A_bout</property>
+				      <property name="use_underline">True</property>
+				      <property name="use_markup">False</property>
+				      <property name="justify">GTK_JUSTIFY_LEFT</property>
+				      <property name="wrap">False</property>
+				      <property name="selectable">False</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+				      <property name="width_chars">-1</property>
+				      <property name="single_line_mode">False</property>
+				      <property name="angle">0</property>
+				    </widget>
+				    <packing>
+				      <property name="padding">0</property>
+				      <property name="expand">False</property>
+				      <property name="fill">False</property>
+				    </packing>
+				  </child>
+				</widget>
+			      </child>
+			    </widget>
+			  </child>
 			</widget>
 		      </child>
 		    </widget>
@@ -2029,6 +2091,8 @@ Deragon Informatique inc.
 http://www.deragon.biz
 </property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
+  <signal name="close" handler="on_DlgAbout_close" last_modification_time="Thu, 15 May 2008 12:11:52 GMT"/>
+  <signal name="response" handler="on_DlgAbout_close" last_modification_time="Thu, 15 May 2008 12:24:30 GMT"/>
 </widget>
 
 </glade-interface>
