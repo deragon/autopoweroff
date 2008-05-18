@@ -1,0 +1,372 @@
+#!/usr/bin/python
+
+import sys
+
+testmode = "@production@" != "true"
+
+if not testmode:
+  sharedir = "@autopoweroff_sharedir@"
+  initdir  = "@autopoweroff_initdir@"
+  etcdir   = "@autopoweroff_etcdir@"
+  version  = "@VERSION@"
+else:
+  # We are in test mode.  Using relative values.
+  sharedir = ".."
+  initdir  = "../rc"
+  etcdir   = "../etc"
+  version  = "Test version"
+
+sys.path.append(sharedir + '/python/modules')
+
+
+import os
+import ConfigParser
+import apoconfig
+import apodoc
+import commands
+
+#errors=""
+#for modulename in [ "pygtk", "gtka", "gtk.glade", "gobject", "gnome.ui" ]:
+#  try:
+#    pygtk=__import__(modulename)
+#    if modulename == "pygtk":
+#      pygtk.require('2.0')
+#  except ImportError, errormsg:
+#    errors = errors + "- " + str(errormsg) + "\n"
+#
+#print errors
+
+try:
+  import pygtk; pygtk.require('2.0')
+  import gtk
+  import gtk.glade
+  import gobject
+#  import gnome.ui
+except ImportError, errormsg:
+  print """
+Sorry, but this application requires Gnome resources that are not
+installed on this machine.  Following is the specific error
+
+      """ + str(errormsg) + "\n"
+  sys.exit(1)
+
+scriptname = os.path.basename(sys.argv[0])
+pidfile    = "/var/run/" + scriptname + ".pid"
+cancelfile = "/tmp/autopoweroff.cancel"
+initfile   = initdir + "/autopoweroff"
+
+LMConfigHosts = None
+edithostiter  = None
+
+
+def quit():
+  gtk.main_quit()
+
+def on_Autopoweroff_delete_event(*args):
+  quit()
+
+def on_BtnStatusCmdQuit_clicked(*args):
+  quit()
+
+def on_BtnConfigQuit_clicked(*args):
+  quit()
+
+def on_BtnConfigRevert_clicked(*args):
+  readConfiguration()
+
+def on_BtnConfigSave_clicked(*args):
+  saveConfiguration()
+  xml.get_widget("DlgSavedConfirmed").show()
+
+def on_BtnAbout_clicked(self, *args):
+  xml.get_widget("DlgAbout").show()
+
+############################################################
+# EditHost Dialog popup
+########################################
+
+def on_DlgSavedConfirmed_close(*args):
+  xml.get_widget("DlgSavedConfirmed").hide()
+  return gtk.TRUE
+
+def on_BtnSavedConfirmedNo_clicked(*args):
+  on_DlgSavedConfirmed_close(args)
+
+def on_BtnSavedConfirmedYes_clicked(*args):
+  (status, output) = commands.getstatusoutput(initfile + " restart")
+  status = status >> 8
+  if status != 0:
+    # HANS:  need to show up a dialog with error here.
+    print "ERROR:  status = " + str(status) + \
+          "\n        output = " + output
+
+  on_DlgSavedConfirmed_close(args)
+  xml.get_widget("LblDialogInform").set_text( \
+    "Autopoweroff has been restarted with the new configuration.");
+  xml.get_widget("DlgInform").show();
+  #xml.get_widget("DlgConfirmRestart").show();
+
+def on_btnDlgInformClose_clicked(*args):
+  xml.get_widget("DlgInform").hide();
+  xml.get_widget("LblDialogInform").set_text( \
+    "<bug:  message is not set.  Contact the author.>");
+
+#def on_BtnConfirmRestart_clicked(*args):
+#  xml.get_widget("DlgConfirmRestart").hide();
+
+def on_BtnConfigRemoveHost_clicked(*args):
+  tvDependants=xml.get_widget("TVDependants")
+  selection = tvDependants.get_selection()
+  result = selection.get_selected()
+  if result: #result could be None
+    model, iter = result
+    model.remove(iter)
+
+
+############################################################
+# EditHost Dialog popup
+########################################
+
+def on_BtnConfigEditHost_clicked(*args):
+  global edithostiter
+  tvDependants=xml.get_widget("TVDependants")
+  selection = tvDependants.get_selection()
+  result = selection.get_selected()
+  if result: #result could be None
+    model, edithostiter = result
+    text=model.get_value(edithostiter, 0)
+    EntryEditHost=xml.get_widget("EntryEditHost")
+    EntryEditHost.set_text(text)
+    DlgEditHost=xml.get_widget("DlgEditHost")
+    DlgEditHost.show()
+  else:
+    print "ERROR:  Serious problem here."
+
+def on_BtnEditHostOk_clicked(*args):
+  DlgEditHost=xml.get_widget("DlgEditHost")
+  EntryEditHost = xml.get_widget("EntryEditHost")
+  host = EntryEditHost.get_text()
+  EntryEditHost.set_text("")
+  LMConfigHosts.set(edithostiter, 0, host)
+  DlgEditHost.hide()
+
+def on_DlgEditHost_close(*args):
+  xml.get_widget("DlgEditHost").hide()
+  return gtk.TRUE
+  
+def on_BtnEditHostCancel_clicked(*args):
+  on_DlgEditHost_close(args)
+  
+
+############################################################
+# AddHost Dialog popup
+########################################
+
+def on_BtnConfigAddHost_clicked(*args):
+  DlgAddHost=xml.get_widget("DlgAddHost")
+  DlgAddHost.show()
+
+def on_BtnAddHostOk_clicked(*args):
+  DlgAddHost=xml.get_widget("DlgAddHost")
+  EntryAddHost = xml.get_widget("EntryAddHost")
+  host = EntryAddHost.get_text()
+  EntryAddHost.set_text("")
+  LMConfigHosts.set(LMConfigHosts.append(), 0, host)
+  DlgAddHost.hide()
+
+def on_DlgAddHost_close(*args):
+  xml.get_widget("DlgAddHost").hide()
+  return gtk.TRUE
+
+def on_BtnAddHostCancel_clicked(*args):
+  on_DlgAddHost_close(args)
+
+
+############################################################
+# Reboot Dialog popup
+########################################
+
+def on_BtnStatusCmdReboot_clicked(*args):
+  xml.get_widget("DlgReboot").show()
+
+def on_DlgReboot_close(*args):
+  xml.get_widget("DlgReboot").hide()
+  return gtk.TRUE
+
+def on_BtnRebootCancel_clicked(*args):
+  on_DlgReboot_close(args)
+
+def on_BtnRebootOk_clicked(*args):
+  xml.get_widget("DlgReboot").hide()
+  #print "Reboot initiated."
+  commands.getstatusoutput("/sbin/shutdown -r now")
+
+
+############################################################
+# Poweroff Dialog popup
+########################################
+
+def on_BtnStatusCmdPoweroff_clicked(*args):
+  xml.get_widget("DlgPoweroff").show()
+
+def on_DlgPoweroff_close(*args):
+  xml.get_widget("DlgPoweroff").hide()
+  return gtk.TRUE
+
+def on_BtnPoweroffCancel_clicked(*args):
+  on_DlgPoweroff_close()
+
+def on_BtnPoweroffOk_clicked(*args):
+  xml.get_widget("DlgPoweroff").hide()
+  #print "Poweroff initiated."
+  commands.getstatusoutput("/sbin/shutdown -h now")
+
+
+############################################################
+
+def on_BtnStatusCmdLogout_clicked(*args):
+  # Sadly, there exist no shell command to logoff a user.
+  pass
+
+def on_BtnStatusCmdApply_clicked(*args):
+  radio_StatusEnabled = xml.get_widget("RadioStatusEnabled");
+  value = radio_StatusEnabled.get_active()
+  if value == 0:
+    file = os.open(cancelfile, os.O_CREAT)
+    os.close(file)
+    xml.get_widget("LblDialogInform").set_text( \
+      "Autopoweroff is now disabled.");
+  else:
+    try:
+      os.remove(cancelfile)
+      xml.get_widget("LblDialogInform").set_text( \
+        "Autopoweroff is now enabled.");
+    except OSError:
+      xml.get_widget("LblDialogInform").set_text( \
+        "Autopoweroff was already enabled.");
+  xml.get_widget("DlgInform").show();
+
+def setRadioStatusButtons():
+  radio_StatusEnabled  = xml.get_widget("RadioStatusEnabled");
+  radio_StatusDisabled = xml.get_widget("RadioStatusDisabled");
+  if os.path.exists(cancelfile):
+    radio_StatusDisabled.set_active(1)
+  else:
+    radio_StatusEnabled.set_active(1)
+
+
+############################################################
+def on_BtnErrorClose_clicked(*args):
+  on_DlgError_close()
+
+def on_DlgError_close(*args):
+  xml.get_widget("DlgError").hide()
+
+
+############################################################
+def readConfiguration():
+  global LMConfigHosts 
+
+  configuration = apoconfig.Configuration(None, None, None, None)
+  try:
+    configuration.read()
+  except apoconfig.APOWarning:
+    pass
+  except apoconfig.APOError, exception:
+    xml.get_widget("LblDialogError").set_text(str(exception.msg))
+    xml.get_widget("DlgError").show()
+
+
+  xml.get_widget("SbStartHour"). \
+    set_value(configuration.noshutdownrange[0])
+  xml.get_widget("SbEndHour").  \
+    set_value(configuration.noshutdownrange[1])
+  xml.get_widget("SbIdleTime"). \
+    set_value(configuration.idletime)
+  xml.get_widget("SbBootDelay"). \
+    set_value(configuration.startupdelay)
+
+  LMConfigHosts = gtk.ListStore(gobject.TYPE_STRING)
+  LMConfigHosts.clear()  # Maybe not necessary, but lets not take chances.
+  for host in configuration.hosts:
+    LMConfigHosts.set(LMConfigHosts.append(), 0, host)
+
+  # TVDepends is a GTK::TreeView widget (Thus, the TV prefix).
+  tvDependants=xml.get_widget("TVDependants")
+  tvDependants.set_model(LMConfigHosts)
+  #print inspect.humanreadable_getmembers(tvDependants)
+
+
+############################################################
+def saveConfiguration():
+  hosts=range(0)
+  noshutdownrange=range(2)
+  noshutdownrange[0]=xml.get_widget("SbStartHour"). \
+    get_value_as_int()
+  noshutdownrange[1]=xml.get_widget("SbEndHour").  \
+    get_value_as_int()
+  idletime=xml.get_widget("SbIdleTime"). \
+    get_value_as_int()
+  startupdelay=xml.get_widget("SbBootDelay"). \
+    get_value_as_int()
+
+  iter=LMConfigHosts.get_iter_root()
+  index=0
+  while iter:
+    hosts.append(LMConfigHosts.get_value(iter, 0))
+    iter = LMConfigHosts.iter_next(iter)
+    index = index+1
+  
+  configuration = apoconfig.Configuration( \
+                    noshutdownrange, idletime, startupdelay, hosts)
+  configuration.save()
+  
+
+############################################################
+#
+# MAIN
+#
+############################################################
+
+#gnome.init("Autopoweroff", "@version@")
+
+gGtkExtendedFeature = gtk.gtk_version[0] >= 2 and gtk.gtk_version[1] >= 6
+
+xml = gtk.glade.XML(sharedir + '/glade/autopoweroff.glade')
+xml.signal_autoconnect(locals())
+
+gtkDialogAbout=xml.get_widget("DlgAbout")
+# Comment by Hans Deragon, 2006/03/10, 17:05 EST
+# .set_version does not exist for Gnome 2.4 used in SuSE.
+if gGtkExtendedFeature:
+  gtkDialogAbout.set_version("@VERSION@")
+
+# Following lines register the delete_event of various dialog boxes to
+# functions that hide them instead of destroying them.  Thus when the
+# user clicks on the "close" widget on the window frame, the dialog is
+# not destroyed (causing exceptions to be subsequently raised), but hidden.
+#
+# See http://www.async.com.br/faq/pygtk/index.py?req=show&file=faq10.006.htp
+# for more details.
+xml.get_widget("DlgPoweroff").connect("delete_event", on_DlgPoweroff_close)
+xml.get_widget("DlgReboot").connect("delete_event", on_DlgReboot_close)
+xml.get_widget("DlgSavedConfirmed").connect("delete_event", on_DlgSavedConfirmed_close)
+xml.get_widget("DlgEditHost").connect("delete_event", on_DlgEditHost_close)
+xml.get_widget("DlgAddHost").connect("delete_event", on_DlgAddHost_close)
+xml.get_widget("DlgError").connect("delete_event", on_DlgError_close)
+tooltip=gtk.Tooltips()
+tooltip.set_tip(xml.get_widget("SbStartHour"), \
+                apodoc.get("config-StartHour&EndHour"))
+tooltip.set_tip(xml.get_widget("SbEndHour"), \
+                apodoc.get("config-StartHour&EndHour"))
+
+# Setting up the single column for TVDependants
+tvDependants=xml.get_widget("TVDependants")
+renderer = gtk.CellRendererText()
+column = gtk.TreeViewColumn("Hosts", renderer, text=0)
+num = tvDependants.append_column(column)
+
+setRadioStatusButtons()
+readConfiguration()
+
+gtk.main()

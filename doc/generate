@@ -1,0 +1,4 @@
+aurigadoc.sh -html -XML autopoweroff.xml -OUT index.html
+#firefox index.html
+#aurigadoc.sh -html -XML autopoweroff.xml -OUT out/autopoweroff.html
+#aurigadoc.sh -pdf  -XML autopoweroff.xml -OUT out/autopoweroff.pdf

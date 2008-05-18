@@ -1,0 +1,46 @@
+fakeroot, for debian.
+======================================================================
+Access root, pour relancer autopoweroff.
+======================================================================
+about dialog would not close (signal to add?)
+======================================================================
+Use of syslog instead of stdout for logging.
+======================================================================
+Move from init.d to upstart
+======================================================================
+Handle suspdend; when comming back, time difference is very high
+regarding usage.  Old time should be discarded.
+======================================================================
+Touchpad not getting detected.
+
+http://wiki.archlinux.org/index.php/Touchpad_Synaptics
+http://www.wlug.org.nz/HotPlugNotes
+======================================================================
+PolicyKit integration
+======================================================================
+
+COPYING
+
+======================================================================
+Détecter l'activité en lisant /dev/input/by-path
+
+[root@snah ~] od -tx1 /dev/input/by-path/platform-i8042-serio-0-event-kbd 
+
+======================================================================
+Test canceling/disabling.  Ca ne semble pas marché.
+
+======================================================================
+Stop SPAMING SYSLOG
+
+======================================================================
+Restrict running autopoweroff to root.
+
+======================================================================
+Try to find out how to prevent Makefile to call "configure --no-create".
+This causes apoinstall not being "chmod +x" and the installation fails.
+
+======================================================================
+Essayer autopoweroff sur SuSE.
+
+======================================================================
+Redo the interface.
