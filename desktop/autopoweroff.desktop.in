@@ -14,4 +14,5 @@ GenericName[en]=Autopoweroff Configurator
 Comment=Configurator for Autopoweroff
 Comment[en]=Gnome configurator for Autopoweroff
 Comment[fr]=Configurateur pour Autopoweroff
-Categories=Application;System;
+#Categories=Application;System;
+Categories=System;Settings;
