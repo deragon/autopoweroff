@@ -151,18 +151,31 @@ aApoDevObs = []
 
 try:
   spkrRE = re.compile(".*spkr.*")
-  #devicePath="/dev/input"
-  devicePath="/dev/input/by-path"
-  for path in os.listdir(devicePath):
-    if spkrRE.search(path) != None:
-      # Ignoring speaker devices.  I do not understand how
-      # a device related to a speaker can be considered an input
-      # device.  This is the case in Ubuntu 07.04.
-      continue
+  devicePath=None
+  # Ubuntu 06.06 does not have any /dev/input/by-paty,
+  # only /dev/input.
+  for devicePath in [ "/dev/input/by-path", "/dev/input" ]:
+    if os.path.exists(devicePath):
+      break
 
-    path = devicePath + "/" + path
-    debug("path = " + path)
-    aDevices.append(path)
+  if devicePath == None:
+    sendmsg("WARNING:  No input device detected.  " + \
+            "Will not be able to detect user activity.")
+  else:
+    for path in os.listdir(devicePath):
+      if spkrRE.search(path) != None:
+        # Ignoring speaker devices.  I do not understand how a device
+        # related to a speaker can be considered an input device.  A
+        # microphone maybe?  Even if this is the case, if a user simply
+        # leave the microphone on, it will always receive some ambient
+        # sound even if the machine is not use.  We cannot make use of
+        # this.  This device is available in Ubuntu 07.04 and 08.10
+        # (2.6.24-17-generic).
+        continue
+
+      path = devicePath + "/" + path
+      debug("path = " + path)
+      aDevices.append(path)
 
 except OSError, oserror:
   if oserror.errno != errno.ENOENT:  # No such file or directory
@@ -229,10 +242,9 @@ while not finish:
   debug("timeElapsedSinceLastEvent = " + str(timeElapsedSinceLastEvent))
 
   # If configuration.idletime is set to 0, that means that the user
-  # does not want any of the console inputs to influence the
+  # does not want any of the console inputs to influence the shutdown decision.
   if configuration.idletime > 0 and \
      timeElapsedSinceLastEvent < configuration.idletime*60:
-    debug("User is active.")
     sleeptime=None
     if testmode:
       sleeptime=2
@@ -301,6 +313,5 @@ if finish:  # No SIGTERM signal received and clean shutdown required.
     print "Powering off at " + time.strftime("%H:%M:%S", \
       (time.localtime(time.time())))
   else:
-    #commands.getstatusoutput("nohup poweroff")
     commands.getstatusoutput("nohup /sbin/shutdown -h now")
     #print "ERROR:  POWEROFF COMMAND DISABLED FOR DEBUGGING PURPOSES."
