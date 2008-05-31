@@ -25,6 +25,7 @@ EXTRA_DIST = \
 	python/modules/apodoc.py \
 	python/modules/apoconfig.py \
 	etc/init.d/autopoweroff.lsb \
+	etc/init.d/autopoweroff.rc-status \
 	etc/init.d/autopoweroff.redhat \
 	glade/autopoweroff.glade \
 	glade/autopoweroff.gladep \
@@ -68,11 +69,17 @@ pam_DATA = etc/pam.d/autopoweroff
 securitydir = $(sysconfdir)/security/console.apps
 security_DATA = etc/security/console.apps/autopoweroff
 
+autoinitdir = $(datadir)/init.d
+autoinit_SCRIPTS = \
+  etc/init.d/autopoweroff.lsb \
+  etc/init.d/autopoweroff.rc-status \
+  etc/init.d/autopoweroff.redhat
+
 # No need to setup initdir = ... here.  This variable is setup automatically
 # by configure.in  If you set it up here, you will cause problems.
-init_SCRIPTS = \
-	etc/init.d/autopoweroff.lsb \
-	etc/init.d/autopoweroff.redhat
+#init_SCRIPTS = \
+#	etc/init.d/autopoweroff.lsb \
+#	etc/init.d/autopoweroff.redhat
 
 docdir_base = $(datarootdir)/doc
 docdir = $(docdir_base)/$(PACKAGE)-$(VERSION)
