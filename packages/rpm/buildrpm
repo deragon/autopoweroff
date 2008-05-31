@@ -5,6 +5,7 @@
 ARCH="noarch"
 
 for DISTRIBUTION in fedora suse; do
+#for DISTRIBUTION in suse; do
   cd ../..
   if [ "$1" != '--make' ]; then
     make rpm
