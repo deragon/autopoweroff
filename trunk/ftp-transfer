@@ -1,13 +1,19 @@
 #!/bin/bash
 
+# Read http://alexandria.wiki.sourceforge.net/File+Release+System+-+Offering+Files+for+Download#webdav
+
 PACKAGE=$1
 VERSION=$2
+RELEASE=1
 
-cat <<EOM | ftp -p upload.sourceforge.net
-cd /incoming
+cat <<EOM | sftp deragon@frs.sourceforge.net
+cd uploads
 put ${PACKAGE}-${VERSION}.tar.gz
+
 lcd packages/rpm
-put ${PACKAGE}-${VERSION}-1.noarch.rpm
+put ${PACKAGE}-${VERSION}-${RELEASE}.noarch.fedora.rpm
+put ${PACKAGE}-${VERSION}-${RELEASE}.noarch.suse.rpm
 lcd ../deb
-put ${PACKAGE}-${VERSION}-1.noarch.deb
+put ${PACKAGE}-${VERSION}-${RELEASE}.noarch.deb
+ls
 EOM
