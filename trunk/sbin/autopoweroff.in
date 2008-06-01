@@ -355,7 +355,7 @@ if gGtkExtendedFeature:
     # GtkDeprecationWarning: gtk.TRUE is deprecated, use True instead
     gTRUE=True
   else:
-    gTRUE=gtk.True
+    gTRUE=gtk.TRUE
 
 # Following lines register the delete_event of various dialog boxes to
 # functions that hide them instead of destroying them.  Thus when the
