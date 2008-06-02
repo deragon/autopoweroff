@@ -1,0 +1,1032 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE merge [ <!ENTITY fo-related "pdf/postscript/rtf"> ]>
+<!-- $Id: autopoweroff.xml,v 1.10 2005/10/16 18:28:55 deragon Exp $ -->
+<document>
+
+<document-meta-info>
+  <title>Autopoweroff: User Guide</title>
+  <!--
+  <attribute name="Author"><a href="mailto:hans@deragon.biz">Hans Deragon</a></attribute>
+  <attribute name="Company"><a href="http://www.deragon.biz">Deragon Informatique inc.</a></attribute>
+  <attribute name="Revision">$Revision: 1.10 $</attribute>
+  <attribute name="Last Modified">$Date: 2005/10/16 18:28:55 $</attribute>
+  -->
+</document-meta-info>
+
+<!-- formating info -->
+<document-formatting-info>
+  <stylesheet url="style.css" />
+  <left-margin>40pt</left-margin>
+  <right-margin>40pt</right-margin>
+  <top-margin>20pt</top-margin>
+  <bottom-margin>25pt</bottom-margin>
+  <body-font-family>Helvetica</body-font-family>
+  <body-font-size>12pt</body-font-size>
+  <document-title-font-family>Helvetica</document-title-font-family>
+  <document-title-font-size>16pt</document-title-font-size>
+  <document-attributes-font-family>Helvetica</document-attributes-font-family>
+  <document-attributes-font-size>12pt</document-attributes-font-size>
+  <section-header-font-family>Helvetica</section-header-font-family>
+  <generate-section-numbers>yes</generate-section-numbers>
+  <header-height>75pt</header-height>
+  <footer-height>50pt</footer-height>
+</document-formatting-info>
+
+<!-- document header -->
+<!--
+<document-header>
+<table width="100%"><tr><td align="left"><img src="logo_auriga.gif" alt="Aurigalogic: Smart Business Solutions"/></td>
+<td valign="middle" align="right"><b>Autopoweroff: User Guide</b></td></tr>
+</table>
+<hr size="1" color="red" noshade="true" />
+</document-header>
+-->
+<document-header>
+<table width="100%"><tr><td align="left">
+  <a href="http://www.deragon.biz">Deragon Informatique inc.</a>
+</td>
+<td valign="middle" align="right">
+<b>Autopoweroff: User Guide</b>
+<br/>
+<a href="http://sourceforge.net/projects/autopoweroff"><img src="http://sourceforge.net/sflogo.php?group_id=77254&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo"/></a>
+</td></tr>
+</table>
+<hr size="1" color="red" noshade="true" />
+</document-header>
+
+<document-body>
+<!-- meta info -->
+<table-of-content>
+<link href="#what_is">About Autopoweroff</link>
+<link href="#distributions">Supported Linux distributions</link>
+<link href="#download">Download</link>
+<link href="#configuration">Screenshots &amp; Configuration
+  <link href="#config_autopoweroff">Autopoweroff configuration
+    <link href="#config_autopoweroff_gui">Autopoweroff GUI configuration tool</link>
+    <link href="#config_autopoweroff_file">Autopoweroff configuration file (autopoweroff.conf)</link>
+  </link>
+  <link href="#config_bios">BIOS configuration</link>
+</link>
+<link href="#installation">Installation</link>
+<link href="#uninstallation">Uninstallation</link>
+<link href="#license">License</link>
+<link href="#troubleshooting">Troubleshooting
+  <link href="#troubleshooting_glade">Troubleshooting Glade warnings
+  </link>
+</link>
+<link href="#developers">For developers</link>
+<link href="#todo">To do</link>
+<link href="#change_history">Change History
+  <link href="#changes_2.9.1">Version 2.9.1</link>
+  <link href="#changes_2.9.0">Version 2.9.0</link>
+  <link href="#changes_2.1.0">Version 2.1.0</link>
+  <link href="#changes_2.0.0">Version 2.0.0</link>
+  <link href="#changes_1.2.0">Version 1.2.0</link>
+  <link href="#changes_1.1.1">Version 1.1.1</link>
+  <link href="#changes_1.1.0">Version 1.1.0</link>
+  <link href="#changes_1.0.1">Version 1.0.1</link>
+</link>
+<link href="#misc">Miscelleanous</link>
+<link href="#contact">Contact</link>
+</table-of-content>
+
+<section name="what_is" label="About Autopoweroff">
+
+<p>
+
+  Autopoweroff is daemon that is started at boot time, and which
+  function is to shutdown the computer at a specific time, but 
+  only if some conditions are met.  This software is meant for
+  the Linux operating system.
+
+</p>
+<p>
+
+  The computer will shutdown if all the above conditions are met:
+
+</p>
+
+<ul>
+
+    <li>
+
+    Any hosts that the computer is dependant on is not
+    answering ping anymore.
+
+    </li>
+
+    <li>
+
+    No keyboard or mouse activity has been detected on the computer for
+    a while.
+
+    </li>
+
+    <li>
+
+    The user has not disabled Autopoweroff.
+
+    </li>
+
+</ul>
+
+<p>
+
+  One good use of Autopoweroff is for home use, on a firewall/router
+  server.  You can setup Autopoweroff to shutdown the server every
+  evening at say, 22:00.  However, your server might serve other
+  computers in your home.  Autopoweroff will shutdown the server after
+  22:00 only if no other computer on the network is responding to
+  <code>ping</code>.  For example, if at 22:43 you are still working on
+  your thin client in the living room, the server in your baseman will
+  remain up.  As soon as you shutdown the workstation, the server will
+  go down.
+
+</p>
+<p>
+
+  The server can boot automatically every morning by setting its BIOS
+  properly.  Autopoweroff has nothing to do with this process.  But with
+  this setting, your home server does not need to run 24/7.  The advantages
+  such a setting offers are:
+
+  <ul>
+
+    <li>
+
+      Increase security.  Nobody can hack your server while its shutdown.
+
+    </li>
+    <li>
+
+      Save electricity and curb down heat generation.
+
+    </li>
+    <li>
+
+      Cut down noise.  A shutdown server does not produce any noise.
+
+    </li>
+    <li>
+
+      Avoid the hassle of having to shut down and start up the server
+      manually.
+
+    </li>
+  </ul>
+
+</p>
+<p>
+
+  A nice GUI is provided to configure Autopoweroff's parameters.  See
+  <section-link href="#config_autopoweroff_gui">Autopoweroff configurator</section-link>.
+
+</p>
+<p>
+
+  The SourceForge page for this project can be found 
+  <a href="http://sourceforge.net/projects/autopoweroff/">here</a>.
+
+</p>
+
+<!--
+<table width="100%">
+  <tr>
+    <td valign="top" width="130">
+
+      <p class="warning">
+        HELP WANTED
+      </p>
+
+    </td>
+    <td>
+
+      <p>
+
+      USB keyboards and mice are not yet supported.  I simply do not know
+      how to implement activity detection with these devices.  If you have
+      any clue how to do this, please share your ideas with me.
+
+      </p>
+
+    </td>
+  </tr>
+</table>
+-->
+
+
+</section>
+
+<section name="distributions" label="Supported Linux distributions">
+
+<p>
+
+  Autopoweroff will work on most distributions.  However, for some
+  distribution you might have to manually move files to the right place
+  to get it working and write your own init script so that Autopoweroff
+  would start at booting.  If you install Autopoweroff from the tarball,
+  this is more likely.
+
+</p>
+<p>
+
+  Fully supported distributions include:  <b>Ubuntu</b>, <b>Fedora/Red
+  Hat</b> and <b>openSuSE/SLED/SLES</b>.  It should also work with
+  <b>Debian</b> and <b>Mandrake</b>.  Download the .rpm or .deb package
+  and everything will be installed and enabled automatically.  This
+  include setting up Autopoweroff to start at the next computer boot.  And
+  if you decide to remove Autopoweroff, everything gets removed.
+
+</p>
+<p>
+
+  With a package, you will only have to run the GUI configuration tool or
+  edit <code>/etc/autopoweroff.conf</code> to your particular needs.
+
+  Autopoweroff will be eventually submitted to Ubuntu's and Fedora's
+  repositories, making it even easier to install it.
+
+</p>
+<table width="100%">
+  <tr>
+  <td valign="top" width="130">
+    <p class="warning">
+    HELP WANTED
+    </p>
+    </td>
+    <td>
+
+    <p>
+
+    If you are running a distribution that is not yet supported by
+    Autopoweroff, write to me.  I will ask you some questions about your
+    distribution and probably be able to add support for it.
+
+    </p>
+
+  </td>
+  </tr>
+</table>
+
+</section>
+
+
+<section name="download" label="Download">
+
+<p>
+
+  The latest version of Autopoweroff can be downloaded from
+  <a href="http://sourceforge.net/project/showfiles.php?group_id=74727">
+  SourceForge</a>.
+
+<table width="100%">
+  <tr>
+    <td valign="top" width="130">
+
+      <p class="warning">
+        RELEASE CANDIDAT VERSION AVAILABLE.
+      </p>
+
+    </td>
+    <td>
+
+      <p>
+
+        Version 2.9.1 is a release candidate version (3.0.0 will be the
+        stable release).  I need people to test it.  Unknown bugs might
+        cause your system to shutdown even if someone is making use of
+        it.  However, 2.9.1 appears stable and I suggest people to try
+        it out.
+
+      <p>
+      </p>
+
+        Please provide feedback by writing to me at
+        <a href="mailto:hans@deragon.biz">hans@deragon.biz</a>
+        If enough people report to me that this version is stable, I
+        will release it as such.
+
+      </p>
+
+    </td>
+  </tr>
+</table>
+
+</p>
+
+</section>
+
+<section name="configuration" label="Configuration">
+<br/>
+
+  Following are subsections that explains how to configure your system for
+  Autopoweroff.
+
+</section>
+
+<section name="config_autopoweroff" label="Autopoweroff configuration">
+
+<p>
+  There are two ways to configure Autopoweroff.
+
+  <ul>
+    <li>
+      Use the <section-link href="#config_autopoweroff_gui">GUI configuration tool</section-link>.
+
+    </li>
+    <li>
+      Edit manually the configuration file <section-link href="#config_autopoweroff_file"><code>autopoweroff.conf</code></section-link>.
+    </li>
+  </ul>
+</p>
+
+Following, the list of sub-sections.
+
+</section>
+
+<section name="config_autopoweroff_gui" label="Autopoweroff GUI configuration tool">
+
+<p>
+
+  The Autopoweroff GUI configuration tool is pretty easy.
+
+</p>
+<p>
+
+  In the first panel named <em>Status &amp; Commands</em>,
+  the user can enable or disable Autopoweroff and poweroff
+  or reboot the computer.
+
+</p>
+
+<blockquote>
+<table>
+  <tr width="600">
+    <td align="center">
+      <img src="autopoweroff_cfg-statusandcmd.png" alt="Status &amp; Commands screenshot"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <i>Status &amp; commands</i>
+    </td>
+  </tr>
+</table>
+</blockquote>
+<p>
+
+  In the second panel named <em>Status &amp; Commands</em>, the user can
+  configure the different parameters of Autopoweroff.  See <section-link
+  href="#config_autopoweroff_file">Autopoweroff configuration
+  file</section-link> for a description of the different parameters.
+
+</p>
+<blockquote>
+<table>
+  <tr width="600">
+    <td align="center">
+      <img src="autopoweroff_cfg-config.png" alt="Configuration screenshot"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <i>Configuration</i>
+    </td>
+  </tr>
+</table>
+</blockquote>
+<p align="center">
+
+
+</p>
+
+</section>
+
+
+<section name="config_autopoweroff_file" label="Autopoweroff configuration file (autopoweroff.conf)">
+
+<p>
+
+  The <code>/etc/autopoweroff.conf</code> (or
+  <code>${prefix}/etc/autopoweroff.conf</code>, for those who installed
+  from the tarball) configuration file is well documented and easy to
+  understand.  Following is an example:
+
+</p>
+
+<blockquote>
+<pre>
+# Autopoweroff Test version configuration file.
+
+# WARNING:  If you decide to edit this file, edit only the values of the
+#           parameters.  If you add comments, they will be lost at the
+#           next software upgrade or when the GUI configurator is being
+#           used to update the file.  Only values persists.
+
+
+# StartHour and EndHour parameters (expressed in hours):
+#
+#   Following is the time range where the computer should not shutdown
+#   even if all conditions are met.  In this example where StartHour=5
+#   and EndHour=22, the computer will not shut down between 05:00 and
+#   22:00, local time.
+
+[NO_SHUTDOWN_TIME_RANGE]
+StartHour=5
+EndHour=22
+
+
+# StartupDelay parameter (expressed in minutes):
+#
+#   When the computer is booting up, if all the conditions are met and
+#   the computer is in the shutdown time range, as soon as Autopoweroff
+#   is started, the computer will shutdown.  Thus, the user will never
+#   have the chance to boot into the computer.  This is where the
+#   "delay" parameter comes in.  If "delay" is set to 15 for example,
+#   Autopoweroff will not poweroff the computer even if all the
+#   conditions are met, for a period of 15 minutes after the computer
+#   has booted.  This allows the user to login and change Autopoweroff's
+#   configuration.
+#
+#
+# IdleTime parameter (expressed in minutes):
+#
+#   Like a screensaver, Autopoweroff detects keyboard and mouse
+#   activity, and if there is any activity on the server, it would not
+#   be powered off regardless if all the other conditions are met.  If
+#   set to 0, user activity on the server will be ignored.
+#  
+#   PS/2 keyboards and PS/2 and serial mices are supported.  AT keyboards
+#   will probably work too (if you can confirm this, please write to me).
+#   Unfortunatly, USB keyboards and mices are not supported yet 
+#   (I do not know how to detect activity on USB devices).
+
+[TIMEOUTS]
+StartupDelay=0
+IdleTime=10
+
+
+# Hosts parameter (list of hostnames or IPs, separated by commas):
+#
+#   Here you list the list of hosts your machine is dependant, i.e. this
+#   computer should not shutdown if any of the hosts declared here is
+#   still up (responding to ping).
+
+[DEPENDANTS]
+Hosts=mafalda, 192.168.0.5
+</pre>
+</blockquote>
+
+
+</section>
+
+<section name="config_bios" label="BIOS configuration">
+
+<p>
+
+  It is possible to setup the BIOS so that the computer will boot
+  itself every day.  Each BIOS is different, but they are pretty much
+  similar.  Following are the instructions on how to setup an Award
+  BIOS.
+
+</p>
+<p>
+
+  On the main page, select the menu <em>POWER</em>, then the
+  <em>POWER UP CONTROL</em> item.  Once the new screen shows up,
+  move the cursor to the <em>Automatic Power Up</em> line and select
+  <em>Everyday</em>.  On the following line, set the time at which
+  the computer should start everyday.  Save the settings and voilà.
+
+</p>
+
+</section>
+
+
+
+<section name="installation" label="Installation">
+
+<p>
+
+  To install the .deb package, simply run:
+
+</p>
+
+<blockquote>
+  <code>
+  sudo dpkg -i autopoweroff*.deb  
+  </code>
+</blockquote>
+
+<p>
+
+  To install the .rpm package, simply run:
+
+</p>
+
+<blockquote>
+  <code>
+  rpm -Uhv autopoweroff*.rpm
+  </code>
+</blockquote>
+
+<p>
+
+  For the tarball, extract it and run <code>configure</code> followed
+  by <code>make install</code>.
+
+</p>
+
+<blockquote>
+  <code>
+
+  tar xvzf autopoweroff.tar.gz
+<br/>
+  cd autopoweroff
+<br/>
+  configure --prefix="&lt;path to the installation directory&gt;"
+<br/>
+  make install
+
+  </code>
+</blockquote>
+
+<p> 
+
+  You will need to setup the init script properly.  Two versions exists.
+
+</p> 
+</section>
+
+<section name="uninstallation" label="Uninstallation">
+
+<p>
+
+  To uninstall the .deb package, simply run:
+
+</p>
+
+<blockquote>
+  <code>
+  sudo dpkg -r autopoweroff
+  </code>
+</blockquote>
+
+<p>
+
+  To uninstall the .rpm package, simply run:
+
+</p>
+
+<blockquote>
+  <code>
+  rpm -e autopoweroff
+  </code>
+</blockquote>
+
+<p>
+
+  If you installed from the tarball, run
+</p>
+
+<blockquote>
+  <code>
+  autopoweroff_uninstall
+  </code>
+</blockquote>
+</section>
+
+<section name="license" label="License">
+<p>
+
+  This software is covered by the 
+
+  <a href="http://www.gnu.org/licenses/gpl.html#TOC1">GPL 2.0</a>
+
+  license.  For a local copy of the license, see file
+  COPYING.
+
+</p>
+</section>
+
+
+<section name="troubleshooting" label="Troubleshooting">
+<p>
+  Following are troubleshooting sections.
+</p>
+
+  <ul>
+    <li>
+      <section-link href="#troubleshooting_glade">Troubleshooting Glade warnings</section-link>.
+    </li>
+  </ul>
+</section>
+<section name="troubleshooting_glade" label="Troubleshooting Glade warnings">
+
+  <p>
+    Do not be alarmed by glade warning message showing up when you
+    are running the <code>autopoweroff</code> command (the GUI configurator).
+    These warning appears because you are running a different version of
+    Gnome than the one upon which Autopoweroff was built.  Probably you
+    are running an older version, thus some new properties that were
+    introduced are not supported on your older system.  For instance,
+    On a Fedora Core 4 system, you will get the following errors:
+
+  </p>
+  <p><code>
+(autopoweroff:5954): libglade-WARNING **: unknown property `urgency_hint' for class `GtkDialog'
+    </code></p>
+    <p><code>
+(autopoweroff:5954): libglade-WARNING **: unknown property `wrap_license' for class `GtkAboutDialog'
+  </code></p>
+  <p>
+    This is nothing to be concerned about.
+  </p>
+</section>
+
+<section name="developers" label="For Developers">
+  <br/>
+
+  Autopoweroff might be of interest to developers because of the following
+  reasons:
+  
+  <br/>
+  <ul>
+  <li>
+
+    This project is a very nice example on how to write a Python daemon
+    that probes input devices, make use of threads
+
+  </li>
+  <li>
+
+    It is also a very good example about packaging for .deb and .rpm
+    based distributions, and universal tarball.  It makes heavy use of
+    autoconf and automake.
+
+  </li>
+  <li>
+
+    Finally, be this project a lesson;  if you distribute your software
+    with a tarball, provide an easy solution to de-install it.  Either
+    provide a script like Autopoweroff is doing, or provide a "make
+    uninstall" target.
+
+  </li>
+  </ul>
+
+</section>
+
+<section name="todo" label="To do">
+
+<p>
+
+The following are features to be added in future releases.
+
+</p>
+
+<ul>
+
+  <li>
+
+    Detect activity from a remote login, either it be console or an X session.
+    Currently, if someone is working remotly on the computer, this will go
+    undetected and Autopoweroff will proceed with the shutdown if all other
+    conditions are met.
+
+  </li>
+  <li>
+
+    Internationalization (i18n).  Autopoweroff is currently available only
+    in English.
+
+  </li>
+  <li>
+
+    New GUI that follows more closely the Gnome recommendations.
+
+  </li>
+  <li>
+
+    Better documentation, including writing a man page.
+
+  </li>
+  <li>
+
+    Support for a wider range of Linux distributions.
+
+  </li>
+</ul>
+
+</section>
+
+<section name="change_history" label="Change history">
+
+<br/>
+
+The following changes have been incorporated in the below mentioned versions:
+
+
+</section>
+
+<section name="changes_2.9.1" label="Version 2.9.1 - 2008/06/01">
+
+<br/>
+
+Following feedback received from user <a href="http://tklema.info">Tomas
+Klema</a> and another anonymous one, multiple small improvements and
+fixes were introduced in this version of Autopoweroff:
+
+<br/>
+
+<ul>
+
+  <li>
+
+    Moved the icon from "Applications/System Tools" to
+    "System/Administration".
+
+  </li>
+  <li>
+
+    LSB and rc.status based bootstrap scripts now supported in the RPMs.
+
+  </li>
+  <li>
+
+    Now supports officially the three main distributions:  Ubuntu,
+    OpenSuSE and Fedora.
+
+  </li>
+  <li>
+
+    `arping` is now also used in addition to `ping` to test if dependant
+    hosts are up.  This cascading of tests increase the chances to
+    detect a dependant host if the host make use of a firewall.
+
+  <li>
+
+    If /dev/input/by-path/* are non-existant on a system, /dev/input/*
+    entries are used instead.  This will allow Autopoweroff to detect
+    user events on Ubuntu 06.06 for instance.
+
+  </li>
+  </li>
+  <li>
+
+    About dialog would not close properly.  This has been fixed.
+
+  </li>
+  <li>
+
+    Some small GUI improvement were introduced.  Mainly, some widgets
+    were simply to small for the font size.  They were slightly
+    increased.
+
+  </li>
+  <li>
+
+    Files in subversion were moved to trunk/.  branches/ and tags/ where
+    created to better manage the software.
+
+  </li>
+
+</ul>
+</section>
+
+<section name="changes_2.9.0" label="Version 2.9.0 - 2008/05/11">
+
+<br/>
+This release is a complete overhaul of the project.
+<br/>
+
+<ul>
+
+  <li>
+
+    Ubuntu support introduced.
+
+  </li>
+  <li>
+
+    New techniques are used to probe device, which now include USB devices.
+    For the techies, /dev/input/by-path devices get probed.
+    Modern kernels are required.
+
+  </li>
+  <li>
+
+    Subversion is now used instead of CVS for software configuration
+    management.
+
+  </li>
+
+</ul>
+</section>
+
+<section name="changes_2.1.0" label="Version 2.1.0 - 2004/01/19">
+
+<ul>
+
+  <li>
+
+    Like a screensaver, Autopoweroff now detects idle time on the server
+    by scanning for keyboard and mouse activity.  Currently, PS/2
+    keyboards and PS/2 &amp; serial mices are supported (USB devices are
+    unfortunatly not detected yet).
+
+  </li>
+
+  <li>
+
+    Added automatic configuration file upgrade.  If you upgrade Autopoweroff
+    and autopoweroff.conf configuration file format has changed, it will
+    automatically be upgraded to the new format while preserving the
+    previous configuration.
+
+  </li>
+
+  <li>
+
+    If Autopoweroff, upon startup, discovers that another instance of
+    itself is already running, instead of quiting it kills the old
+    instance and continues.
+
+  </li>
+
+  <li>
+
+    Replaced calls to "reboot" and "poweroff" with their corresponding
+    "shutdown" command.  Some user wrote to me asking where reboot and
+    poweroff could be obtained, so I assume that they are not always
+    available.
+
+  </li>
+
+
+</ul>
+</section>
+
+<section name="changes_2.0.0" label="Version 2.0.0 - 2003/11/23">
+
+<ul>
+
+  <li>
+
+    Created a user interface to simplify configuration.  See
+    <section-link href="#config_autopoweroff_gui">
+      Autopoweroff GUI configuration tool
+    </section-link>.
+
+  </li>
+
+  <li>
+
+    Miscelleanous Autopoweroff events are now reported in syslog, for
+    tracking purposes.
+
+  </li>
+
+  <li>
+
+    Removed Gnome dependency, for servers running in text mode only.
+
+  </li>
+
+
+</ul>
+
+</section>
+<section name="changes_1.2.0" label="Version 1.2.0 - 2003/06/07">
+
+<ul>
+
+  <li>
+
+    Fixed *.desktop files so that the icons now appear in the gnome
+    "system tools" menu even if no locale is set.
+
+  </li>
+
+</ul>
+
+</section>
+
+<section name="changes_1.1.1" label="Version 1.1.1 - 2003/05/03">
+
+<ul>
+
+  <li>
+
+    RPM installation now fully recognize Mandrake.
+
+  </li>
+
+  <li>
+
+    Improved the Autopoweroff Configuration section of the document and
+    the comments in /etc/autopoweroff.conf.
+
+  </li>
+
+  <li>
+
+    Added the <code>Supported distributions</code> section.
+
+  </li>
+
+</ul>
+
+</section>
+
+<section name="changes_1.1.0" label="Version 1.1.0 - 2003/04/27">
+
+<ul>
+
+  <li>
+
+    Automatic Gnome installation.  Under Red Hat 9.0, the cancel and
+    enable scripts now have icons showing up under the "System tools"
+    menu.
+
+  </li>
+
+  <li>
+
+    Improved the installation and uninstallation of the software from
+    a tarball.
+
+  </li>
+
+</ul>
+
+</section>
+
+<section name="changes_1.0.1" label="Version 1.0.1 - 2003/04/14">
+
+<ul>
+
+  <li>
+
+    Used autoconf to allow installation from a tarball.
+
+  </li>
+
+  <li>
+
+    Started using <a href="http://aurigadoc.sourceforge.net/">AurigaDoc</a>
+    for creating this document.
+
+  </li>
+
+</ul>
+
+</section>
+<section name="misc" label="Miscelleanous">
+<p>
+  This document has been created with <a href="http://aurigadoc.sourceforge.net/">AurigaDoc</a>
+</p>
+</section>
+
+<section name="contact" label="Contact">
+
+<p>
+
+  If you have any questions or issues with this software, you can contact
+  the following persons:
+
+</p>
+
+
+<blockquote>
+<table>
+  <tr>
+    <td>
+      Author:
+    </td>
+    <td>
+      Hans Deragon
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Email:
+    </td>
+    <td>
+      <a href="mailto:hans@deragon.biz">hans@deragon.biz</a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Website: 
+    </td>
+    <td>
+      <a href="http://www.deragon.biz">www.deragon.biz</a>
+    </td>
+  </tr>
+</table>
+</blockquote>
+
+</section>
+</document-body>
+</document>

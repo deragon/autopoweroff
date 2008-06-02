@@ -1,0 +1,43 @@
+#!/bin/bash
+# Autopoweroff init script.
+
+### BEGIN INIT INFO
+# Provides:       autopoweroff
+# Required-Start: $syslog
+# Required-Stop:
+# Default-Start:  3 5
+# Default-Stop:
+# Short-Description: Automatic Poweroff of server when conditions are met.
+### END INIT INFO
+
+test -f /etc/rc.status || exit 1
+
+. /etc/rc.status
+. /lib/lsb/init-functions
+
+logfile="@autopoweroff_logdir@/autopoweroff.log"
+
+start()
+{
+  echo "Starting Autopoweroff..."
+  start_daemon @autopoweroff_sbindir@/autopoweroffd >>${logfile} 2>&1
+  rc_failed $?
+  rc_status -v1
+}
+
+stop()
+{
+  echo "Stopping Autopoweroff..."
+  killproc autopoweroffd
+  rc_failed $?
+  rc_status -v1
+}
+
+case "$1" in
+  start)    start;;
+  stop)     stop;;
+  restart)  stop;start;;
+  *)        echo "Usage: $0 {start|stop|restart}"
+            rc_failed 1
+            rc_status -v1;;
+esac

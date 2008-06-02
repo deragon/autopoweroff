@@ -1,0 +1,317 @@
+#!/usr/bin/python
+
+# Autopoweroff, version @version@
+
+import sys
+import commands
+import os
+import syslog
+import time
+import re
+import signal
+import threading
+import errno
+
+testmode = "@production@" != "true"
+
+if not testmode and os.fork() != 0:
+  sys.exit(0)
+
+if testmode:
+  # We are in test mode.  Using relative values.
+  sharedir = ".."
+  etcdir   = "../etc"
+  vardir   = "/tmp/autopoweroff/var"
+  ctrldir  = "/tmp/autopoweroff/var"
+else:
+  sharedir = "@autopoweroff_sharedir@"
+  etcdir   = "@autopoweroff_etcdir@"
+  vardir   = "@autopoweroff_vardir@"
+  ctrldir  = "@autopoweroff_ctrldir@"
+
+sys.path.append(sharedir + '/python/modules')
+
+from apoconfig import *
+import apoconfig
+
+try:
+  os.makedirs(vardir)
+except OSError, oserror:
+  # Error #17 is "File exists", which we ignore.  If anything
+  # else, we raise it.
+  if oserror[0] != 17:
+    raise oserror
+
+pidfile    = vardir  + "/" + scriptname + ".pid"
+cancelfile = ctrldir + "/" + scriptname + ".cancel"
+conffile   = etcdir  + "/" + scriptname + ".conf"
+
+# The "No shutdown range" is the range, expressed in hours, during which no
+# shutdown is to be performed.
+# Expressed in local time, not UTC.
+
+if os.path.exists(pidfile):
+  fdPidFile=open(pidfile)
+  pid=fdPidFile.readline()
+  fdPidFile.close()
+  try:
+    os.kill(int(pid), signal.SIGTERM)
+    sendmsg("Currently running instance killed.", syslog.LOG_ALERT)
+  except OSError, oserror:
+    if oserror.errno != errno.ESRCH:  # No such process
+      # errno ESRCH (#3) means that the process does not exist.
+      # If such is the case, we ignore the exception, else, we raise it.
+      raise
+
+configuration = apoconfig.Configuration(None, None, None, None)
+try:
+  configuration.read()
+except apoconfig.APOWarning, message:
+  sendmsg(message)
+except apoconfig.APOError, message:
+  sendmsg(message)
+
+#debug("idletime=" + str(configuration.idletime))
+
+sendmsg("Successfully started as PID: " + str(os.getpid()))
+
+
+######################################################################
+# Lock file creation to ensure only one instance of this script is running.
+file=open(pidfile, 'w')
+file.write(str(os.getpid()))
+file.close()
+
+
+######################################################################
+# The system must remain on for at least the 'startupdelay' first minutes
+# it was started.
+if not testmode:
+  sendmsg("Startup sleep of " + str(configuration.startupdelay) + " minutes.")
+  time.sleep(configuration.startupdelay*60)
+
+
+######################################################################
+# Loading kernel power management module.
+# For the moment, not required.
+#commands.getstatusoutput("/sbin/modprobe apm")
+
+gLastInputEventTime = time.time()
+
+class ApoDeviceObserverThread(threading.Thread):
+
+  def __init__(self, sDevice):
+    threading.Thread.__init__(self, name=sDevice)
+    self.setDaemon(True)
+    self.sDevice = sDevice
+    self.sleep = 0
+
+  def run(self):
+    global gLastInputEventTime
+    fd=open(self.sDevice, 'r')
+    debug("ApoDeviceObserverThread.run():  Check on " + \
+        self.sDevice + " started.")
+    self.finish = False
+    lastEventTime = 0.0
+    while not self.finish:
+      if self.sleep > 0:
+        time.sleep(self.sleep)
+        self.sleep = 0
+
+      try:
+        fd.read(1)
+      except IOError, ioerror:
+        if ioerror.errno == errno.ENODEV:
+          self.finish=True
+          sendmsg("Device " + self.sDevice + " absent (No such device error)",\
+                  syslog.LOG_NOTICE)
+          continue
+        else:
+          raise
+      currentTime=time.time()
+      gLastInputEventTime=currentTime
+      #print currentTime-lastEventTime
+      # To reduce the quantity of output, we print only a few
+      # of the events, for debugging purposes.  Else, it is simply
+      # to much.
+      if currentTime > lastEventTime + 0.01:
+        debug("ApoDeviceObserverThread.run():  Activity detected on " + \
+            self.sDevice + " at " + str(currentTime))
+      lastEventTime = currentTime
+    fd.close()
+
+  def terminate(self):
+    self.finish = True
+
+  def sleep(self, timeout):
+    self.sleep = timeout
+
+aDevices   = []
+aApoDevObs = []
+
+try:
+  spkrRE = re.compile(".*spkr.*")
+  devicePath=None
+  # Ubuntu 06.06 does not have any /dev/input/by-paty,
+  # only /dev/input.
+  for devicePath in [ "/dev/input/by-path", "/dev/input" ]:
+    if os.path.exists(devicePath):
+      break
+
+  if devicePath == None:
+    sendmsg("WARNING:  No input device detected.  " + \
+            "Will not be able to detect user activity.")
+  else:
+    for path in os.listdir(devicePath):
+      if spkrRE.search(path) != None:
+        # Ignoring speaker devices.  I do not understand how a device
+        # related to a speaker can be considered an input device.  A
+        # microphone maybe?  Even if this is the case, if a user simply
+        # leave the microphone on, it will always receive some ambient
+        # sound even if the machine is not use.  We cannot make use of
+        # this.  This device is available in Ubuntu 07.04 and 08.10
+        # (2.6.24-17-generic).
+        continue
+
+      path = devicePath + "/" + path
+      debug("path = " + path)
+      aDevices.append(path)
+
+except OSError, oserror:
+  if oserror.errno != errno.ENOENT:  # No such file or directory
+    raise
+
+for sDevice in aDevices:
+  debug("sDevice = " + sDevice)
+  apoDevObs=ApoDeviceObserverThread(sDevice)
+  apoDevObs.start()
+  aApoDevObs.append(apoDevObs)
+
+
+
+######################################################################
+isToBeSuspended = False
+finish          = False
+alivePrint      = False
+while not finish:
+
+  # Checking if the current hour is within the poweroff shutdown range.
+  # Now contains the current hour.
+
+  now = time.time()
+  #debug("UTC:  ", time.gmtime(now))
+  #debug("LOCAL:  ", time.localtime(now))
+  nowtuple = time.localtime(now)
+  nowhour = nowtuple[3]
+  #debug(nowhour)
+
+  if nowhour >= configuration.noshutdownrange[0] and \
+     nowhour < configuration.noshutdownrange[1]:
+    shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2],
+                   configuration.noshutdownrange[1],
+                   0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
+    #debug(shutdowntuple)
+    #debug(nowtuple)
+    sleeptime=time.mktime(shutdowntuple)-now+1
+
+    # Using gmtime(sleeptime) here because localtime(0) is actually
+    # 1969/12/31 19h00, thus if using localtime(sleeptime), we actually
+    # print the sleeptime minus 5 hours, which is wrong.
+    sendmsg("Currently not in time range " + \
+            str(configuration.noshutdownrange) + \
+            " for system shutdown.\nSleeping for " + \
+            time.strftime("%H:%M:%S", time.gmtime(sleeptime)),".")
+    alivePrint=False
+    time.sleep(sleeptime)
+    continue
+
+  if os.path.exists(cancelfile):
+    if not isToBeSuspended:
+      isToBeSuspended = True
+      sendmsg("Suspended as requested.")
+    time.sleep(15)
+    continue
+  else:
+    isToBeSuspended = False
+ 
+  # HANS:  TODO:
+  # to check if gm
+  nowTime = time.time()
+  timeElapsedSinceLastEvent = nowTime - gLastInputEventTime
+
+  debug("timeElapsedSinceLastEvent = " + str(timeElapsedSinceLastEvent))
+
+  # If configuration.idletime is set to 0, that means that the user
+  # does not want any of the console inputs to influence the shutdown decision.
+  if configuration.idletime > 0 and \
+     timeElapsedSinceLastEvent < configuration.idletime*60:
+    sleeptime=None
+    if testmode:
+      sleeptime=2
+    else:
+      sleeptime=configuration.idletime*60
+    debug("Sleeping for " + str(sleeptime) + "s.")
+    time.sleep(sleeptime)
+    continue
+
+  isOneStillAlive=False
+
+  # Eventually, the following code for pinging hosts should be threaded
+  # so this could be done in the background.
+  aInterfaces=commands.getstatusoutput( \
+    "route -n | tail --lines=+3 | awk -F \" \" \"{print \$8}\" | sort -u")[1].split()
+  for host in configuration.hosts:
+    #debug("Pinging host:  >>" + host + "<<")
+    status = commands.getstatusoutput("ping -c 1 -w 10 " + host)[0]
+    #debug(status)
+    #signal = status & 0xFF
+    exitcode = (status >> 8) & 0xFF
+    #debug(exitcode)
+    if exitcode == 0:
+      isOneStillAlive=True
+      break
+
+    # Experimental use of arping.
+    debug(aInterfaces)
+    for interface in aInterfaces:
+      status = commands.getstatusoutput( \
+                "arping -w 10 -I " + interface + " " + host)[0]
+      debug(status)
+      #signal = status & 0xFF
+      exitcode = (status >> 8) & 0xFF
+      debug(exitcode)
+      if exitcode == 0:
+        isOneStillAlive=True
+        break
+
+  if isOneStillAlive:
+    if not alivePrint:
+      sendmsg(host + " is still alive.")
+    alivePrint=True
+    time.sleep(5)
+    continue
+  else:
+    sendmsg("All the conditions for shutdown are met.  System shutdown.", \
+            syslog.LOG_ALERT)
+    finish = True
+  # Checking if anybody is working on the server.  No shutdown if there
+  # is activity on the keyboard or on the mouse.
+
+for thread in aApoDevObs:
+  thread.terminate()
+
+os.remove(pidfile)
+sendmsg("Ending.")
+
+# Only poweroff if it has been determined that this is the action to do.
+# Remember, autopoweroff could have received a SIGTERM (CTRL-C).
+#
+# The while loop can end when finish == True or if autopoweroff
+# receives a SIGTERM signal.
+if finish:  # No SIGTERM signal received and clean shutdown required.
+  if testmode:
+    print "Powering off at " + time.strftime("%H:%M:%S", \
+      (time.localtime(time.time())))
+  else:
+    commands.getstatusoutput("nohup /sbin/shutdown -h now")
+    #print "ERROR:  POWEROFF COMMAND DISABLED FOR DEBUGGING PURPOSES."

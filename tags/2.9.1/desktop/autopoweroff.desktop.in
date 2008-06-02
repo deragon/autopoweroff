@@ -1,0 +1,18 @@
+[Desktop Entry]
+Version=@PACKAGE_VERSION@
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Exec=@autopoweroff_bindir@/autopoweroff
+Icon=@autopoweroff_sharedir@/pixmaps/autopoweroff.png
+Name=Autopoweroff Configurator
+Name[fr]=Configurateur Autopoweroff
+Name[en]=Autopoweroff Configurator
+GenericName=Autopoweroff Configurator
+GenericName[fr]=Configurateur Autopoweroff
+GenericName[en]=Autopoweroff Configurator
+Comment=Configurator for Autopoweroff
+Comment[en]=Gnome configurator for Autopoweroff
+Comment[fr]=Configurateur pour Autopoweroff
+#Categories=Application;System;
+Categories=System;Settings;

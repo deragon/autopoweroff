@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# Startup script for autopoweroff.
+#
+# chkconfig: - 98 1
+# description: Automatically poweroff this station given certain
+#              circomstances.
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+logfile="@autopoweroff_logdir@/autopoweroff.log"
+
+start() {
+  echo -n $"Starting Autopoweroff: "
+  echo "----------------------------------------------------------------------" >>${logfile}
+  date >>${logfile}
+  @autopoweroff_sbindir@/autopoweroffd >>${logfile} 2>&1
+  RETVAL=$?
+  #echo ${RETVAL}
+  if [ ${RETVAL} -eq 0 ]; then
+    echo_success
+  else
+    echo_failure
+  fi
+  echo
+  return ${RETVAL}
+}
+
+stop() {
+  echo -n $"Stopping Autopoweroff: "
+  killproc autopoweroffd
+  RETVAL=$?
+  echo
+  return ${RETVAL}
+}
+
+case "$1" in
+  start)
+  start
+  ;;
+  stop)
+  stop
+  ;;
+  restart)
+  stop
+  start
+  ;;
+  *)
+  echo $"Usage: $0 {start|stop|restart}"
+  exit 1
+esac
+
+exit 0
