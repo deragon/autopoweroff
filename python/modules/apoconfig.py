@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import commands
 import os
 import sys
@@ -10,25 +8,14 @@ import syslog
 from types import *
 from __main__ import *
 import apodoc
+from apolib import *
 
-scriptname = os.path.basename(sys.argv[0])
-
-def sendmsg(msg, priority=syslog.LOG_INFO):
-  print msg
-  syslog.syslog(scriptname + ":  " + str(msg))
-
-def debug(msg):
-  if testmode:
-    print msg
-
-def commentString(text):
-  regexp=re.compile("(?m)^")
-  return regexp.sub("# ", text.rstrip().lstrip())
+#scriptname = os.path.basename(sys.argv[0])
 
 #print commentString(apodoc.get('IdleTime'))
 #print apodoc.get('IdleTime')
 
-conffile = etcdir + "/autopoweroff.conf"
+conffile = etcdir + "/" + scriptname + ".conf"
 
 class APOError(Exception):
   def __init__(self, msg, errorcode):
