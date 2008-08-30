@@ -1,6 +1,11 @@
 #!/usr/bin/python
 
 import sys
+import os
+import ConfigParser
+import commands
+
+scriptname = os.path.basename(sys.argv[0])
 
 testmode = "@production@" != "true"
 
@@ -8,6 +13,7 @@ if not testmode:
   sharedir = "@autopoweroff_sharedir@"
   initdir  = "@autopoweroff_initdir@"
   etcdir   = "@autopoweroff_etcdir@"
+  rundir   = "@autopoweroff_rundir@"
   version  = "@VERSION@"
 else:
   # We are in test mode.  Using relative values.
@@ -15,15 +21,13 @@ else:
   initdir  = "../rc"
   etcdir   = "../etc"
   version  = "Test version"
+  rundir   = "/tmp/autopoweroff/var"
 
 sys.path.append(sharedir + '/python/modules')
 
-
-import os
-import ConfigParser
 import apoconfig
 import apodoc
-import commands
+from apolib import *
 
 #errors=""
 #for modulename in [ "pygtk", "gtka", "gtk.glade", "gobject", "gnome.ui" ]:
@@ -49,10 +53,7 @@ installed on this machine.  Following is the specific error
 
       """ + str(errormsg) + "\n"
   sys.exit(1)
-
-scriptname = os.path.basename(sys.argv[0])
-pidfile    = "/var/run/" + scriptname + ".pid"
-cancelfile = "/tmp/autopoweroff.cancel"
+cancelfile = rundir + "/" + scriptname + ".cancel"
 initfile   = initdir + "/autopoweroff"
 
 LMConfigHosts = None
@@ -241,7 +242,7 @@ def on_BtnStatusCmdApply_clicked(*args):
   radio_StatusEnabled = xml.get_widget("RadioStatusEnabled");
   value = radio_StatusEnabled.get_active()
   if value == 0:
-    file = os.open(cancelfile, os.O_CREAT)
+    file = os.open(cancelfile, os.O_CREAT, 0444)
     os.close(file)
     xml.get_widget("LblDialogInform").set_text( \
       "Autopoweroff is now disabled.");
