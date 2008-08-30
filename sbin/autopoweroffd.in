@@ -17,34 +17,31 @@ testmode = "@production@" != "true"
 if not testmode and os.fork() != 0:
   sys.exit(0)
 
+scriptname = os.path.basename(sys.argv[0])
+
 if testmode:
   # We are in test mode.  Using relative values.
   sharedir = ".."
   etcdir   = "../etc"
-  vardir   = "/tmp/autopoweroff/var"
-  ctrldir  = "/tmp/autopoweroff/var"
+  piddir   = "/tmp/autopoweroff/var"
+  rundir   = "/tmp/autopoweroff/var"
 else:
   sharedir = "@autopoweroff_sharedir@"
   etcdir   = "@autopoweroff_etcdir@"
-  vardir   = "@autopoweroff_vardir@"
-  ctrldir  = "@autopoweroff_ctrldir@"
+  piddir   = "@autopoweroff_piddir@"
+  rundir   = "@autopoweroff_rundir@"
 
 sys.path.append(sharedir + '/python/modules')
 
-from apoconfig import *
+#from apoconfig import *
 import apoconfig
+from apolib import *
 
-try:
-  os.makedirs(vardir)
-except OSError, oserror:
-  # Error #17 is "File exists", which we ignore.  If anything
-  # else, we raise it.
-  if oserror[0] != 17:
-    raise oserror
-
-pidfile    = vardir  + "/" + scriptname + ".pid"
-cancelfile = ctrldir + "/" + scriptname + ".cancel"
-conffile   = etcdir  + "/" + scriptname + ".conf"
+createDirs([ piddir, rundir ])
+sys.exit(3)
+pidfile    = piddir + "/" + scriptname + ".pid"
+cancelfile = rundir + "/" + scriptname + ".cancel"
+conffile   = etcdir + "/" + scriptname + ".conf"
 
 # The "No shutdown range" is the range, expressed in hours, during which no
 # shutdown is to be performed.
