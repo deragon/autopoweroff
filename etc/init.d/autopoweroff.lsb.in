@@ -1,5 +1,22 @@
 #!/bin/bash
+
 # Autopoweroff init script.
+#
+# For further information on guides on how to write init scripts, see:
+#
+#   http://wiki.debian.org/LSBInitScripts
+#   http://www.debian.org/doc/debian-policy/ch-opersys.html
+
+### BEGIN INIT INFO
+# Provides:          autopoweroff
+# Required-Start:    $local_fs $syslog
+# Required-Stop:     $local_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Autopoweroff init script
+### END INIT INFO
+
 
 test -f /lib/lsb/init-functions || exit 1
 . /lib/lsb/init-functions
@@ -16,14 +33,20 @@ start()
 stop()
 {
   log_begin_msg "Stopping Autopoweroff..."
-  killproc autopoweroffd
-  log_end_msg 0
+  killproc -p @autopoweroff_pidfile@ autopoweroffd
+  log_end_msg $?
 }
 
 
 case "$1" in
-  start)    start;;
-  stop)     stop;;
-  restart)  stop;start;;
-  *)        echo "Usage: $0 {start|stop|restart}" ;;
+  start)          start;;
+  stop)           stop;;
+  restart)        stop; start;;
+  reload)         stop; start;;
+  force-reload)   stop; start;;
+  *)              cat <<EOM
+Usage: $0 {start|stop|restart|reload|force-reload}
+Note:  reload and force-reload actually call restart.
+EOM
+;;
 esac
