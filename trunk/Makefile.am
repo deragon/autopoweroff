@@ -23,6 +23,7 @@ EXTRA_DIST = \
 	sbin/autopoweroff-uninstall.in \
 	sbin/autopoweroff-upgrade.in \
 	python/modules/apodoc.py \
+	python/modules/apolib.py \
 	python/modules/apoconfig.py \
 	etc/init.d/autopoweroff.lsb \
 	etc/init.d/autopoweroff.rc-status \
@@ -32,6 +33,7 @@ EXTRA_DIST = \
 	glade/autopoweroff.trans \
 	desktop/autopoweroff.desktop.in \
 	pixmaps/autopoweroff.png \
+	pixmaps/autopoweroff.svg \
 	etc/pam.d/autopoweroff \
 	etc/security/console.apps/autopoweroff.in \
 	etc/autopoweroff.conf \
@@ -46,6 +48,7 @@ EXTRA_DIST = \
 pythondir=${datadir}/python/modules
 python_DATA = \
 	python/modules/apodoc.py \
+	python/modules/apolib.py \
 	python/modules/apoconfig.py
 
 gladedir=${datadir}/glade
@@ -58,7 +61,9 @@ desktopdir=${autopoweroff_desktopdir}
 desktop_DATA = desktop/autopoweroff.desktop
 
 pixmapsdir=${datadir}/pixmaps
-pixmaps_DATA = pixmaps/autopoweroff.png
+pixmaps_DATA = \
+	pixmaps/autopoweroff.png \
+  pixmaps/autopoweroff.svg
 
 etcdir = $(sysconfdir)
 etc_DATA = etc/autopoweroff.conf
