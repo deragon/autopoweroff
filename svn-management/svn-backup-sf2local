@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# This script generates a complete backup of the project to a local directory.
+#
+# See:  http://alexandria.wiki.sourceforge.net/Subversion+-+Version+Control+for+Source+Code#tocSubversion%20-%20Version%20Control%20for%20Source%20Code15
+
+# To import data again into SF:
+#
+# http://alexandria.wiki.sourceforge.net/Subversion+-+Version+Control+for+Source+Code#tocSubversion%20-%20Version%20Control%20for%20Source%20Code6
+
+PROJECT="autopoweroff"
+
+
+# CODE ------------------------------------------------------------ 
+DST="../../${PROJECT}-svn-repo"
+rm -rf ${DST}
+mkdir -p ${DST}
+rsync -av ${PROJECT}.svn.sourceforge.net::svn/${PROJECT}/* ${DST}
+echo "Backup subversion repository can be found at ${DST}"
