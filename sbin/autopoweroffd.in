@@ -14,6 +14,7 @@ import errno
 
 testmode = "@production@" != "true"
 
+# Fork to disconnect from the terminal, if in production.
 if not testmode and os.fork() != 0:
   sys.exit(0)
 
@@ -38,8 +39,7 @@ import apoconfig
 from apolib import *
 
 createDirs([ piddir, rundir ])
-sys.exit(3)
-pidfile    = piddir + "/" + scriptname + ".pid"
+pidfile    = "@autopoweroff_pidfile@"
 cancelfile = rundir + "/" + scriptname + ".cancel"
 conffile   = etcdir + "/" + scriptname + ".conf"
 
