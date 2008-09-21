@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# For documentation about taging, see:
+#
+# http://svnbook.red-bean.com/en/1.1/ch04s06.html
+
+TAG_REVISION="3.0.0"
+TAG_DESC="Autopoweroff version ${TAG_REVISION}"
+
+cat <<EOM
+Once you are sure that all you have checked in all the files for a specific
+revision, you should run this script to tag the revision.
+
+Taging with:
+
+  revision:     ${TAG_REVISION}
+  description:  ${TAG_DESC}
+
+EOM
+
+echo -n "Are you sure you want to proceed (y/n)? "
+read -n 1 ANSWER
+echo
+
+if [ "${ANSWER}" != "y" ]; then
+  echo "Command aborted."
+  exit 1
+fi
+
+SVN_HTTP="https://autopoweroff.svn.sourceforge.net/svnroot/autopoweroff"
+SVN_CORE_REPO="${SVN_HTTP}/trunk"
+SVN_TAG="${SVN_HTTP}/tags/${TAG_REVISION}"
+
+svn copy ${SVN_CORE_REPO} ${SVN_TAG} -m "${TAG_DESC}"
