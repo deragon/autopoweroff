@@ -71,12 +71,14 @@
 <link href="#uninstallation">Uninstallation</link>
 <link href="#license">License</link>
 <link href="#troubleshooting">Troubleshooting
-  <link href="#troubleshooting_glade">Troubleshooting Glade warnings
-  </link>
+  <link href="#troubleshooting_glade">Troubleshooting Glade warnings</link>
+  <link href="#troubleshooting_initd">/etc/init.d/autopoweroff prompting
+     when upgrading on Debian or Ubuntu</link>
 </link>
 <link href="#developers">For developers</link>
 <link href="#todo">To do</link>
 <link href="#change_history">Change History
+  <link href="#changes_3.0.0">Version 3.0.0</link>
   <link href="#changes_2.9.1">Version 2.9.1</link>
   <link href="#changes_2.9.0">Version 2.9.0</link>
   <link href="#changes_2.1.0">Version 2.1.0</link>
@@ -278,39 +280,6 @@
   The latest version of Autopoweroff can be downloaded from
   <a href="http://sourceforge.net/project/showfiles.php?group_id=74727">
   SourceForge</a>.
-
-<table width="100%">
-  <tr>
-    <td valign="top" width="130">
-
-      <p class="warning">
-        RELEASE CANDIDAT VERSION AVAILABLE.
-      </p>
-
-    </td>
-    <td>
-
-      <p>
-
-        Version 2.9.1 is a release candidate version (3.0.0 will be the
-        stable release).  I need people to test it.  Unknown bugs might
-        cause your system to shutdown even if someone is making use of
-        it.  However, 2.9.1 appears stable and I suggest people to try
-        it out.
-
-      <p>
-      </p>
-
-        Please provide feedback by writing to me at
-        <a href="mailto:hans@deragon.biz">hans@deragon.biz</a>
-        If enough people report to me that this version is stable, I
-        will release it as such.
-
-      </p>
-
-    </td>
-  </tr>
-</table>
 
 </p>
 
@@ -611,15 +580,7 @@ Hosts=mafalda, 192.168.0.5
 
 
 <section name="troubleshooting" label="Troubleshooting">
-<p>
   Following are troubleshooting sections.
-</p>
-
-  <ul>
-    <li>
-      <section-link href="#troubleshooting_glade">Troubleshooting Glade warnings</section-link>.
-    </li>
-  </ul>
 </section>
 <section name="troubleshooting_glade" label="Troubleshooting Glade warnings">
 
@@ -641,6 +602,31 @@ Hosts=mafalda, 192.168.0.5
   </code></p>
   <p>
     This is nothing to be concerned about.
+  </p>
+</section>
+
+<section name="troubleshooting_initd" label="Troubleshooting /etc/init.d/autopoweroff upgrade">
+
+  <p>
+    Under Debian Policy, /etc/init.d files are considered configuration file
+    like any other /etc file.  Thus when Autopoweroff upgrades its /etc/init.d
+    file, apt (or your software package manager) will prompt you asking if you
+    want to keep the original file or not.
+  </p>
+
+  <p>
+    This make sense because some people actually modify /etc/init.d
+    files to suit their particular needs.  Ideally though, the software
+    package manaager should not prompt if the original file has not
+    change when upgrading.  Alas, this is not the case except only for
+    the most recent version of Linux (this comment was written in
+    September 2008).
+  </p>
+
+  <p>
+    See:  <a href="https://bugs.launchpad.net/ubuntu/+source/sysvinit/+bug/246550">
+             Ubuntu Bug #246550</a>
+
   </p>
 </section>
 
@@ -727,6 +713,47 @@ The following are features to be added in future releases.
 The following changes have been incorporated in the below mentioned versions:
 
 
+</section>
+
+
+<section name="changes_3.0.0" label="Version 3.0.0 - 2008/09/01">
+
+<br/>
+
+Since 2.9.1 was reported stable, 3.0.0 was released with only minor fixes added.
+
+<br/>
+
+<ul>
+
+  <li>
+
+    PID and cancel file where previously stored under /tmp, which under Ubuntu
+    (and probably Debian), is erased at each reboot.  They were moved under
+    /var where they should have been in the first place.
+
+  </li>
+
+  <li>
+
+    Introduced new icon in SVG.
+
+  </li>
+
+  <li>
+
+    Replaced the GNU 2.0 License with another GNU 2.0 License with more recent
+    text.  Fundemantaly, the license has not changed.
+
+  </li>
+
+  <li>
+
+    Introduced new icon in SVG.
+
+  </li>
+
+</ul>
 </section>
 
 <section name="changes_2.9.1" label="Version 2.9.1 - 2008/06/01">
