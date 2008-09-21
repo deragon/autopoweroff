@@ -15,12 +15,19 @@ from apolib import *
 #print commentString(apodoc.get('IdleTime'))
 #print apodoc.get('IdleTime')
 
-conffile = etcdir + "/" + scriptname + ".conf"
+# Do not use variable "scriptname" for defining the "conffile".
+# "scriptname" gets the value autopoweroffd when it is the daemon
+# running, thus setting "conffile" to ".../autopoweroffd.conf", which is
+# non existant.
+conffile = etcdir + "/autopoweroff.conf"
 
 class APOError(Exception):
-  def __init__(self, msg, errorcode):
-    self.msg=msg
+  def __init__(self, message, errorcode):
+    self.message=message
     self.errorcode=errorcode
+
+  def __str__(self):
+    return "Err #" + str(self.errorcode) + ":  " + self.message
 
 class APOWarning(Exception):
   pass
