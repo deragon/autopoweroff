@@ -1,1 +1,2 @@
 /etc/autopoweroff.conf
+/etc/init.d/autopoweroff
