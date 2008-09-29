@@ -1,10 +1,9 @@
 #!/bin/bash
 
-update-rc.d autopoweroff defaults
+# For nice examples on how to write this scripts, see scripts available
+# under:  /var/lib/dpkg/info
 
-cat >@autopoweroff_bindir@/autopoweroff <<EOS
-#!/bin/bash
-gksu @autopoweroff_sbindir@/autopoweroff
-EOS
-
-chmod 755 @autopoweroff_bindir@/autopoweroff
+#echo "args:  $*"
+#echo "$0 called."
+update-rc.d autopoweroff defaults >/dev/null
+exit 0
