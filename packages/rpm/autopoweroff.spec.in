@@ -125,7 +125,7 @@ WARNING:  Since Autopoweroff will start next time this machine is
 
 To start Autopoweroff now instead of waiting for the next reboot, run:
 
-  ${INITDST}/autopoweroff start
+  ${INITDST} start
 
 EOF
 fi
