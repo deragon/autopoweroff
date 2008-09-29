@@ -18,6 +18,10 @@
 # write over the file with the newest format.
 
 import sys
+import os
+
+scriptname = os.path.basename(sys.argv[0])
+
 testmode = 0
 testmode = "@production@" != "true"
 
