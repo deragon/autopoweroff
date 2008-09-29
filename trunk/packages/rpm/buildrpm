@@ -6,6 +6,9 @@ ARCH="noarch"
 
 for DISTRIBUTION in fedora suse; do
 #for DISTRIBUTION in suse; do
+  echo "======================================================================"
+  echo "== Building rpm for ${DISTRIBUTION}"
+
   cd ../..
   if [ "$1" != '--make' ]; then
     make rpm
@@ -13,8 +16,8 @@ for DISTRIBUTION in fedora suse; do
   else
     # Calling configure with --enable-install-for-rpm so that the spec file
     # is properly generated.
-    echo "======================================================================"
-    echo "== buildrpm:  ./configure called for generating ${PACKAGE}.spec"
+    echo "----------------------------------------------------------------------"
+    echo "-- buildrpm:  ./configure called for generating ${PACKAGE}.spec"
     ./configure --enable-install-for-rpm --enable-install-for-${DISTRIBUTION}
   fi
   cd -
@@ -27,8 +30,8 @@ for DISTRIBUTION in fedora suse; do
   mv ${PACKAGE}-${VERSION}.tar.gz ${RPMDIR}/SOURCES/.
   RELEASE=`egrep "^%define release" ${PACKAGE}.spec | awk "{print \\\$3; }"`;
 
-  echo "======================================================================"
-  echo "== buildrpm:  rpmbuild now called."
+  echo "----------------------------------------------------------------------"
+  echo "-- buildrpm:  rpmbuild now called."
   rpmbuild -bb ${PACKAGE}.spec
 
   if [ $? == 0 ]; then
