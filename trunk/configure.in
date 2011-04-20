@@ -8,7 +8,7 @@ PATH=/sbin:/usr/sbin:${PATH}
 AC_INIT(autopoweroff, 3.0.0, hans@deragon.biz)
 AM_INIT_AUTOMAKE(autopoweroff, 3.0.0)
 AC_REVISION($Revision: 1.4 $)
-AC_COPYRIGHT([Hans Deragon, Copyright 2003-2008, under the GPL 2.0 license.])
+AC_COPYRIGHT([Hans Deragon, Copyright 2003-2011, GPL 2.0])
 
 DESCRIPTION_SHORT="Automatically power off a computer if not used"
 
@@ -241,8 +241,6 @@ if [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
   autopoweroff_sbindir="/usr/sbin"
   autopoweroff_vardir="/var"
   autopoweroff_logdir="${autopoweroff_vardir}/log"
-  autopoweroff_rundir="${autopoweroff_vardir}/run/autopoweroff"
-  autopoweroff_piddir="${autopoweroff_rundir}"
   autopoweroff_initdir="${autopoweroff_etcdir}/init.d"
 
 else
@@ -269,15 +267,17 @@ else
   autopoweroff_etccrondir=${autopoweroff_etcdir}/cron.d
   autopoweroff_crondir=${autopoweroff_sharedir}/cron
   autopoweroff_vardir=${autopoweroff_sharedir}/var
-  autopoweroff_rundir="${autopoweroff_vardir}/run/autopoweroff"
-  autopoweroff_piddir="${autopoweroff_rundir}"
   autopoweroff_logdir=${autopoweroff_sharedir}/log
   autopoweroff_bindir=${bindir}
   autopoweroff_sbindir=${sbindir}
   autopoweroff_initdir=${sysconfdir}/init.d
 fi
 
-autopoweroff_file_cancel="${autopoweroff_vardir}"
+autopoweroff_rundir="${autopoweroff_vardir}/run/autopoweroff"
+autopoweroff_piddir="${autopoweroff_rundir}"
+
+autopoweroff_pidfile="${autopoweroff_piddir}/autopoweroff.pid"
+autopoweroff_cancelfile="${autopoweroff_rundir}/autopoweroff.cancel"
 
 if [[ "${prefix}" = "NONE" -a "${GNOMECONFIG}" = "found" ]]; then
   autopoweroff_desktopdir=`gnome-config --datadir`
@@ -288,7 +288,8 @@ elif (( ${INSTALLICON} )) || \
   fi
 fi
 
-autopoweroff_pidfile="${autopoweroff_piddir}/autopoweroff.pid"
+# autopoweroff_conffile not used yet.
+#autopoweroff_conffile="${autopoweroff_etcdir}/autopoweroff.conf"
 
 if [[ -z "${autopoweroff_desktopdir}" ]]; then
   autopoweroff_desktopdir="${autopoweroff_sharedir}/applications"
@@ -313,6 +314,7 @@ eval "eval sysconfdir_expanded=$sysconfdir"
 # Setting production tag to true, so that generated executables are using
 # real production settings instead of test settings.
 production=true
+program_name="Autopoweroff"
 
 initdir=${sysconfdir_expanded}/init.d
 
@@ -356,6 +358,7 @@ AC_SUBST(gnome_appldir)
 AC_SUBST(initdir)
 AC_SUBST(consolehelperpath)
 AC_SUBST(production)
+AC_SUBST(program_name)
 AC_SUBST(autopoweroff_sharedir)
 AC_SUBST(autopoweroff_etcdir)
 AC_SUBST(autopoweroff_etccrondir)
@@ -365,6 +368,7 @@ AC_SUBST(autopoweroff_logdir)
 AC_SUBST(autopoweroff_rundir)
 AC_SUBST(autopoweroff_piddir)
 AC_SUBST(autopoweroff_pidfile)
+AC_SUBST(autopoweroff_cancelfile)
 AC_SUBST(autopoweroff_bindir)
 AC_SUBST(autopoweroff_sbindir)
 AC_SUBST(autopoweroff_initdir)
