@@ -716,7 +716,7 @@ The following changes have been incorporated in the below mentioned versions:
 </section>
 
 
-<section name="changes_3.0.0" label="Version 3.0.0 - 2008/09/01">
+<section name="changes_3.0.0" label="Version 3.0.0 - 2011/05/01">
 
 <br/>
 
@@ -736,7 +736,14 @@ Since 2.9.1 was reported stable, 3.0.0 was released with only minor fixes added.
 
   <li>
 
-    Introduced new icon in SVG.
+    Made the /etc/init.d/autopoweroff LSB version compliant to the standard.
+
+  </li>
+
+  <li>
+
+    Introduced a new icon in SVG format (default).  PNG format is available
+    for window managers which do not support the SVG format.
 
   </li>
 
@@ -744,12 +751,6 @@ Since 2.9.1 was reported stable, 3.0.0 was released with only minor fixes added.
 
     Replaced the GNU 2.0 License with another GNU 2.0 License with more recent
     text.  Fundemantaly, the license has not changed.
-
-  </li>
-
-  <li>
-
-    Introduced new icon in SVG.
 
   </li>
 
