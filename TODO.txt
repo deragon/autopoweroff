@@ -1,7 +1,12 @@
+Nouvelles dépendance:
+
+python-gi-dev
+
+Faut retirer les vielles dépendances.
+
 ======================================================================
-Use of syslog instead of stdout for logging.
-======================================================================
-Move from init.d to upstart
+Move from init.d to systemd
+(waiting to actually get a distro (Ubuntu 16.04 LTS) with systemd to do this).
 ======================================================================
 Handle suspdend; when comming back, time difference is very high
 regarding usage.  Old time should be discarded.
@@ -13,13 +18,7 @@ http://www.wlug.org.nz/HotPlugNotes
 ======================================================================
 PolicyKit integration
 ======================================================================
-
 COPYING
-
-======================================================================
-Détecter l'activité en lisant /dev/input/by-path
-
-[root@snah ~] od -tx1 /dev/input/by-path/platform-i8042-serio-0-event-kbd 
 
 ======================================================================
 Test canceling/disabling.  Ca ne semble pas marché.
@@ -33,9 +32,3 @@ Restrict running autopoweroff to root.
 ======================================================================
 Try to find out how to prevent Makefile to call "configure --no-create".
 This causes apoinstall not being "chmod +x" and the installation fails.
-
-======================================================================
-Essayer autopoweroff sur SuSE.
-
-======================================================================
-Redo the interface.
