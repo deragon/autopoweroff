@@ -36,7 +36,7 @@ EXTRA_DIST = \
 	pixmaps/autopoweroff.svg \
 	etc/pam.d/autopoweroff \
 	etc/security/console.apps/autopoweroff.in \
-	etc/autopoweroff.conf \
+	etc/autopoweroff/autopoweroff.conf \
 	doc/autopoweroff_cfg-config.png \
 	doc/autopoweroff_cfg-statusandcmd.png \
 	doc/autopoweroff.xml \
@@ -66,7 +66,7 @@ pixmaps_DATA = \
   pixmaps/autopoweroff.svg
 
 etcdir = $(sysconfdir)
-etc_DATA = etc/autopoweroff.conf
+etc_DATA = etc/autopoweroff/autopoweroff.conf
 
 pamdir = $(sysconfdir)/pam.d
 pam_DATA = etc/pam.d/autopoweroff

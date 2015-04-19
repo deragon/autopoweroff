@@ -5,8 +5,9 @@ process this file with autoconf to produce a configure script.
 # PATH by default, causing binaries such as "shutdown" not to be found.
 PATH=/sbin:/usr/sbin:${PATH}
 
-AC_INIT(autopoweroff, 3.0.0, hans@deragon.biz)
-AM_INIT_AUTOMAKE(autopoweroff, 3.0.0)
+AC_INIT([autopoweroff], [3.0.0])
+AC_CONFIG_SRCDIR([.])
+AM_INIT_AUTOMAKE
 AC_REVISION($Revision: 1.4 $)
 AC_COPYRIGHT([Hans Deragon, Copyright 2003-2011, GPL 2.0])
 
@@ -233,6 +234,7 @@ if [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
 
   exec_prefix='${prefix}/usr'
 
+  set -x
   autopoweroff_sharedir="/usr/share/autopoweroff"
   autopoweroff_etcdir="/etc"
   autopoweroff_etccrondir="${autopoweroff_etcdir}/cron.d"
@@ -242,6 +244,7 @@ if [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
   autopoweroff_vardir="/var"
   autopoweroff_logdir="${autopoweroff_vardir}/log"
   autopoweroff_initdir="${autopoweroff_etcdir}/init.d"
+  set +x
 
 else
 
@@ -262,6 +265,7 @@ else
   eval "eval sysconfdir=$sysconfdir"
   #eval "eval localstatedir=$localstatedir"
 
+  set -x
   autopoweroff_sharedir="${datadir}"
   autopoweroff_etcdir=${sysconfdir}
   autopoweroff_etccrondir=${autopoweroff_etcdir}/cron.d
@@ -271,6 +275,7 @@ else
   autopoweroff_bindir=${bindir}
   autopoweroff_sbindir=${sbindir}
   autopoweroff_initdir=${sysconfdir}/init.d
+  set +x
 fi
 
 autopoweroff_rundir="${autopoweroff_vardir}/run/autopoweroff"

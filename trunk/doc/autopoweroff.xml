@@ -96,15 +96,22 @@
 
 <p>
 
-  Autopoweroff is daemon that is started at boot time, and which
-  function is to shutdown the computer at a specific time, but 
-  only if some conditions are met.  This software is meant for
-  the Linux operating system.
+  Autopoweroff is daemon that is started at boot time, and which function is
+  to run a command at a specific time, but only if some conditions are met.
+  Originally, this application would only shutdown the computer, thus its
+  name, but now it can suspend, hibernate, or run any custom command provided
+  by the user.
 
 </p>
 <p>
 
-  The computer will shutdown if all the above conditions are met:
+  This software is meant for the Linux operating system.
+
+</p>
+<p>
+
+  The computer will execute the command (suspend by default) if all the above
+  conditions are met:
 
 </p>
 
@@ -134,15 +141,14 @@
 
 <p>
 
-  One good use of Autopoweroff is for home use, on a firewall/router
-  server.  You can setup Autopoweroff to shutdown the server every
-  evening at say, 22:00.  However, your server might serve other
-  computers in your home.  Autopoweroff will shutdown the server after
-  22:00 only if no other computer on the network is responding to
-  <code>ping</code>.  For example, if at 22:43 you are still working on
-  your thin client in the living room, the server in your baseman will
-  remain up.  As soon as you shutdown the workstation, the server will
-  go down.
+  One good use of Autopoweroff is for home use, on a firewall/router server.
+  You can setup Autopoweroff to suspend/shutdown the server every evening at
+  say, 22:00.  However, your server might serve other computers in your home.
+  Autopoweroff will shutdown the server after 22:00 only if no other computer
+  on the network is responding to <code>ping</code>.  For example, if at 22:43
+  you are still working on your thin client in the living room, the server in
+  your baseman will remain up.  As soon as you shutdown the workstation, the
+  server will go down.
 
 </p>
 <p>
@@ -156,7 +162,8 @@
 
     <li>
 
-      Increase security.  Nobody can hack your server while its shutdown.
+      Increase security.  Nobody can hack your server while its 
+      suspended, in hibernation or shutdown.
 
     </li>
     <li>
@@ -190,7 +197,12 @@
   <a href="http://sourceforge.net/projects/autopoweroff/">here</a>.
 
 </p>
+<p>
 
+  Note that one day, it might be possible to replace this piece of software
+  with SystemD.  Currently I have no OS with SystemD installed to test.
+
+</p>
 <!--
 <table width="100%">
   <tr>
@@ -246,7 +258,7 @@
   edit <code>/etc/autopoweroff.conf</code> to your particular needs.
 
   Autopoweroff will be eventually submitted to Ubuntu's and Fedora's
-  repositories, making it even easier to install it.
+  repositories, making it even easier to install.
 
 </p>
 <table width="100%">
@@ -595,10 +607,10 @@ Hosts=mafalda, 192.168.0.5
 
   </p>
   <p><code>
-(autopoweroff:5954): libglade-WARNING **: unknown property `urgency_hint' for class `GtkDialog'
+(autopoweroff:7785): Gtk-CRITICAL **: gtk_radio_button_set_group: assertion '!g_slist_find (group, radio_button)' failed
     </code></p>
     <p><code>
-(autopoweroff:5954): libglade-WARNING **: unknown property `wrap_license' for class `GtkAboutDialog'
+(autopoweroff:7785): Gtk-WARNING **: No object called: 
   </code></p>
   <p>
     This is nothing to be concerned about.
@@ -617,7 +629,7 @@ Hosts=mafalda, 192.168.0.5
   <p>
     This make sense because some people actually modify /etc/init.d
     files to suit their particular needs.  Ideally though, the software
-    package manaager should not prompt if the original file has not
+    package manager should not prompt if the original file has not
     change when upgrading.  Alas, this is not the case except only for
     the most recent version of Linux (this comment was written in
     September 2008).
@@ -728,6 +740,13 @@ Since 2.9.1 was reported stable, 3.0.0 was released with only minor fixes added.
 
   <li>
 
+    Upgraded the GUI to the latest GTK API available on Ubuntu LTS 14.01
+    Trusty Thar.
+
+  </li>
+
+  <li>
+
     PID and cancel file where previously stored under /tmp, which under Ubuntu
     (and probably Debian), is erased at each reboot.  They were moved under
     /var where they should have been in the first place.
@@ -742,16 +761,39 @@ Since 2.9.1 was reported stable, 3.0.0 was released with only minor fixes added.
 
   <li>
 
-    Introduced a new icon in SVG format (default).  PNG format is available
-    for window managers which do not support the SVG format.
+    Introduced a new icon in SVG format, now the default.  PNG format is
+    available for window managers which do not support the SVG format.
 
   </li>
 
   <li>
 
-    Replaced the GNU 2.0 License with another GNU 2.0 License with more recent
-    text.  Fundemantaly, the license has not changed.
+    Replaced the GNU 2.0 License text with another GNU 2.0 License text which
+    was updated by the Free Software Foundation.  Fundementaly though, the
+    license has not changed.
 
+  </li>
+
+  <li>
+
+    Fixed bug regarding 'no shutdown range' crossing over midnight.
+    Thanks to Kyle Shim (kyle.s.shim@gmail.com) for reporting and
+    proving a patch to fix it.
+
+  </li>
+
+  <li>
+
+    Fixed bug in script building .deb package where the wrong value of
+    ${autopoweroff_bindir} was being used.
+
+  </li>
+
+  <li>
+
+    Fixed bug in .deb package; previously, autopoweroff-upgrade was not called
+    upon installation of the package.
+    
   </li>
 
 </ul>

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 {
 #ARCH=`uname -i`
@@ -14,6 +14,7 @@ else
   # is properly generated.
   echo "======================================================================"
   echo "== builddeb:  ./configure called for setting everything properly"
+  env
 
   BUILD=`pwd`"/build"
   rm -rf build
@@ -29,6 +30,16 @@ else
   make install
   cd -
 
+  # WARNING:
+  #
+  #  When called from the Makefile, this scripts inherits the autopoweroff_*
+  #  variables such as ${autopoweroff_bindir}.  However, the values of
+  #  these variables are wrong, comming from a previous install, not this
+  #  one.  We just called above ./configure, but cannot inherit the
+  #  variables from the generated files.  Thus we have no choice to
+  #  hardcode the variables here, overwritting their wrong values.
+  export autopoweroff_bindir="/usr/bin"
+
   # Setting up the proper init file for Ubuntu/Debian.
 
   cd ${BUILD}/usr/share/autopoweroff
@@ -38,6 +49,7 @@ else
   rm -rf init.d
   cd -
 
+  env
   mkdir -p ${BUILD}${autopoweroff_bindir}
   cat >${BUILD}${autopoweroff_bindir}/autopoweroff <<EOS
 #!/bin/bash
@@ -59,7 +71,7 @@ EOS
   rm -f ${PACKAGE}.${ARCH}.deb
   ln -s ${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb \
         ${PACKAGE}.${ARCH}.deb
-  echo "To install the created package, run:  sudo dpkg -i ${PWD}/${PACKAGE}.${ARCH}.deb"
+  echo -e "To install the created package, run:\n\n  sudo dpkg -i ${PWD}/${PACKAGE}.${ARCH}.deb"
 
 fi
 } 2>&1 | tee builddeb.log

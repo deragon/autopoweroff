@@ -1,45 +1,44 @@
 #!/usr/bin/python
 
-
-# Hans Deragon
-# Consultant en informatique/Software Consultant
-#
-# Deragon Informatique inc.
-# Copyright 2004
-#
-# http://www.deragon.biz
-# mailto:hans@deragon@biz
-#
-# 2004/01/02, 09:16 EST
-# 
 # This scripts upgrades the /etc/autopoweroff.conf file automatically.
 # apoconfig.read() function supports old formats.  So we read the old
-# configuration file and then call the apoconfig.write() fonction to
+# configuration file and then call the apoconfig.save() fonction to
 # write over the file with the newest format.
 
 import sys
 import os
+import shutil
 
 scriptname = os.path.basename(sys.argv[0])
 
-testmode = 0
 testmode = "@production@" != "true"
 
 if testmode:
   # We are in test mode.  Using relative values.
-  etcdir   = "../etc"
-  sharedir = ".."
-  version  = "Test version"
+  print "Test mode activated."
+  osetcdir    = "../etc"
+  sharedir    = ".."
+  programname = "autopoweroff"
+  version     = "Test version"
 else:
-  etcdir   = "@autopoweroff_etcdir@"
-  sharedir = "@autopoweroff_sharedir@"
-  version  = "@VERSION@"
+  osetcdir    = "@autopoweroff_etcdir@"
+  sharedir    = "@autopoweroff_sharedir@"
+  programname = "@PACKAGE_NAME@"
+  version     = "@VERSION@"
+
+etcdir = osetcdir  + "/@PACKAGE_NAME@"
+if not os.path.isdir(etcdir):
+  os.makedirs(etcdir)
+  os.makedirs(etcdir + "/@PACKAGE_NAME@.d")
+
+  shutil.move(osetcdir + "/@PACKAGE_NAME@.conf",
+              etcdir + "/@PACKAGE_NAME@.conf")
 
 sys.path.append(sharedir + '/python/modules')
 
 import apoconfig
 
-configuration = apoconfig.Configuration(None, None, None, None)
+configuration = apoconfig.Configuration()
 try:
   configuration.read()
 except apoconfig.APOWarning, message:

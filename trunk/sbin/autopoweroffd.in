@@ -22,24 +22,30 @@ scriptname = os.path.basename(sys.argv[0])
 
 if testmode:
   # We are in test mode.  Using relative values.
+  programname = "autopoweroff"
   sharedir = ".."
-  etcdir   = "../etc"
-  piddir   = "/tmp/autopoweroff/var"
-  rundir   = "/tmp/autopoweroff/var"
+  etcdir   = "../etc/" + programname
+  rundir   = "/tmp/" + programname + "-test/var"
+  piddir   = rundir
+  pidfile  = "autopoweroff-test.pid"
 else:
+  programname = "@program_name@".lower()
   sharedir = "@autopoweroff_sharedir@"
-  etcdir   = "@autopoweroff_etcdir@"
-  piddir   = "@autopoweroff_piddir@"
+  etcdir   = "@autopoweroff_etcdir@/" + programname
   rundir   = "@autopoweroff_rundir@"
+  piddir   = "@autopoweroff_piddir@"
+  pidfile  = "@autopoweroff_pidfile@"
 
 sys.path.append(sharedir + '/python/modules')
 
-#from apoconfig import *
 import apoconfig
 from apolib import *
 
+if os.getuid() != 0:
+  sendmsg("Must be executed as root.")
+  sys.exit(1)
+
 createDirs([ piddir, rundir ])
-pidfile    = "@autopoweroff_pidfile@"
 cancelfile = rundir + "/" + scriptname + ".cancel"
 conffile   = etcdir + "/" + scriptname + ".conf"
 
@@ -68,9 +74,25 @@ except apoconfig.APOWarning, message:
 except apoconfig.APOError, message:
   sendmsg(message)
 
+command=""
+if configuration.action == None:
+  # Default command is SLEEP.  It is safer as no actual data can be lost going
+  # to sleep where a shutdown my cause data lost because saving operations
+  # could not be performed.
+  command = APOCommand.commands[APOCommand.SLEEP]
+  commandtext = APOCommand.SLEEP
+if configuration.action == APOCommand.OTHER:
+
+  command = configuration.actioncommand
+  commandtext = "executing '" + command + "'"
+else:
+  command = APOCommand.commands[configuration.action]
+  commandtext = APOCommand.commands[configuration.action]
+
 #debug("idletime=" + str(configuration.idletime))
 
 sendmsg("Successfully started as PID: " + str(os.getpid()))
+sendmsg("Command to execute when all conditions are met:  " + command)
 
 
 ######################################################################
@@ -187,9 +209,10 @@ for sDevice in aDevices:
 
 
 ######################################################################
-isToBeSuspended = False
+isToBePutOnHold = False
 finish          = False
 alivePrint      = False
+sleepTimeLogged = False
 while not finish:
 
   # Checking if the current hour is within the poweroff shutdown range.
@@ -202,34 +225,59 @@ while not finish:
   nowhour = nowtuple[3]
   #debug(nowhour)
 
-  if nowhour >= configuration.noshutdownrange[0] and \
-     nowhour < configuration.noshutdownrange[1]:
-    shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2],
-                   configuration.noshutdownrange[1],
-                   0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
-    #debug(shutdowntuple)
-    #debug(nowtuple)
-    sleeptime=time.mktime(shutdowntuple)-now+1
+  sleeptime = 0;
+  if configuration.noshutdownrange[apoconfig.STARTHOUR] <= configuration.noshutdownrange[apoconfig.ENDHOUR]:
+    if nowhour >= configuration.noshutdownrange[apoconfig.STARTHOUR] and \
+       nowhour < configuration.noshutdownrange[apoconfig.ENDHOUR]:
+      shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2],
+                     configuration.noshutdownrange[apoconfig.ENDHOUR],
+                     0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
+      #debug(shutdowntuple)
+      #debug(nowtuple)
+      sleeptime=time.mktime(shutdowntuple)-now+1
+  else:
+    if (nowhour >= configuration.noshutdownrange[apoconfig.STARTHOUR] and nowhour <= 24) or \
+        nowhour < configuration.noshutdownrange[apoconfig.ENDHOUR] :
+      shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2]+1,
+                     configuration.noshutdownrange[apoconfig.ENDHOUR],
+                     0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
+      #debug(shutdowntuple)
+      #debug(nowtuple)
+      sleeptime=time.mktime(shutdowntuple)-now+1
 
+  if sleeptime > 0:
     # Using gmtime(sleeptime) here because localtime(0) is actually
     # 1969/12/31 19h00, thus if using localtime(sleeptime), we actually
     # print the sleeptime minus 5 hours, which is wrong.
-    sendmsg("Currently not in time range " + \
-            str(configuration.noshutdownrange) + \
-            " for system shutdown.\nSleeping for " + \
-            time.strftime("%H:%M:%S", time.gmtime(sleeptime)),".")
+    if sleepTimeLogged == False:
+      sendmsg("Currently not in time range " + \
+              str(configuration.noshutdownrange) + \
+              " for " + commandtext + ".  Sleeping for " + \
+              time.strftime("%H:%M:%S", time.gmtime(sleeptime)),".")
+      sleepTimeLogged = True
     alivePrint=False
-    time.sleep(sleeptime)
+
+    # Actually sleeping for 1 minute.  The problem is that when the system is
+    # suspended or hibernated prior the expiration time, the sleep will
+    # continue where it left of, without taking account the time that lapsed
+    # during the sleep.
+
+    # Say for example that sleeptime is 2 hours.  15 minutes after this thread
+    # started sleeping, the user manually suspends the computer for 3 hours.
+    # Upon resuming, this thread will still continue to sleep for 1:45 hours,
+    # despite it should be stopped.
+
+    time.sleep(1*60)
     continue
 
   if os.path.exists(cancelfile):
-    if not isToBeSuspended:
-      isToBeSuspended = True
+    if not isToBePutOnHold:
+      isToBePutOnHold = True
       sendmsg("Suspended as requested.")
     time.sleep(15)
     continue
   else:
-    isToBeSuspended = False
+    isToBePutOnHold = False
  
   # HANS:  TODO:
   # to check if gm
@@ -306,9 +354,11 @@ sendmsg("Ending.")
 # The while loop can end when finish == True or if autopoweroff
 # receives a SIGTERM signal.
 if finish:  # No SIGTERM signal received and clean shutdown required.
+
   if testmode:
-    print "Powering off at " + time.strftime("%H:%M:%S", \
-      (time.localtime(time.time())))
+    print "Test mode:  would have run action '" + command \
+          + "' at " + time.strftime("%H:%M:%S", (time.localtime(time.time())))
   else:
-    commands.getstatusoutput("nohup /sbin/shutdown -h now")
+    #commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
+    commands.getstatusoutput(command)
     #print "ERROR:  POWEROFF COMMAND DISABLED FOR DEBUGGING PURPOSES."
