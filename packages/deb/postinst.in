@@ -5,5 +5,6 @@
 
 #echo "args:  $*"
 #echo "$0 called."
+/usr/sbin/autopoweroff-upgrade
 update-rc.d autopoweroff defaults >/dev/null
 exit 0

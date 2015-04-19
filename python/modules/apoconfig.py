@@ -19,22 +19,26 @@ from apolib import *
 # "scriptname" gets the value autopoweroffd when it is the daemon
 # running, thus setting "conffile" to ".../autopoweroffd.conf", which is
 # non existant.
-conffile = etcdir + "/autopoweroff.conf"
+#conffile = etcdir + "/autopoweroff.conf"
+conffile = etcdir + "/" + programname + ".conf"
 
-class APOError(Exception):
-  def __init__(self, message, errorcode):
-    self.message=message
-    self.errorcode=errorcode
+STARTHOUR=0
+ENDHOUR=1
+            
+class APOConfigurationError(APOError):
 
-  def __str__(self):
-    return "Err #" + str(self.errorcode) + ":  " + self.message
-
-class APOWarning(Exception):
-  pass
+  def __init__(self, lines, errorcode):
+    header="CONFIRGURATION ERROR\n\nThe following errors were found in configuration file:\n" + conffile
+    footer="Please fix them with the GUI or by editing the file."
+    super(APOConfigurationError, self).__init__(header, lines, footer, errorcode)
 
 class Configuration:
 
-  def __init__(self, noshutdownrange, idletime, startupdelay, hosts):
+  # Parameters can be all None.  In that circumstance, the object should
+  # be used to call read() to read the content of a configuration file.
+  def __init__(self, noshutdownrange=None, idletime=None, startupdelay=None, hosts=None, action=None, actioncommand=None, tosyslog=True):
+
+    self.tosyslog = tosyslog
     if noshutdownrange == None:
       self.noshutdownrange=[4, 23] # hours
     else:
@@ -58,6 +62,8 @@ class Configuration:
     self.warnings=""
     self.errors=""
     self.configParser = ConfigParser.ConfigParser()
+    self.action=action
+    self.actioncommand=actioncommand
 
   def warn(self, msg):
     self.warnings = self.warnings + "  - " + msg + "\n"
@@ -65,6 +71,19 @@ class Configuration:
   def deprecated(self, old, new):
     self.warn("\"" + old + "\" is deprecated.  Please use \"" + new + "\".")
 
+  # type:           StringType or IntType
+  #
+  # defaultvalue:   <any value>
+  #
+  # section:        Name of the section found in [] in the config file.
+  #
+  # options:        Entry under a section found in the config file.
+  #                 Options are of format "<optioname>|<status>"
+  #
+  #                 <status> can be one of:
+  #
+  #                    - v  for valid option
+  #                    - d  deprecated option
   def optionalConfig(self, type, defaultValue, section, *options):
     regex=re.compile("(\w+)\|(\w)")
     validOption = None
@@ -112,18 +131,18 @@ class Configuration:
   def read(self):
 
     try:
+      sendmsg("Reading configuration file:  " + conffile,
+              tosyslog=self.tosyslog)
       fd=open(conffile)
       self.configParser.readfp(fd)
       fd.close()
       #print self.configParser.sections()
-      #print "conffile=" + conffile
 
       # Shutdown range
-
-      self.noshutdownrange[0]=self.optionalConfig( \
+      self.noshutdownrange[STARTHOUR]=self.optionalConfig( \
           IntType, 0, "NO_SHUTDOWN_TIME_RANGE", "StartHour|v", "start|d")
 
-      self.noshutdownrange[1]=self.optionalConfig( \
+      self.noshutdownrange[ENDHOUR]=self.optionalConfig( \
           IntType, 0, "NO_SHUTDOWN_TIME_RANGE", "EndHour|v", "end|d")
 
       self.idletime=self.optionalConfig( \
@@ -135,19 +154,45 @@ class Configuration:
       tmphosts=self.optionalConfig( \
           StringType, 0, "DEPENDANTS", "Hosts|v", "hosts|d")
 
+      self.action=self.optionalConfig( \
+          StringType, None, "ACTION", "Action|v")
+
+      self.actioncommand=self.optionalConfig( \
+          StringType, None, "ACTION", "ActionCommand|v")
+
+      if self.action == None:
+        self.errors = "No action command command provided."
+      else:
+        # Not assigning to self.action because parse() could return None
+        # if self.action is invalid.  But we still want to print out in
+        # the error message the faulty section.
+        action = APOCommand.parse(self.action)
+        if action == None: 
+          self.errors = "Invalid action command:  \"" + \
+                        str(self.action) + "\""
+        else:
+          self.action = action
+
+      if self.actioncommand=="":
+        self.actioncommand=None
+
       # Removing whitespaces in list before performing the split.
-      self.hosts=re.sub("\s*", "", tmphosts).split(',')
+      if tmphosts == None:
+        self.hosts = []
+      else:
+        self.hosts=re.sub("\s*", "", tmphosts).split(',')
+
         # If the configuration files contains a line like "hosts=" with no
         # actual hosts defined, an empty host shows up, which is wrong.
         # we eliminate this.
-      if self.hosts[0] == '':
-        # Got an empty host.  Getting ride of it.
-        self.hosts = self.hosts[1:]
+        if self.hosts[0] == '':
+          # Got an empty host.  Getting ride of it.
+          self.hosts = self.hosts[1:]
 
     except IOError:
       self.errors = "Could not open configuration file " + conffile + \
                     "\nUsing default values."
-      raise APOError(self.errors, 1)
+      raise APOConfigurationError(self.errors, 1)
 
   def save(self):
 
@@ -216,4 +261,45 @@ class Configuration:
       if index != len(self.hosts)-1:
         fd.write(", ")
     fd.write("\n")
+
+    fd.write("""
+
+#  [ACTION]
+#
+#  Action
+#
+#   Action to be taken when all conditions are met.
+#
+#   Choices are:
+#
+#     - Shutdown
+#     - Sleep     (suspend to ram)
+#     - Hibernate (suspend to disk)
+#     - Other     (ActionCommand must be supplied)
+#
+# ActionCommand
+# 
+#   In some cases, users want to specifiy the action command.  It could be a
+#   script, a special version of /usr/sbin/shutdown, etc...  Arguments are
+#   added after the command.  Example:
+#
+#   ActionCommand=/usr/sbin/shutdown -r now
+#
+#   Strictly speaking, the command could be anything, including actions
+#   that has nothing to do with powering down a computer.  In that sense,
+#   'Autopoweroff' is a misnomer; it should have been called something like
+#   'ScheduledAction'.
+#
+#   Autopoweroff already have standard Linux command hardcoded for shutting
+#   down, sleep or hibernate the computer.  Therefore, this command comes
+#   commented in the default configuration file.
+#
+#   Since this option is an advance one, it is not available from the GUI.
+[ACTION]
+""")
+
+    # TODO:  
+    fd.write("Action="        + str(self.action)        + "\n")
+    fd.write("ActionCommand=" + str(self.actioncommand) + "\n")
+
     fd.close();

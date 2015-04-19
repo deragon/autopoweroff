@@ -1,16 +1,19 @@
-INTERSTING READING
-======================================================================
+INTERESTING READING
+══════════════════════════════════════════════════════════════════════════════
 
-  http://beranger.org/index.php?article=1958&page=3k
+  Glade and Gtk.Builder
+  http://python-gtk-3-tutorial.readthedocs.org/en/latest/builder.html
 
 
 DEVICE READING:
-======================================================================
+══════════════════════════════════════════════════════════════════════════════
+
   Synaptic touchpad driver:  http://web.telia.com/~u89404340/touchpad/
 
 
 CONSOLEHELPER
-======================================================================
+══════════════════════════════════════════════════════════════════════════════
+
   man consolehelper on info how to get consolehelper running.
 
   cd /usr/bin
@@ -34,7 +37,7 @@ EOF
 EOF
 
 
-
 GNOMESU
-======================================================================
+══════════════════════════════════════════════════════════════════════════════
+
   /usr/bin/gnomesu -c autopoweroff

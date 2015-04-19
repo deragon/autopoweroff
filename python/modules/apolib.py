@@ -1,7 +1,15 @@
+# -*- coding: utf-8 -*-
+
 import errno
 import syslog
 import os
 from __main__ import scriptname,testmode
+
+#def disableFile():
+#
+#def enable(rundir):
+  #cancelfile = rundir + "/" + scriptname + ".cancel"
+  
 
 def createDirs(aDirs):
   for directory in aDirs:
@@ -17,9 +25,10 @@ def createDirs(aDirs):
       if oserror[0] != errno.EEXIST:
         raise oserror
 
-def sendmsg(msg, priority=syslog.LOG_INFO):
+def sendmsg(msg, priority=syslog.LOG_INFO, tosyslog=True):
   print msg
-  syslog.syslog(scriptname + ":  " + str(msg))
+  if tosyslog:
+    syslog.syslog(scriptname + ":  " + str(msg))
 
 def debug(msg):
   if testmode:
@@ -28,3 +37,54 @@ def debug(msg):
 def commentString(text):
   regexp=re.compile("(?m)^")
   return regexp.sub("# ", text.rstrip().lstrip())
+
+class APOCommand:
+
+  # No enum used here as, of this writing, this code must remain
+  # compatible with 2.x Python and we do not want to add a dependency
+  # to module 'enum34'.
+  #
+  # See:  http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
+
+  SHUTDOWN="shutdown"
+  SLEEP="sleep"
+  HIBERNATE="hibernate"
+  OTHER="other"
+
+  commands={}
+  commands[SHUTDOWN]  = "/sbin/shutdown -h now"
+  commands[SLEEP]     = "echo -n mem >/sys/power/state"
+  commands[HIBERNATE] = "echo -n disk >/sys/power/state"
+
+  def parse(string):
+    if string == None:
+       return None
+
+    string = string.lower().strip()
+    if string == APOCommand.SHUTDOWN    or \
+       string == APOCommand.SLEEP       or \
+       string == APOCommand.HIBERNATE:
+      return string
+    else:
+      return None
+
+  parse = staticmethod(parse)
+
+class APOError(Exception):
+  def __init__(self, header, lines, footer, errorcode):
+    self.lines=lines.split("\n")
+    self.header=header
+    self.footer=footer
+    self.errorcode=errorcode
+
+    text=""
+    for line in self.lines:
+      text = text + "  - " + line + "\n"
+
+    self.message = header + "\n\n" + text + "\n" + footer
+
+  def __str__(self):
+    return "Err #" + str(self.errorcode) + ":  " + self.message
+
+class APOWarning(Exception):
+  pass
