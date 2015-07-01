@@ -66,6 +66,24 @@ if os.path.exists(pidfile):
       # If such is the case, we ignore the exception, else, we raise it.
       raise
 
+
+# ======================================================================
+# SIGTERM Handler
+def sigtermHandler(_signo, _stack_frame):
+  print "sigtermHandler() called."
+  global aApoDevObs
+  for thread in aApoDevObs:
+    thread.terminate()
+
+  global pidfile
+  os.remove(pidfile)
+  sendmsg("Ending.")
+
+signal.signal(signal.SIGTERM, sigtermHandler)
+
+
+# ======================================================================
+# Configuration
 configuration = apoconfig.Configuration(None, None, None, None)
 try:
   configuration.read()
@@ -210,155 +228,149 @@ for sDevice in aDevices:
 
 ######################################################################
 isToBePutOnHold = False
-finish          = False
 alivePrint      = False
 sleepTimeLogged = False
-while not finish:
+try:
+   while True:
 
-  # Checking if the current hour is within the poweroff shutdown range.
-  # Now contains the current hour.
+     if os.path.exists(cancelfile):
+       if not isToBePutOnHold:
+         isToBePutOnHold = True
+         sendmsg(programname + " disabled as requested (detected presence of '" + \
+                 cancelfile + "').")
+       time.sleep(15)
+       continue
+     else:
+       isToBePutOnHold = False
+    
+     # Checking if the current hour is within the poweroff shutdown range.
+     # Now contains the current hour.
 
-  now = time.time()
-  #debug("UTC:  ", time.gmtime(now))
-  #debug("LOCAL:  ", time.localtime(now))
-  nowtuple = time.localtime(now)
-  nowhour = nowtuple[3]
-  #debug(nowhour)
+     now = time.time()
+     #debug("UTC:  ", time.gmtime(now))
+     #debug("LOCAL:  ", time.localtime(now))
+     nowtuple = time.localtime(now)
+     nowhour = nowtuple[3]
+     #debug(nowhour)
 
-  sleeptime = 0;
-  if configuration.noshutdownrange[apoconfig.STARTHOUR] <= configuration.noshutdownrange[apoconfig.ENDHOUR]:
-    if nowhour >= configuration.noshutdownrange[apoconfig.STARTHOUR] and \
-       nowhour < configuration.noshutdownrange[apoconfig.ENDHOUR]:
-      shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2],
-                     configuration.noshutdownrange[apoconfig.ENDHOUR],
-                     0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
-      #debug(shutdowntuple)
-      #debug(nowtuple)
-      sleeptime=time.mktime(shutdowntuple)-now+1
-  else:
-    if (nowhour >= configuration.noshutdownrange[apoconfig.STARTHOUR] and nowhour <= 24) or \
-        nowhour < configuration.noshutdownrange[apoconfig.ENDHOUR] :
-      shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2]+1,
-                     configuration.noshutdownrange[apoconfig.ENDHOUR],
-                     0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
-      #debug(shutdowntuple)
-      #debug(nowtuple)
-      sleeptime=time.mktime(shutdowntuple)-now+1
+     sleeptime = 0;
+     if configuration.noshutdownrange[apoconfig.STARTHOUR] <= \
+        configuration.noshutdownrange[apoconfig.ENDHOUR]:
+       if nowhour >= configuration.noshutdownrange[apoconfig.STARTHOUR] and \
+          nowhour < configuration.noshutdownrange[apoconfig.ENDHOUR]:
+         shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2],
+                        configuration.noshutdownrange[apoconfig.ENDHOUR],
+                        0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
+         #debug(shutdowntuple)
+         #debug(nowtuple)
+         sleeptime=time.mktime(shutdowntuple)-now+1
+     else:
+       if (nowhour >= configuration.noshutdownrange[apoconfig.STARTHOUR] and 
+           nowhour <= 24) or \
+           nowhour < configuration.noshutdownrange[apoconfig.ENDHOUR] :
+         shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2]+1,
+                        configuration.noshutdownrange[apoconfig.ENDHOUR],
+                        0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
+         #debug(shutdowntuple)
+         #debug(nowtuple)
+         sleeptime=time.mktime(shutdowntuple)-now+1
 
-  if sleeptime > 0:
-    # Using gmtime(sleeptime) here because localtime(0) is actually
-    # 1969/12/31 19h00, thus if using localtime(sleeptime), we actually
-    # print the sleeptime minus 5 hours, which is wrong.
-    if sleepTimeLogged == False:
-      sendmsg("Currently not in time range " + \
-              str(configuration.noshutdownrange) + \
-              " for " + commandtext + ".  Sleeping for " + \
-              time.strftime("%H:%M:%S", time.gmtime(sleeptime)),".")
-      sleepTimeLogged = True
-    alivePrint=False
+     if sleeptime > 0:
+       # Using gmtime(sleeptime) here because localtime(0) is actually
+       # 1969/12/31 19h00, thus if using localtime(sleeptime), we actually
+       # print the sleeptime minus 5 hours, which is wrong.
+       if sleepTimeLogged == False:
+         sendmsg("Currently not in time range " + \
+                 str(configuration.noshutdownrange) + \
+                 " for " + commandtext + ".  Sleeping for " + \
+                 time.strftime("%H:%M:%S", time.gmtime(sleeptime)),".")
+         sleepTimeLogged = True
+       alivePrint=False
 
-    # Actually sleeping for 1 minute.  The problem is that when the system is
-    # suspended or hibernated prior the expiration time, the sleep will
-    # continue where it left of, without taking account the time that lapsed
-    # during the sleep.
+       # Actually sleeping for 1 minute.  The problem is that when the system is
+       # suspended or hibernated prior the expiration time, the sleep will
+       # continue where it left of, without taking account the time that lapsed
+       # during the sleep.
 
-    # Say for example that sleeptime is 2 hours.  15 minutes after this thread
-    # started sleeping, the user manually suspends the computer for 3 hours.
-    # Upon resuming, this thread will still continue to sleep for 1:45 hours,
-    # despite it should be stopped.
+       # Say for example that sleeptime is 2 hours.  15 minutes after this thread
+       # started sleeping, the user manually suspends the computer for 3 hours.
+       # Upon resuming, this thread will still continue to sleep for 1:45 hours,
+       # despite it should be stopped.
 
-    time.sleep(1*60)
-    continue
+       time.sleep(1*60)
+       continue
 
-  if os.path.exists(cancelfile):
-    if not isToBePutOnHold:
-      isToBePutOnHold = True
-      sendmsg("Suspended as requested.")
-    time.sleep(15)
-    continue
-  else:
-    isToBePutOnHold = False
- 
-  # HANS:  TODO:
-  # to check if gm
-  nowTime = time.time()
-  timeElapsedSinceLastEvent = nowTime - gLastInputEventTime
+     nowTime = time.time()
+     timeElapsedSinceLastEvent = nowTime - gLastInputEventTime
 
-  debug("timeElapsedSinceLastEvent = " + str(timeElapsedSinceLastEvent))
+     debug("timeElapsedSinceLastEvent = " + str(timeElapsedSinceLastEvent))
 
-  # If configuration.idletime is set to 0, that means that the user
-  # does not want any of the console inputs to influence the shutdown decision.
-  if configuration.idletime > 0 and \
-     timeElapsedSinceLastEvent < configuration.idletime*60:
-    sleeptime=None
-    if testmode:
-      sleeptime=2
-    else:
-      sleeptime=configuration.idletime*60
-    debug("Sleeping for " + str(sleeptime) + "s.")
-    time.sleep(sleeptime)
-    continue
+     # If configuration.idletime is set to 0, that means that the user
+     # does not want any of the console inputs to influence the shutdown decision.
+     if configuration.idletime > 0 and \
+        timeElapsedSinceLastEvent < configuration.idletime*60:
+       sleeptime=None
+       if testmode:
+         sleeptime=2
+       else:
+         sleeptime=configuration.idletime*60
+       debug("Sleeping for " + str(sleeptime) + "s.")
+       time.sleep(sleeptime)
+       continue
 
-  isOneStillAlive=False
+     isOneStillAlive=False
 
-  # Eventually, the following code for pinging hosts should be threaded
-  # so this could be done in the background.
-  aInterfaces=commands.getstatusoutput( \
-    "route -n | tail --lines=+3 | awk -F \" \" \"{print \$8}\" | sort -u")[1].split()
-  for host in configuration.hosts:
-    #debug("Pinging host:  >>" + host + "<<")
-    status = commands.getstatusoutput("ping -c 1 -w 10 " + host)[0]
-    #debug(status)
-    #signal = status & 0xFF
-    exitcode = (status >> 8) & 0xFF
-    #debug(exitcode)
-    if exitcode == 0:
-      isOneStillAlive=True
-      break
+     # Eventually, the following code for pinging hosts should be threaded
+     # so this could be done in the background.
+     aInterfaces=commands.getstatusoutput( \
+       "route -n | tail --lines=+3 | awk -F \" \" \"{print \$8}\" | sort -u")[1].split()
+     for host in configuration.hosts:
+       #debug("Pinging host:  >>" + host + "<<")
+       status = commands.getstatusoutput("ping -c 1 -w 10 " + host)[0]
+       #debug(status)
+       #signal = status & 0xFF
+       exitcode = (status >> 8) & 0xFF
+       #debug(exitcode)
+       if exitcode == 0:
+         isOneStillAlive=True
+         break
 
-    # Experimental use of arping.
-    debug(aInterfaces)
-    for interface in aInterfaces:
-      status = commands.getstatusoutput( \
-                "arping -w 10 -I " + interface + " " + host)[0]
-      debug(status)
-      #signal = status & 0xFF
-      exitcode = (status >> 8) & 0xFF
-      debug(exitcode)
-      if exitcode == 0:
-        isOneStillAlive=True
-        break
+       # Experimental use of arping.
+       debug(aInterfaces)
+       for interface in aInterfaces:
+         status = commands.getstatusoutput( \
+                   "arping -w 10 -I " + interface + " " + host)[0]
+         debug(status)
+         #signal = status & 0xFF
+         exitcode = (status >> 8) & 0xFF
+         debug(exitcode)
+         if exitcode == 0:
+           isOneStillAlive=True
+           break
 
-  if isOneStillAlive:
-    if not alivePrint:
-      sendmsg(host + " is still alive.")
-    alivePrint=True
-    time.sleep(5)
-    continue
-  else:
-    sendmsg("All the conditions for shutdown are met.  System shutdown.", \
-            syslog.LOG_ALERT)
-    finish = True
-  # Checking if anybody is working on the server.  No shutdown if there
-  # is activity on the keyboard or on the mouse.
+     if isOneStillAlive:
+       if not alivePrint:
+         sendmsg(host + " is still alive.")
+       alivePrint=True
+       time.sleep(5)
+       continue
+     else:
+       sendmsg("All the conditions are met for running the action.", \
+               syslog.LOG_ALERT)
+       if testmode:
+         print "Test mode:  would have run action '" + command \
+               + "' at " + time.strftime("%H:%M:%S", (time.localtime(time.time())))
+       else:
+         #commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
+         commands.getstatusoutput(command)
+         #print "ERROR:  POWEROFF COMMAND DISABLED FOR DEBUGGING PURPOSES."
 
-for thread in aApoDevObs:
-  thread.terminate()
 
-os.remove(pidfile)
-sendmsg("Ending.")
 
-# Only poweroff if it has been determined that this is the action to do.
-# Remember, autopoweroff could have received a SIGTERM (CTRL-C).
-#
-# The while loop can end when finish == True or if autopoweroff
-# receives a SIGTERM signal.
-if finish:  # No SIGTERM signal received and clean shutdown required.
-
-  if testmode:
-    print "Test mode:  would have run action '" + command \
-          + "' at " + time.strftime("%H:%M:%S", (time.localtime(time.time())))
-  else:
-    #commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
-    commands.getstatusoutput(command)
-    #print "ERROR:  POWEROFF COMMAND DISABLED FOR DEBUGGING PURPOSES."
+   # Only poweroff if it has been determined that this is the action to do.
+   # Remember, autopoweroff could have received a SIGTERM (CTRL-C).
+   #
+   # The while loop can end when finish == True or if autopoweroff
+   # receives a SIGTERM signal.
+except:
+  sigtermHandler(None, None)
