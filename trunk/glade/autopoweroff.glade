@@ -36,25 +36,32 @@
   <object class="GtkAboutDialog" id="DlgAbout">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
+    <property name="title" translatable="yes">Autopoweroff - About</property>
+    <property name="default_width">-1</property>
+    <property name="default_height">-1</property>
+    <property name="icon">autopoweroff.png</property>
     <property name="type_hint">normal</property>
     <property name="program_name">Autopoweroff</property>
     <property name="version">&amp;lt;put version here&amp;gt;</property>
     <property name="copyright" translatable="yes">Hans Deragon,
 (c) Copyright 2006-2015</property>
-    <property name="comments" translatable="yes">Poweroff, Sleep, Hibernate (or any other action)
+    <property name="comments" translatable="yes">Poweroff, sleep, hibernate or run any other action on
 your computer automatically when conditions
-you set are met.</property>
+you set are met, such as having no more activity on the keyboard/mouse and no dependencies against other hosts.</property>
     <property name="website">http://autopoweroff.sourceforge.net</property>
     <property name="website_label" translatable="yes">Autopoweroff website</property>
-    <property name="license" translatable="yes">GPL 2.0</property>
     <property name="authors">Hans Deragon
 Computer consultant
 Deragon Informatique inc.
 http://www.deragon.biz
 </property>
     <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
+    <property name="logo">autopoweroff.png</property>
+    <property name="logo_icon_name"/>
+    <property name="license_type">gpl-2-0</property>
     <signal name="close" handler="gtk_widget_hide_on_delete" swapped="no"/>
     <signal name="delete-event" handler="gtk_widget_hide_on_delete" swapped="no"/>
+    <signal name="response" handler="gtk_widget_hide_on_delete" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="aboutdialog">
         <property name="can_focus">False</property>
@@ -498,7 +505,7 @@ which is dependant of this one.</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="xpad">4</property>
-    <property name="stock">gtk-missing-image</property>
+    <property name="pixbuf">autopoweroff.png</property>
   </object>
   <object class="GtkImage" id="ImgReboot">
     <property name="visible">True</property>
@@ -626,7 +633,6 @@ which is dependant of this one.</property>
                                 <property name="use_underline">True</property>
                                 <property name="xalign">0.5</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">RadioStatusDisabled</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
