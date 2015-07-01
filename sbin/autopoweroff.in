@@ -41,25 +41,9 @@ from apolib import *
 import apoconfig
 import apodoc
 
-#errors=""
-#for modulename in [ "pygtk", "gtka", "gtk.glade", "gobject", "gnome.ui" ]:
-#  try:
-#    pygtk=__import__(modulename)
-#    if modulename == "pygtk":
-#      pygtk.require('2.0')
-#  except ImportError, errormsg:
-#    errors = errors + "- " + str(errormsg) + "\n"
-#
-#print errors
-
 gnomeversion="3.0"
 try:
   from gi.repository import Gtk
-  #import pygtk; pygtk.require(gnomeversion)
-  #import gtk
-  #import gtk.glade
-  #import gobject
-#  import gnome.ui
 except ImportError, errormsg:
   print """
 Sorry, but this application requires Gnome """ + gnomeversion + """ resources that are not
@@ -469,10 +453,21 @@ def terminateProgram(*args):
 #
 ############################################################
 
-#gnome.init("Autopoweroff", "@version@")
-
+if testmode:
+  print "Using GTK " + \
+        str(Gtk.get_major_version()) + "." + \
+        str(Gtk.get_minor_version()) + "." + \
+        str(Gtk.get_micro_version())
 
 builder = Gtk.Builder()
+# Following line causes a warning to be generated.  No clue why
+# this happens, the warning is not helpfull at all:
+#
+#   (autopoweroff.in:12065): Gtk-WARNING **: No object called: 
+# 
+# Bug report opened on 2014-04-21 about this useless warning:
+#
+#  https://bugzilla.gnome.org/show_bug.cgi?id=748234
 builder.add_from_file(sharedir + '/glade/autopoweroff.glade')
 builder.connect_signals(locals())
 
@@ -505,7 +500,7 @@ builder.get_object("DlgAddHost").connect("delete_event", on_DlgAddHost_close)
 setRadioStatusButtons()
 readConfiguration()
 
-if os.getuid() != 0:
+if not testmode and os.getuid() != 0:
   msg="""
 <b>This executable should not have been called directly.</b>
 
@@ -531,5 +526,8 @@ The Autopoweroff GUI needs to run as root and the following executable
   DlgErrorSetup(msg)
 else: 
   builder.get_object("Autopoweroff").show()
+
+DlgAbout = builder.get_object("DlgAbout");
+DlgAbout.set_version(version)
 
 Gtk.main()
