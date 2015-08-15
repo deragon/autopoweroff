@@ -233,16 +233,6 @@ sleepTimeLogged = False
 try:
    while True:
 
-     if os.path.exists(cancelfile):
-       if not isToBePutOnHold:
-         isToBePutOnHold = True
-         sendmsg(programname + " disabled as requested (detected presence of '" + \
-                 cancelfile + "').")
-       time.sleep(15)
-       continue
-     else:
-       isToBePutOnHold = False
-    
      # Checking if the current hour is within the poweroff shutdown range.
      # Now contains the current hour.
 
@@ -287,15 +277,15 @@ try:
          sleepTimeLogged = True
        alivePrint=False
 
-       # Actually sleeping for 1 minute.  The problem is that when the system is
-       # suspended or hibernated prior the expiration time, the sleep will
-       # continue where it left of, without taking account the time that lapsed
-       # during the sleep.
+       # Actually sleeping for 1 minute.  The problem is that when the system
+       # is suspended or hibernated prior the expiration time, the sleep will
+       # continue where it left of, without taking account the time that
+       # lapsed during the sleep.
 
-       # Say for example that sleeptime is 2 hours.  15 minutes after this thread
-       # started sleeping, the user manually suspends the computer for 3 hours.
-       # Upon resuming, this thread will still continue to sleep for 1:45 hours,
-       # despite it should be stopped.
+       # Say for example that sleeptime is 2 hours.  15 minutes after this
+       # thread started sleeping, the user manually suspends the computer for
+       # 3 hours.  Upon resuming, this thread will still continue to sleep for
+       # 1:45 hours, despite it should be stopped.
 
        time.sleep(1*60)
        continue
@@ -305,8 +295,8 @@ try:
 
      debug("timeElapsedSinceLastEvent = " + str(timeElapsedSinceLastEvent))
 
-     # If configuration.idletime is set to 0, that means that the user
-     # does not want any of the console inputs to influence the shutdown decision.
+     # If configuration.idletime is set to 0, that means that the user does
+     # not want any of the console inputs to influence the shutdown decision.
      if configuration.idletime > 0 and \
         timeElapsedSinceLastEvent < configuration.idletime*60:
        sleeptime=None
@@ -314,7 +304,8 @@ try:
          sleeptime=2
        else:
          sleeptime=configuration.idletime*60
-       debug("Sleeping for " + str(sleeptime) + "s.")
+       debug("Sleeping for " + str(sleeptime) + \
+             "s following IdleTime configuration.")
        time.sleep(sleeptime)
        continue
 
@@ -352,9 +343,19 @@ try:
        if not alivePrint:
          sendmsg(host + " is still alive.")
        alivePrint=True
-       time.sleep(5)
        continue
      else:
+       while os.path.exists(cancelfile):
+         if not isToBePutOnHold:
+           isToBePutOnHold = True
+           sendmsg(programname + \
+                   " disabled as requested (detected presence of '" + \
+                   cancelfile + "').")
+         time.sleep(1*60)
+         continue
+
+       isToBePutOnHold = False
+    
        sendmsg("All the conditions are met for running the action.", \
                syslog.LOG_ALERT)
        if testmode:
