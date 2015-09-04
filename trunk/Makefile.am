@@ -17,39 +17,9 @@ sbin_SCRIPTS = \
 	sbin/autopoweroff-uninstall \
 	sbin/autopoweroff-upgrade
 
-EXTRA_DIST = \
-	sbin/autopoweroffd.in \
-	sbin/autopoweroff.in \
-	sbin/autopoweroff-uninstall.in \
-	sbin/autopoweroff-upgrade.in \
-	python/modules/apodoc.py \
-	python/modules/apolib.py \
-	python/modules/apoconfig.py \
-	etc/init.d/autopoweroff.lsb \
-	etc/init.d/autopoweroff.rc-status \
-	etc/init.d/autopoweroff.redhat \
-	glade/autopoweroff.glade \
-	glade/autopoweroff.gladep \
-	glade/autopoweroff.trans \
-	desktop/autopoweroff.desktop.in \
-	pixmaps/autopoweroff.png \
-	pixmaps/autopoweroff.svg \
-	etc/pam.d/autopoweroff \
-	etc/security/console.apps/autopoweroff.in \
-	etc/autopoweroff/autopoweroff.conf \
-	doc/autopoweroff_cfg-config.png \
-	doc/autopoweroff_cfg-statusandcmd.png \
-	doc/autopoweroff.xml \
-	doc/COPYING \
-  packages/rpm/buildrpm \
-  postinstall \
-  packages/rpm/${PACKAGE}.spec.in
-
 pythondir=${datadir}/python/modules
 python_DATA = \
-	python/modules/apodoc.py \
-	python/modules/apolib.py \
-	python/modules/apoconfig.py
+	python/modules/*.py
 
 gladedir=${datadir}/glade
 glade_DATA = \
@@ -65,8 +35,10 @@ pixmaps_DATA = \
 	pixmaps/autopoweroff.png \
   pixmaps/autopoweroff.svg
 
-etcdir = $(sysconfdir)
-etc_DATA = etc/autopoweroff/autopoweroff.conf
+etcdir = $(sysconfdir)/autopoweroff
+etc_DATA = etc/autopoweroff/autopoweroff.conf \
+           etc/autopoweroff/autopoweroff-logging.conf \
+           etc/autopoweroff/autopoweroff-logging-debug.conf
 
 pamdir = $(sysconfdir)/pam.d
 pam_DATA = etc/pam.d/autopoweroff
@@ -95,6 +67,25 @@ doc_DATA = \
   INSTALL \
   NEWS \
   README
+
+EXTRA_DIST =                            \ 
+	${sbin_SCRIPTS}                       \ 
+	${python_DATA}                        \ 
+	${autoinit_SCRIPTS}                   \ 
+	${glade_DATA}                         \ 
+	${desktop_DATA}                       \ 
+	${pixmaps_DATA}                       \ 
+	${pam_DATA}                           \ 
+	${security_DATA}                      \ 
+	${etc_DATA}                           \ 
+	doc/autopoweroff_cfg-config.png       \ 
+	doc/autopoweroff_cfg-statusandcmd.png \ 
+	doc/autopoweroff.xml                  \ 
+	doc/COPYING                           \ 
+	packages/rpm/buildrpm                 \ 
+	postinstall                           \ 
+  packages/rpm/${PACKAGE}.spec.in
+
 
 deb:
 	export PACKAGE=${PACKAGE}; \

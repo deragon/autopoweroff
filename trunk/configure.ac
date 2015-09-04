@@ -236,7 +236,7 @@ if [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
 
   set -x
   autopoweroff_sharedir="/usr/share/autopoweroff"
-  autopoweroff_etcdir="/etc"
+  autopoweroff_etcdir="/etc/autopoweroff"
   autopoweroff_etccrondir="${autopoweroff_etcdir}/cron.d"
   autopoweroff_crondir="${autopoweroff_sharedir}/cron"
   autopoweroff_bindir="/usr/bin"
@@ -267,7 +267,7 @@ else
 
   set -x
   autopoweroff_sharedir="${datadir}"
-  autopoweroff_etcdir=${sysconfdir}
+  autopoweroff_etcdir=${sysconfdir}/autopoweroff
   autopoweroff_etccrondir=${autopoweroff_etcdir}/cron.d
   autopoweroff_crondir=${autopoweroff_sharedir}/cron
   autopoweroff_vardir=${autopoweroff_sharedir}/var
@@ -293,18 +293,9 @@ elif (( ${INSTALLICON} )) || \
   fi
 fi
 
-# autopoweroff_conffile not used yet.
-#autopoweroff_conffile="${autopoweroff_etcdir}/autopoweroff.conf"
-
 if [[ -z "${autopoweroff_desktopdir}" ]]; then
   autopoweroff_desktopdir="${autopoweroff_sharedir}/applications"
 fi
-
-# if [[ "${INSTALLTYPE}" = "RPM" ]]; then
-#   datadir="/usr/share/autopoweroff"
-#   autopoweroff_desktopdir="${datadir}/applications"
-#   sysconfdir="/etc"
-# fi
 
 # Expanding used variables that can be interpreted by a Python script.
 # If we use @sysconfdir@ directly in a Python script, @sysconfdir@ would be
