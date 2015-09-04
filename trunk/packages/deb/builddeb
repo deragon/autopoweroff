@@ -17,8 +17,8 @@ else
   env
 
   BUILD=`pwd`"/build"
-  rm -rf build
-  mkdir -p build/DEBIAN
+  rm -rf "${BUILD}"
+  mkdir -p "${BUILD}/DEBIAN"
 
   cd ../..
   ./configure --prefix=${BUILD} \
@@ -59,12 +59,12 @@ EOS
 
   rm -f ${BUILD}/usr/sbin/${PACKAGE}-uninstall
 
-  rm -rf build/etc/pam.d build/etc/security  # Removing Fedora stuff
-  mv control build/DEBIAN
+  rm -rf "${BUILD}/etc/pam.d" "${BUILD}/etc/security"  # Removing Fedora stuff
+  mv control "${BUILD}/DEBIAN"
   chmod 755 postinst postrm
-  cp -p conffiles build/DEBIAN/.
-  mv postinst postrm build/DEBIAN/.
-  fakeroot dpkg-deb --build build  # Build package with files owned by root:root
+  cp -p conffiles "${BUILD}/DEBIAN/."
+  mv postinst postrm "${BUILD}/DEBIAN/."
+  fakeroot dpkg-deb --build "${BUILD}"  # Build package with files owned by root:root
   dpkg -c build.deb  # Simply show content of debian package.
   lintian build.deb  # Check if package is properly setup.
   mv build.deb ${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb
