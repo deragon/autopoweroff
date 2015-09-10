@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 # Autopoweroff, version @version@
 
@@ -14,15 +15,15 @@ import errno
 import logging
 import logging.config
 
-testmode = "@production@" != "true"
+gTestMode = "@production@" != "true"
 
 # Fork to disconnect from the terminal, if in production.
-if not testmode and os.fork() != 0:
+if not gTestMode and os.fork() != 0:
   sys.exit(0)
 
 scriptname = os.path.basename(sys.argv[0])
 
-if testmode:
+if gTestMode:
   # We are in test mode.  Using relative values.
   programname = "autopoweroff"
   sharedir = ".."
@@ -43,11 +44,13 @@ else:
 
 logging.config.fileConfig(etcdir + "/" + loggingFile)
 logger = logging.getLogger(__name__);
+logger.info("══════════════════════════════════════════════════════════")
+logger.info(programname + " started.")
 
 sys.path.append(sharedir + '/python/modules')
 
-import apoconfig
-from apolib import *
+import ApoConfig
+from ApoLibrary import *
 
 if os.getuid() != 0:
   sendmsg("Must be executed as root.")
@@ -92,12 +95,12 @@ signal.signal(signal.SIGTERM, sigtermHandler)
 
 # ======================================================================
 # Configuration
-configuration = apoconfig.Configuration(None, None, None, None)
+configuration = ApoConfig.Configuration(None, None, None, None)
 try:
   configuration.read()
-except apoconfig.APOWarning, message:
+except ApoConfig.APOWarning, message:
   sendmsg(message)
-except apoconfig.APOError, message:
+except ApoConfig.APOError, message:
   sendmsg(message)
 
 command=""
@@ -125,8 +128,8 @@ sendmsg("Command to execute when all conditions are met:  " + command)
 # Starting thread that checks if any host is still alive.
 # The global gHostsStillAlive variable is updated by this thread
 # and used by the main one to get the list of all hosts still alive.
-from HostsStillAliveCheckThread import *
-hostsStillAliveCheckThread=HostsStillAliveCheckThread(configuration.hosts)
+from ApoHostsStillAliveCheckThread import *
+hostsStillAliveCheckThread=ApoHostsStillAliveCheckThread(configuration.hosts)
 hostsStillAliveCheckThread.start()
 
 
@@ -140,7 +143,7 @@ file.close()
 ######################################################################
 # The system must remain on for at least the 'startupdelay' first minutes
 # it was started.
-if not testmode:
+if not gTestMode:
   sendmsg("Startup sleep of " + str(configuration.startupdelay) + " minutes.")
   time.sleep(configuration.startupdelay*60)
 
@@ -258,37 +261,37 @@ try:
      nowhour = nowtuple[3]
      #logger.debug(nowhour)
 
-     sleeptime = 0;
-     if configuration.noshutdownrange[apoconfig.STARTHOUR] <= \
-        configuration.noshutdownrange[apoconfig.ENDHOUR]:
-       if nowhour >= configuration.noshutdownrange[apoconfig.STARTHOUR] and \
-          nowhour < configuration.noshutdownrange[apoconfig.ENDHOUR]:
+     sleepTime = 0;
+     if configuration.noshutdownrange[ApoConfig.STARTHOUR] <= \
+        configuration.noshutdownrange[ApoConfig.ENDHOUR]:
+       if nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and \
+          nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
          shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2],
-                        configuration.noshutdownrange[apoconfig.ENDHOUR],
+                        configuration.noshutdownrange[ApoConfig.ENDHOUR],
                         0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
          #logger.debug(shutdowntuple)
          #logger.debug(nowtuple)
-         sleeptime=time.mktime(shutdowntuple)-now+1
+         sleepTime=time.mktime(shutdowntuple)-now+1
      else:
-       if (nowhour >= configuration.noshutdownrange[apoconfig.STARTHOUR] and 
+       if (nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and 
            nowhour <= 24) or \
-           nowhour < configuration.noshutdownrange[apoconfig.ENDHOUR] :
+           nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR] :
          shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2]+1,
-                        configuration.noshutdownrange[apoconfig.ENDHOUR],
+                        configuration.noshutdownrange[ApoConfig.ENDHOUR],
                         0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
          #logger.debug(shutdowntuple)
          #logger.debug(nowtuple)
-         sleeptime=time.mktime(shutdowntuple)-now+1
+         sleepTime=time.mktime(shutdowntuple)-now+1
 
-     if sleeptime > 0:
-       # Using gmtime(sleeptime) here because localtime(0) is actually
-       # 1969/12/31 19h00, thus if using localtime(sleeptime), we actually
-       # print the sleeptime minus 5 hours, which is wrong.
+     if sleepTime > 0:
+       # Using gmtime(sleepTime) here because localtime(0) is actually
+       # 1969/12/31 19h00, thus if using localtime(sleepTime), we actually
+       # print the sleepTime minus 5 hours, which is wrong.
        if sleepTimeLogged == False:
          sendmsg("Currently not in time range " + \
                  str(configuration.noshutdownrange) + \
                  " for " + commandtext + ".  Sleeping for " + \
-                 time.strftime("%H:%M:%S", time.gmtime(sleeptime)),".")
+                 time.strftime("%H:%M:%S", time.gmtime(sleepTime)),".")
          sleepTimeLogged = True
        alivePrint=False
 
@@ -297,7 +300,7 @@ try:
        # continue where it left of, without taking account the time that
        # lapsed during the sleep.
 
-       # Say for example that sleeptime is 2 hours.  15 minutes after this
+       # Say for example that sleepTime is 2 hours.  15 minutes after this
        # thread started sleeping, the user manually suspends the computer for
        # 3 hours.  Upon resuming, this thread will still continue to sleep for
        # 1:45 hours, despite it should be stopped.
@@ -314,14 +317,14 @@ try:
      # not want any of the console inputs to influence the shutdown decision.
      if configuration.idletime > 0 and \
         timeElapsedSinceLastEvent < configuration.idletime*60:
-       sleeptime=None
-       if testmode:
-         sleeptime=2
+       sleepTime=None
+       if gTestMode:
+         sleepTime=2
        else:
-         sleeptime=configuration.idletime*60
-       logger.debug("Sleeping for " + str(sleeptime) + \
+         sleepTime=configuration.idletime*60
+       logger.debug("Sleeping for " + str(sleepTime) + \
              "s following IdleTime configuration.")
-       time.sleep(sleeptime)
+       time.sleep(sleepTime)
        continue
     
      logger.debug("gHostsStillAlive = " + str(gHostsStillAlive))
@@ -344,7 +347,7 @@ try:
     
        sendmsg("All the conditions are met for running the action.", \
                syslog.LOG_ALERT)
-       if testmode:
+       if gTestMode:
          print "Test mode:  would have run action '" + command \
                + "' at " + time.strftime("%H:%M:%S", (time.localtime(time.time())))
        else:

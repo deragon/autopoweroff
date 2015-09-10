@@ -11,9 +11,9 @@ import traceback
 scriptname        = os.path.basename(sys.argv[0])
 scriptnameandpath = os.path.realpath(sys.argv[0])
 
-testmode = "@production@" != "true"
+gTestMode = "@production@" != "true"
 
-if not testmode:
+if not gTestMode:
   sharedir    = "@autopoweroff_sharedir@"
   initdir     = "@autopoweroff_initdir@"
   etcdir      = "@autopoweroff_etcdir@/@PACKAGE_NAME@"
@@ -37,9 +37,9 @@ else:
 
 sys.path.append(sharedir + '/python/modules')
 
-from apolib import *
-import apoconfig
-import apodoc
+from ApoLibrary import *
+import ApoConfig
+import ApoDocumentation
 
 gnomeversion="3.0"
 try:
@@ -282,12 +282,12 @@ def setRadioStatusButtons():
 def readConfiguration():
   global LMConfigHosts 
 
-  configuration = apoconfig.Configuration(None, None, None, None, None, None, False)
+  configuration = ApoConfig.Configuration(None, None, None, None, None, None, False)
   try:
     configuration.read()
-  except apoconfig.APOWarning:
+  except ApoConfig.APOWarning:
     pass
-  except apoconfig.APOError, exception:
+  except ApoConfig.APOError, exception:
     builder.get_object("DlgError").set_markup(str(exception.message))
     builder.get_object("DlgError").show()
 
@@ -362,7 +362,7 @@ def saveConfiguration():
 
     actioncommand = builder.get_object("TxtActionCommand").get_text()
 
-    configuration = apoconfig.Configuration( \
+    configuration = ApoConfig.Configuration( \
                       noshutdownrange, idletime, startupdelay, \
                       hosts, action, actioncommand)
     configuration.save()
@@ -453,7 +453,7 @@ def terminateProgram(*args):
 #
 ############################################################
 
-if testmode:
+if gTestMode:
   print "Using GTK " + \
         str(Gtk.get_major_version()) + "." + \
         str(Gtk.get_minor_version()) + "." + \
@@ -485,9 +485,9 @@ builder.get_object("DlgAddHost").connect("delete_event", on_DlgAddHost_close)
 # Todo:  à réimplémenter
 #tooltip=gtk.Tooltips()
 #tooltip.set_tip(builder.get_object("SbStartHour"), \
-#                apodoc.get("config-StartHour&EndHour"))
+#                ApoDocumentation.get("config-StartHour&EndHour"))
 #tooltip.set_tip(builder.get_object("SbEndHour"), \
-#                apodoc.get("config-StartHour&EndHour"))
+#                ApoDocumentation.get("config-StartHour&EndHour"))
 
 # Setting up the single column for TVDependants
 #tvDependants=builder.get_object("TVDependants")
@@ -500,7 +500,7 @@ builder.get_object("DlgAddHost").connect("delete_event", on_DlgAddHost_close)
 setRadioStatusButtons()
 readConfiguration()
 
-if not testmode and os.getuid() != 0:
+if not gTestMode and os.getuid() != 0:
   msg="""
 <b>This executable should not have been called directly.</b>
 

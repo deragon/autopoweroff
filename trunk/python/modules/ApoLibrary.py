@@ -3,7 +3,7 @@
 import errno
 import syslog
 import os
-from __main__ import scriptname,testmode
+from __main__ import scriptname,gTestMode
 
 #def disableFile():
 #
@@ -31,7 +31,7 @@ def sendmsg(msg, priority=syslog.LOG_INFO, tosyslog=True):
     syslog.syslog(scriptname + ":  " + str(msg))
 
 def debug(msg):
-  if testmode:
+  if gTestMode:
     print msg
 
 def commentString(text):
