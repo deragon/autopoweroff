@@ -7,13 +7,13 @@ import re
 import syslog
 from types import *
 from __main__ import *
-import apodoc
-from apolib import *
+import ApoDocumentation
+from ApoLibrary import *
 
 #scriptname = os.path.basename(sys.argv[0])
 
-#print commentString(apodoc.get('IdleTime'))
-#print apodoc.get('IdleTime')
+#print commentString(ApoDocumentation.get('IdleTime'))
+#print ApoDocumentation.get('IdleTime')
 
 # Do not use variable "scriptname" for defining the "conffile".
 # "scriptname" gets the value autopoweroffd when it is the daemon
