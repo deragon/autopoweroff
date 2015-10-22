@@ -240,9 +240,9 @@ except OSError, oserror:
 
 for device in DevicesArray:
   logger.debug("Device = " + device)
-  #apoDevObs=ApoDeviceObserverThread(device)
-  #apoDevObs.start()
-  #ApoDevObsArray.append(apoDevObs)
+  apoDevObs=ApoDeviceObserverThread(device)
+  apoDevObs.start()
+  ApoDevObsArray.append(apoDevObs)
 
 ######################################################################
 isToBePutOnHold = False
