@@ -8,6 +8,7 @@ import syslog
 from types import *
 from __main__ import *
 import ApoDocumentation
+import logging
 from ApoLibrary import *
 
 #scriptname = os.path.basename(sys.argv[0])
@@ -28,6 +29,7 @@ ENDHOUR=1
 class APOConfigurationError(APOError):
 
   def __init__(self, lines, errorcode):
+    
     header="CONFIRGURATION ERROR\n\nThe following errors were found in configuration file:\n" + conffile
     footer="Please fix them with the GUI or by editing the file."
     super(APOConfigurationError, self).__init__(header, lines, footer, errorcode)
@@ -37,7 +39,7 @@ class Configuration:
   # Parameters can be all None.  In that circumstance, the object should
   # be used to call read() to read the content of a configuration file.
   def __init__(self, noshutdownrange=None, idletime=None, startupdelay=None, hosts=None, action=None, actioncommand=None, tosyslog=True):
-
+    self.logger = logging.getLogger(__name__)
     self.tosyslog = tosyslog
     if noshutdownrange == None:
       self.noshutdownrange=[4, 23] # hours
@@ -125,7 +127,7 @@ class Configuration:
     if validWarn:
         self.warn(validWarn)
 
-    debug("configuration:  " + option + " = " + str(value))
+    self.logger.debug("configuration:  " + option + " = " + str(value))
     return value
 
   def read(self):
