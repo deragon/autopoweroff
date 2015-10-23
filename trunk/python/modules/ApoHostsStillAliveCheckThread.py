@@ -4,9 +4,8 @@ import commands
 import threading
 import time
 import logging
-#from ApoLibrary import *
 
-class HostsStillAliveCheckThread(threading.Thread):
+class ApoHostsStillAliveCheckThread(threading.Thread):
 
   def __init__(self, hosts):
     self.logger = logging.getLogger(__name__);
