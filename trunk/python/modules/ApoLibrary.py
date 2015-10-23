@@ -3,6 +3,7 @@
 import errno
 import syslog
 import os
+import logging
 from __main__ import scriptname,gTestMode
 
 #def disableFile():
@@ -10,6 +11,7 @@ from __main__ import scriptname,gTestMode
 #def enable(rundir):
   #cancelfile = rundir + "/" + scriptname + ".cancel"
   
+logger = logging.getLogger(__name__)
 
 def createDirs(aDirs):
   for directory in aDirs:
@@ -26,13 +28,9 @@ def createDirs(aDirs):
         raise oserror
 
 def sendmsg(msg, priority=syslog.LOG_INFO, tosyslog=True):
-  print msg
+  logger.info(msg)
   if tosyslog:
     syslog.syslog(scriptname + ":  " + str(msg))
-
-def debug(msg):
-  if gTestMode:
-    print msg
 
 def commentString(text):
   regexp=re.compile("(?m)^")
