@@ -3,17 +3,12 @@
 
 # Autopoweroff, version @version@
 
-import sys
-import commands
-import os
-import syslog
-import time
-import re
-import signal
-import threading
-import errno
 import logging
 import logging.config
+import os
+import re
+import signal
+import sys
 
 gTestMode = "@production@" != "true"
 
@@ -55,17 +50,17 @@ if os.getuid() != 0:
   sendmsg("Must be executed as root.")
   sys.exit(1)
 
-createDirs([ piddir, rundir ])
+createDirs([piddir, rundir])
 cancelfile = rundir + "/" + scriptname + ".cancel"
-conffile   = etcdir + "/" + scriptname + ".conf"
+conffile = etcdir + "/" + scriptname + ".conf"
 
 # The "No shutdown range" is the range, expressed in hours, during which no
 # shutdown is to be performed.
 # Expressed in local time, not UTC.
 
 if os.path.exists(pidfile):
-  fdPidFile=open(pidfile)
-  pid=fdPidFile.readline()
+  fdPidFile = open(pidfile)
+  pid = fdPidFile.readline()
   fdPidFile.close()
   try:
     os.kill(int(pid), signal.SIGTERM)
@@ -89,8 +84,8 @@ def sigtermHandler(_signo, _stack_frame):
   os.remove(pidfile)
   sendmsg("Ending.")
 
-signal.signal(signal.SIGTERM, sigtermHandler)
 
+signal.signal(signal.SIGTERM, sigtermHandler)
 
 # ======================================================================
 # Configuration
@@ -102,7 +97,7 @@ except ApoConfig.APOWarning, message:
 except ApoConfig.APOError, message:
   sendmsg(message)
 
-command=""
+command = ""
 if configuration.action == None:
   # Default command is SLEEP.  It is safer as no actual data can be lost going
   # to sleep where a shutdown my cause data lost because saving operations
@@ -117,45 +112,42 @@ else:
   command = APOCommand.commands[configuration.action]
   commandtext = APOCommand.commands[configuration.action]
 
-#logger.debug("idletime=" + str(configuration.idletime))
+# logger.debug("idletime=" + str(configuration.idletime))
 
 sendmsg("Successfully started as PID: " + str(os.getpid()))
 sendmsg("Command to execute when all conditions are met:  " + command)
-
 
 ######################################################################
 # Starting thread that checks if any host is still alive.
 # The global gHostsStillAlive variable is updated by this thread
 # and used by the main one to get the list of all hosts still alive.
 from ApoHostsStillAliveCheckThread import *
-hostsStillAliveCheckThread=ApoHostsStillAliveCheckThread(configuration.hosts)
-hostsStillAliveCheckThread.start()
 
+hostsStillAliveCheckThread = ApoHostsStillAliveCheckThread(configuration.hosts)
+hostsStillAliveCheckThread.start()
 
 ######################################################################
 # Lock file creation to ensure only one instance of this script is running.
-file=open(pidfile, 'w')
+file = open(pidfile, 'w')
 file.write(str(os.getpid()))
 file.close()
-
 
 ######################################################################
 # The system must remain on for at least the 'startupdelay' first minutes
 # it was started.
 if not gTestMode:
   sendmsg("Startup sleep of " + str(configuration.startupdelay) + " minutes.")
-  time.sleep(configuration.startupdelay*60)
-
+  time.sleep(configuration.startupdelay * 60)
 
 ######################################################################
 # Loading kernel power management module.
 # For the moment, not required.
-#commands.getstatusoutput("/sbin/modprobe apm")
+# commands.getstatusoutput("/sbin/modprobe apm")
 
 gLastInputEventTime = time.time()
 
-class ApoDeviceObserverThread(threading.Thread):
 
+class ApoDeviceObserverThread(threading.Thread):
   def __init__(self, sDevice):
     threading.Thread.__init__(self, name=sDevice)
     self.setDaemon(True)
@@ -164,9 +156,9 @@ class ApoDeviceObserverThread(threading.Thread):
 
   def run(self):
     global gLastInputEventTime
-    fd=open(self.sDevice, 'r')
+    fd = open(self.sDevice, 'r')
     logger.debug("ApoDeviceObserverThread.run():  Check on " + \
-        self.sDevice + " started.")
+                 self.sDevice + " started.")
     self.finish = False
     lastEventTime = 0.0
     while not self.finish:
@@ -178,21 +170,21 @@ class ApoDeviceObserverThread(threading.Thread):
         fd.read(1)
       except IOError, ioerror:
         if ioerror.errno == errno.ENODEV:
-          self.finish=True
-          sendmsg("Device " + self.sDevice + " absent (No such device error)",\
+          self.finish = True
+          sendmsg("Device " + self.sDevice + " absent (No such device error)", \
                   priority=syslog.LOG_NOTICE)
           continue
         else:
           raise
-      currentTime=time.time()
-      gLastInputEventTime=currentTime
-      #print currentTime-lastEventTime
+      currentTime = time.time()
+      gLastInputEventTime = currentTime
+      # print currentTime-lastEventTime
       # To reduce the quantity of output, we print only a few
       # of the events, for logger.debugging purposes.  Else, it is simply
       # to much.
       if currentTime > lastEventTime + 0.01:
         logger.debug("ApoDeviceObserverThread.run():  Activity detected on " + \
-            self.sDevice + " at " + str(currentTime))
+                     self.sDevice + " at " + str(currentTime))
       lastEventTime = currentTime
     fd.close()
 
@@ -207,10 +199,10 @@ ApoDevObsArray = []
 
 try:
   spkrRE = re.compile(".*spkr.*")
-  devicePath=None
+  devicePath = None
   # Ubuntu 06.06 does not have any /dev/input/by-paty,
   # only /dev/input.
-  for devicePath in [ "/dev/input/by-path", "/dev/input" ]:
+  for devicePath in ["/dev/input/by-path", "/dev/input"]:
     if os.path.exists(devicePath):
       break
 
@@ -239,7 +231,7 @@ except OSError, oserror:
 
 for device in DevicesArray:
   logger.debug("Device = " + device)
-  apoDevObs=ApoDeviceObserverThread(device)
+  apoDevObs = ApoDeviceObserverThread(device)
   apoDevObs.start()
   ApoDevObsArray.append(apoDevObs)
 
@@ -248,111 +240,111 @@ isToBePutOnHold = False
 alivePrint      = False
 sleepTimeLogged = False
 try:
-   while True:
+  while True:
 
-     # Checking if the current hour is within the poweroff shutdown range.
-     # Now contains the current hour.
+    # Checking if the current hour is within the poweroff shutdown range.
+    # Now contains the current hour.
 
-     now = time.time()
-     #logger.debug("UTC:  ", time.gmtime(now))
-     #logger.debug("LOCAL:  ", time.localtime(now))
-     nowtuple = time.localtime(now)
-     nowhour = nowtuple[3]
-     #logger.debug(nowhour)
+    now = time.time()
+    # logger.debug("UTC:  ", time.gmtime(now))
+    # logger.debug("LOCAL:  ", time.localtime(now))
+    nowtuple = time.localtime(now)
+    nowhour = nowtuple[3]
+    # logger.debug(nowhour)
 
-     sleepTime = 0;
-     if configuration.noshutdownrange[ApoConfig.STARTHOUR] <= \
-        configuration.noshutdownrange[ApoConfig.ENDHOUR]:
-       if nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and \
-          nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
-         shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2],
-                        configuration.noshutdownrange[ApoConfig.ENDHOUR],
-                        0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
-         #logger.debug(shutdowntuple)
-         #logger.debug(nowtuple)
-         sleepTime=time.mktime(shutdowntuple)-now+1
-     else:
-       if (nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and 
-           nowhour <= 24) or \
-           nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR] :
-         shutdowntuple=(nowtuple[0], nowtuple[1], nowtuple[2]+1,
-                        configuration.noshutdownrange[ApoConfig.ENDHOUR],
-                        0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
-         #logger.debug(shutdowntuple)
-         #logger.debug(nowtuple)
-         sleepTime=time.mktime(shutdowntuple)-now+1
+    sleepTime = 0;
+    if configuration.noshutdownrange[ApoConfig.STARTHOUR] <= \
+            configuration.noshutdownrange[ApoConfig.ENDHOUR]:
+      if nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and \
+                      nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
+        shutdowntuple = (nowtuple[0], nowtuple[1], nowtuple[2],
+                         configuration.noshutdownrange[ApoConfig.ENDHOUR],
+                         0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
+        # logger.debug(shutdowntuple)
+        # logger.debug(nowtuple)
+        sleepTime = time.mktime(shutdowntuple) - now + 1
+    else:
+      if (nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and
+              nowhour <= 24) or \
+                      nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
+        shutdowntuple = (nowtuple[0], nowtuple[1], nowtuple[2] + 1,
+                         configuration.noshutdownrange[ApoConfig.ENDHOUR],
+                         0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
+        # logger.debug(shutdowntuple)
+        # logger.debug(nowtuple)
+        sleepTime = time.mktime(shutdowntuple) - now + 1
 
-     if sleepTime > 0:
-       # Using gmtime(sleepTime) here because localtime(0) is actually
-       # 1969/12/31 19h00, thus if using localtime(sleepTime), we actually
-       # print the sleepTime minus 5 hours, which is wrong.
-       if sleepTimeLogged == False:
-         sendmsg("Currently not in time range " + \
-                 str(configuration.noshutdownrange) + \
-                 " for " + commandtext + ".  Sleeping for " + \
-                 time.strftime("%H:%M:%S", time.gmtime(sleepTime)),".")
-         sleepTimeLogged = True
-       alivePrint=False
+    if sleepTime > 0:
+      # Using gmtime(sleepTime) here because localtime(0) is actually
+      # 1969/12/31 19h00, thus if using localtime(sleepTime), we actually
+      # print the sleepTime minus 5 hours, which is wrong.
+      if sleepTimeLogged == False:
+        sendmsg("Currently not in time range " + \
+                str(configuration.noshutdownrange) + \
+                " for " + commandtext + ".  Sleeping for " + \
+                time.strftime("%H:%M:%S", time.gmtime(sleepTime)), ".")
+        sleepTimeLogged = True
+      alivePrint = False
 
-       # Actually sleeping for 1 minute.  The problem is that when the system
-       # is suspended or hibernated prior the expiration time, the sleep will
-       # continue where it left of, without taking account the time that
-       # lapsed during the sleep.
+      # Actually sleeping for 1 minute.  The problem is that when the system
+      # is suspended or hibernated prior the expiration time, the sleep will
+      # continue where it left of, without taking account the time that
+      # lapsed during the sleep.
 
-       # Say for example that sleepTime is 2 hours.  15 minutes after this
-       # thread started sleeping, the user manually suspends the computer for
-       # 3 hours.  Upon resuming, this thread will still continue to sleep for
-       # 1:45 hours, despite it should be stopped.
+      # Say for example that sleepTime is 2 hours.  15 minutes after this
+      # thread started sleeping, the user manually suspends the computer for
+      # 3 hours.  Upon resuming, this thread will still continue to sleep for
+      # 1:45 hours, despite it should be stopped.
 
-       time.sleep(1*60)
-       continue
+      time.sleep(1 * 60)
+      continue
 
-     nowTime = time.time()
-     timeElapsedSinceLastEvent = nowTime - gLastInputEventTime
+    nowTime = time.time()
+    timeElapsedSinceLastEvent = nowTime - gLastInputEventTime
 
-     logger.debug("timeElapsedSinceLastEvent = " + str(timeElapsedSinceLastEvent))
+    logger.debug("timeElapsedSinceLastEvent = " + str(timeElapsedSinceLastEvent))
 
-     # If configuration.idletime is set to 0, that means that the user does
-     # not want any of the console inputs to influence the shutdown decision.
-     if configuration.idletime > 0 and \
-        timeElapsedSinceLastEvent < configuration.idletime*60:
-       sleepTime=None
-       if gTestMode:
-         sleepTime=2
-       else:
-         sleepTime=configuration.idletime*60
-       logger.debug("Sleeping for " + str(sleepTime) + \
-             "s following IdleTime configuration.")
-       time.sleep(sleepTime)
-       continue
-    
-     logger.debug("gHostsStillAlive = " + str(gHostsStillAlive))
-     if len(gHostsStillAlive) > 0:
-       if not alivePrint:
-         sendmsg("Some hosts are still alive:  " + str(gHostsStillAlive))
-       alivePrint=True
-       continue
-     else:
-       while os.path.exists(cancelfile):
-         if not isToBePutOnHold:
-           isToBePutOnHold = True
-           sendmsg(programname + \
-                   " disabled as requested (detected presence of '" + \
-                   cancelfile + "').")
-         time.sleep(1*60)
-         continue
+    # If configuration.idletime is set to 0, that means that the user does
+    # not want any of the console inputs to influence the shutdown decision.
+    if configuration.idletime > 0 and \
+                    timeElapsedSinceLastEvent < configuration.idletime * 60:
+      sleepTime = None
+      if gTestMode:
+        sleepTime = 2
+      else:
+        sleepTime = configuration.idletime * 60
+      logger.debug("Sleeping for " + str(sleepTime) + \
+                   "s following IdleTime configuration.")
+      time.sleep(sleepTime)
+      continue
 
-       isToBePutOnHold = False
-    
-       sendmsg("All the conditions are met for running the action.", \
-               priority=syslog.LOG_ALERT)
-       if gTestMode:
-         print "Test mode:  would have run action '" + command \
-               + "' at " + time.strftime("%H:%M:%S", (time.localtime(time.time())))
-       else:
-         #commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
-         commands.getstatusoutput(command)
-         #print "ERROR:  POWEROFF COMMAND DISABLED FOR logger.debugGING PURPOSES."
+    logger.debug("gHostsStillAlive = " + str(gHostsStillAlive))
+    if len(gHostsStillAlive) > 0:
+      if not alivePrint:
+        sendmsg("Some hosts are still alive:  " + str(gHostsStillAlive))
+      alivePrint = True
+      continue
+    else:
+      while os.path.exists(cancelfile):
+        if not isToBePutOnHold:
+          isToBePutOnHold = True
+          sendmsg(programname + \
+                  " disabled as requested (detected presence of '" + \
+                  cancelfile + "').")
+        time.sleep(1 * 60)
+        continue
+
+      isToBePutOnHold = False
+
+      sendmsg("All the conditions are met for running the action.", \
+              priority=syslog.LOG_ALERT)
+      if gTestMode:
+        print "Test mode:  would have run action '" + command \
+              + "' at " + time.strftime("%H:%M:%S", (time.localtime(time.time())))
+      else:
+        # commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
+        commands.getstatusoutput(command)
+        # print "ERROR:  POWEROFF COMMAND DISABLED FOR logger.debugGING PURPOSES."
 
 
 
