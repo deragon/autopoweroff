@@ -4,7 +4,7 @@ import errno
 import syslog
 import os
 import logging
-from __main__ import scriptname,gTestMode
+from __main__ import scriptname,gTestMode,programname
 
 #def disableFile():
 #
@@ -27,7 +27,14 @@ def createDirs(aDirs):
       if oserror[0] != errno.EEXIST:
         raise oserror
 
-def sendmsg(msg, priority=syslog.LOG_INFO, tosyslog=True):
+def sendmsg(msg, logger=None, priority=syslog.LOG_INFO, tosyslog=True):
+  # Ill attempt to use the stacktrace to determine the name of the logger.
+  # But it is not viable.  For the moment, the code remains, commented,
+  # in case one would like to retry again.
+  #stacktrace=traceback.extract_stack()
+  #print stacktrace
+  if logger == None:
+    logger = logging.getLogger(programname)
   logger.info(msg)
   if tosyslog:
     syslog.syslog(scriptname + ":  " + str(msg))
