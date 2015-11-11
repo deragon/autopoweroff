@@ -25,25 +25,24 @@ scriptname = os.path.basename(sys.argv[0])
 
 if gTestMode:
   # We are in test mode.  Using relative values.
-  programname = "autopoweroff"
-  sharedir = ".."
-  etcdir   = "../etc/" + programname
-  rundir   = "/tmp/" + programname + "-test/var"
-  piddir   = rundir
-  pidfile  = "autopoweroff-test.pid"
-  loggingFile="autopoweroff-logging-debug.conf"
+  programname = "Autopoweroff"
+  sharedir    = ".."
+  etcdir      = "../etc/" + programname.lower()
+  rundir      = "/tmp/" + programname.lower() + "-test/var"
+  piddir      = rundir
+  pidfile     = "autopoweroff-test.pid"
+  loggingFile = "autopoweroff-logging-debug.conf"
 else:
-  logging.basicConfig(level=logging.INFO)
-  programname = "@program_name@".lower()
-  sharedir = "@autopoweroff_sharedir@"
-  etcdir   = "@autopoweroff_etcdir@"
-  rundir   = "@autopoweroff_rundir@"
-  piddir   = "@autopoweroff_piddir@"
-  pidfile  = "@autopoweroff_pidfile@"
-  loggingFile="autopoweroff-logging.conf"
+  programname = "@program_name@"
+  sharedir    = "@autopoweroff_sharedir@"
+  etcdir      = "@autopoweroff_etcdir@"
+  rundir      = "@autopoweroff_rundir@"
+  piddir      = "@autopoweroff_piddir@"
+  pidfile     = "@autopoweroff_pidfile@"
+  loggingFile = "autopoweroff-logging.conf"
 
 logging.config.fileConfig(etcdir + "/" + loggingFile)
-logger = logging.getLogger(__name__);
+logger = logging.getLogger(programname);
 logger.info("══════════════════════════════════════════════════════════")
 logger.info(programname + " started.")
 
@@ -70,7 +69,7 @@ if os.path.exists(pidfile):
   fdPidFile.close()
   try:
     os.kill(int(pid), signal.SIGTERM)
-    sendmsg("Currently running instance killed.", syslog.LOG_ALERT)
+    sendmsg("Currently running instance killed.", priority=syslog.LOG_ALERT)
   except OSError, oserror:
     if oserror.errno != errno.ESRCH:  # No such process
       # errno ESRCH (#3) means that the process does not exist.
@@ -181,7 +180,7 @@ class ApoDeviceObserverThread(threading.Thread):
         if ioerror.errno == errno.ENODEV:
           self.finish=True
           sendmsg("Device " + self.sDevice + " absent (No such device error)",\
-                  syslog.LOG_NOTICE)
+                  priority=syslog.LOG_NOTICE)
           continue
         else:
           raise
@@ -346,7 +345,7 @@ try:
        isToBePutOnHold = False
     
        sendmsg("All the conditions are met for running the action.", \
-               syslog.LOG_ALERT)
+               priority=syslog.LOG_ALERT)
        if gTestMode:
          print "Test mode:  would have run action '" + command \
                + "' at " + time.strftime("%H:%M:%S", (time.localtime(time.time())))

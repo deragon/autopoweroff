@@ -21,7 +21,7 @@ from ApoLibrary import *
 # running, thus setting "conffile" to ".../autopoweroffd.conf", which is
 # non existant.
 #conffile = etcdir + "/autopoweroff.conf"
-conffile = etcdir + "/" + programname + ".conf"
+conffile = etcdir + "/" + programname.lower() + ".conf"
 
 STARTHOUR=0
 ENDHOUR=1
