@@ -37,7 +37,7 @@ else:
   loggingFile = "autopoweroff-logging.conf"
 
 logging.config.fileConfig(etcdir + "/" + loggingFile)
-logger = logging.getLogger(programname);
+logger = logging.getLogger(programname)
 logger.info("══════════════════════════════════════════════════════════")
 logger.info(programname + " started.")
 
@@ -98,7 +98,7 @@ except ApoConfig.APOError, message:
   sendmsg(message)
 
 command = ""
-if configuration.action == None:
+if configuration.action is None:
   # Default command is SLEEP.  It is safer as no actual data can be lost going
   # to sleep where a shutdown my cause data lost because saving operations
   # could not be performed.
@@ -128,9 +128,9 @@ hostsStillAliveCheckThread.start()
 
 ######################################################################
 # Lock file creation to ensure only one instance of this script is running.
-file = open(pidfile, 'w')
-file.write(str(os.getpid()))
-file.close()
+lockFile = open(pidfile, 'w')
+lockFile.write(str(os.getpid()))
+lockFile.close()
 
 ######################################################################
 # The system must remain on for at least the 'startupdelay' first minutes
@@ -206,12 +206,12 @@ try:
     if os.path.exists(devicePath):
       break
 
-  if devicePath == None:
+  if devicePath is None:
     sendmsg("WARNING:  No input device detected.  " + \
             "Will not be able to detect user activity.")
   else:
     for path in os.listdir(devicePath):
-      if spkrRE.search(path) != None:
+      if spkrRE.search(path) is not None:
         # Ignoring speaker devices.  I do not understand how a device
         # related to a speaker can be considered an input device.  A
         # microphone maybe?  Even if this is the case, if a user simply
