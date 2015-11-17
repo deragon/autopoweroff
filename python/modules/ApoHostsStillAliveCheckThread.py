@@ -20,7 +20,7 @@ class ApoHostsStillAliveCheckThread(threading.Thread):
     self.logger.info(__name__ + ".run():  Check on " +
         str(self.hosts) + " started.")
     while True:
-      time.sleep(2)
+      time.sleep(10)
 
       # While testing for hosts, we do not want to initiale to false the
       # global variable until all tests are completed.  Thus this is why we
@@ -61,8 +61,10 @@ class ApoHostsStillAliveCheckThread(threading.Thread):
 
         newHostAliveSet = hostsStillAliveSet - gHostsStillAliveSet
         newHostDeadSet = gHostsStillAliveSet - hostsStillAliveSet
-        self.logger.info("Newly alive:  " + str(newHostAliveSet) + \
-            "  Newly dead:  " + str(newHostDeadSet))
+        # Converting the set to list, simply because the display then
+        # is nicer.
+        self.logger.info("Newly alive:  " + str(list(newHostAliveSet)) + \
+            "  Newly dead:  " + str(list(newHostDeadSet)))
 
       # Now that all the testing is done, we can update the global variable.
       gHostsStillAlive=hostsStillAlive
