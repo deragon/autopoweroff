@@ -66,24 +66,24 @@ doc_DATA = \
   ChangeLog \
   INSTALL \
   NEWS \
-  README
+	README.md
 
-EXTRA_DIST =                            \ 
-	${sbin_SCRIPTS}                       \ 
-	${python_DATA}                        \ 
-	${autoinit_SCRIPTS}                   \ 
-	${glade_DATA}                         \ 
-	${desktop_DATA}                       \ 
-	${pixmaps_DATA}                       \ 
-	${pam_DATA}                           \ 
-	${security_DATA}                      \ 
-	${etc_DATA}                           \ 
-	doc/autopoweroff_cfg-config.png       \ 
-	doc/autopoweroff_cfg-statusandcmd.png \ 
-	doc/autopoweroff.xml                  \ 
-	doc/COPYING                           \ 
-	packages/rpm/buildrpm                 \ 
-	postinstall                           \ 
+EXTRA_DIST =                            \
+	${sbin_SCRIPTS}                       \
+	${python_DATA}                        \
+	${autoinit_SCRIPTS}                   \
+	${glade_DATA}                         \
+	${desktop_DATA}                       \
+	${pixmaps_DATA}                       \
+	${pam_DATA}                           \
+	${security_DATA}                      \
+	${etc_DATA}                           \
+	doc/autopoweroff_cfg-config.png       \
+	doc/autopoweroff_cfg-statusandcmd.png \
+	doc/autopoweroff.xml                  \
+	doc/COPYING                           \
+	packages/rpm/buildrpm                 \
+	postinstall                           \
   packages/rpm/${PACKAGE}.spec.in
 
 

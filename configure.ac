@@ -384,3 +384,13 @@ chmod a+x \
   etc/init.d/autopoweroff.rc-status \
   etc/init.d/autopoweroff.redhat \
   apoinstall
+
+export AUTOPOWEROFF_CONF_CONTENT=`sed "s/^/> /g" etc/autopoweroff/autopoweroff.conf`
+
+# Auto tools eat up any square bracket ([]), so we must double them in the next
+# command to escape them.
+python -c '
+import re, os;
+print re.sub("@>>etc/autopoweroff/autopoweroff.conf<<@",
+             os.environ[["AUTOPOWEROFF_CONF_CONTENT"]], 
+             "".join(open("doc/README.md", "r").readlines()))' >README.md
