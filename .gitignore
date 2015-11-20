@@ -2,6 +2,8 @@
 *.log
 *.status
 *.pyc
+*.deb
+*.rpm
 .idea/
 Makefile
 Makefile.in
@@ -26,3 +28,4 @@ packages/deb/postinst
 packages/deb/postrm
 packages/rpm/autopoweroff.spec
 desktop/autopoweroff.desktop
+packages/deb/build/
