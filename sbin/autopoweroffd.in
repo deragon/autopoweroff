@@ -270,5 +270,8 @@ try:
    #
    # The while loop can end when finish == True or if autopoweroff
    # receives a SIGTERM signal.
-except:
+
+except Exception as exception:
+  logger.error(str(exception))
+  logger.error(traceback.format_exc())
   sigtermHandler(None, None)
