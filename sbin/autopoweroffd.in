@@ -10,6 +10,7 @@ import re
 import signal
 import sys
 import time
+import traceback
 
 gTestMode = "@production@" != "true"
 
@@ -124,6 +125,7 @@ sendmsg("Command to execute when all conditions are met:  " + command)
 # and used by the main one to get the list of all hosts still alive.
 import ApoHostsStillAliveCheckThread
 
+gHostsStillAlive = []
 hostsStillAliveCheckThread = ApoHostsStillAliveCheckThread. \
   ApoHostsStillAliveCheckThread(configuration.hosts)
 hostsStillAliveCheckThread.start()
@@ -199,7 +201,7 @@ try:
         sendmsg("Currently not in time range " + \
                 str(configuration.noshutdownrange) + \
                 " for " + commandtext + ".  Sleeping for " + \
-                time.strftime("%H:%M:%S", time.gmtime(sleepTime)), ".")
+                time.strftime("%H:%M:%S", time.gmtime(sleepTime)))
         sleepTimeLogged = True
       alivePrint = False
 
