@@ -11,8 +11,6 @@ from __main__ import scriptname,gTestMode,programname
 #def enable(rundir):
   #cancelfile = rundir + "/" + scriptname + ".cancel"
   
-logger = logging.getLogger(__name__)
-
 def createDirs(aDirs):
   for directory in aDirs:
     try:
@@ -33,7 +31,7 @@ def sendmsg(msg, logger=None, priority=syslog.LOG_INFO, tosyslog=True):
   # in case one would like to retry again.
   #stacktrace=traceback.extract_stack()
   #print stacktrace
-  if logger == None:
+  if logger is None:
     logger = logging.getLogger(programname)
   logger.info(str(msg))
   if tosyslog:
