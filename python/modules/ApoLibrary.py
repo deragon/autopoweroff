@@ -35,7 +35,7 @@ def sendmsg(msg, logger=None, priority=syslog.LOG_INFO, tosyslog=True):
   #print stacktrace
   if logger == None:
     logger = logging.getLogger(programname)
-  logger.info(msg)
+  logger.info(str(msg))
   if tosyslog:
     syslog.syslog(scriptname + ":  " + str(msg))
 
