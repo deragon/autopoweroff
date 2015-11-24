@@ -173,9 +173,9 @@ try:
 
     sleepTime = 0;
     if configuration.noshutdownrange[ApoConfig.STARTHOUR] <= \
-            configuration.noshutdownrange[ApoConfig.ENDHOUR]:
+       configuration.noshutdownrange[ApoConfig.ENDHOUR]:
       if nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and \
-                      nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
+         nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
         shutdowntuple = (nowtuple[0], nowtuple[1], nowtuple[2],
                          configuration.noshutdownrange[ApoConfig.ENDHOUR],
                          0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
@@ -184,8 +184,8 @@ try:
         sleepTime = time.mktime(shutdowntuple) - now + 1
     else:
       if (nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and
-              nowhour <= 24) or \
-                      nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
+          nowhour <= 24) or \
+          nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
         shutdowntuple = (nowtuple[0], nowtuple[1], nowtuple[2] + 1,
                          configuration.noshutdownrange[ApoConfig.ENDHOUR],
                          0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
@@ -221,7 +221,8 @@ try:
     nowTime = time.time()
     timeElapsedSinceLastEvent = nowTime - gLastInputEventTime
 
-    logger.debug("timeElapsedSinceLastEvent = " + str(timeElapsedSinceLastEvent))
+    logger.debug("timeElapsedSinceLastEvent = " + 
+                 str(timeElapsedSinceLastEvent))
 
     # If configuration.idletime is set to 0, that means that the user does
     # not want any of the console inputs to influence the shutdown decision.
@@ -247,25 +248,23 @@ try:
       while os.path.exists(cancelfile):
         if not isToBePutOnHold:
           isToBePutOnHold = True
-          sendmsg(programname + \
-                  " disabled as requested (detected presence of '" + \
+          sendmsg(programname +
+                  " disabled as requested (detected presence of '" +
                   cancelfile + "').")
         time.sleep(1 * 60)
         continue
 
       isToBePutOnHold = False
 
-      sendmsg("All the conditions are met for running the action.", \
+      sendmsg("All the conditions are met for running the action.",
               priority=syslog.LOG_ALERT)
+
       if gTestMode:
-        print "Test mode:  would have run action '" + command \
-              + "' at " + time.strftime("%H:%M:%S", (time.localtime(time.time())))
+        print "Test mode:  would have run action '" + command + "' at " + 
+              time.strftime("%H:%M:%S", (time.localtime(time.time())))
       else:
         # commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
         commands.getstatusoutput(command)
-        # print "ERROR:  POWEROFF COMMAND DISABLED FOR logger.debugGING PURPOSES."
-
-
 
    # Only poweroff if it has been determined that this is the action to do.
    # Remember, autopoweroff could have received a SIGTERM (CTRL-C).
