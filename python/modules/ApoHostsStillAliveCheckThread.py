@@ -8,7 +8,7 @@ import logging
 class ApoHostsStillAliveCheckThread(threading.Thread):
 
   def __init__(self, hosts):
-    self.logger = logging.getLogger(__name__)
+    self.logger = logging.getLogger("apo.observer.hosts.alive")
     self.logger.info("Initializing Hosts...")
     threading.Thread.__init__(self, name="HostsStillAliveCheckThread")
     self.setDaemon(True)

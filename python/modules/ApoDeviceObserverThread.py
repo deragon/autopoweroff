@@ -12,7 +12,7 @@ class ApoDeviceObserverManager():
   def __init__(self):
     self.devicesArray   = []
     self.apoDevObsArray = []
-    self.logger = logging.getLogger(__name__)
+    self.logger = logging.getLogger("apo.observer.device.manager")
 
     try:
       spkrRE = re.compile(".*spkr.*")
@@ -61,7 +61,7 @@ class ApoDeviceObserverManager():
 class ApoDeviceObserverThread(threading.Thread):
   def __init__(self, sDevice):
     threading.Thread.__init__(self, name=sDevice)
-    self.logger = logging.getLogger(__name__)
+    self.logger = logging.getLogger("apo.observer.device.thread")
     self.setDaemon(True)
     self.sDevice = sDevice
     self.sleep = 0

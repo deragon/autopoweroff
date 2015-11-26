@@ -39,7 +39,7 @@ class Configuration:
   # Parameters can be all None.  In that circumstance, the object should
   # be used to call read() to read the content of a configuration file.
   def __init__(self, noshutdownrange=None, idletime=None, startupdelay=None, hosts=None, action=None, actioncommand=None, tosyslog=True):
-    self.logger = logging.getLogger(__name__)
+    self.logger = logging.getLogger("apo.conf")
     self.tosyslog = tosyslog
     if noshutdownrange == None:
       self.noshutdownrange=[4, 23] # hours
