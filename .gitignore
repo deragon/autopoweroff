@@ -4,6 +4,8 @@
 *.pyc
 *.deb
 *.rpm
+*.sar
+*.pid
 .idea/
 Makefile
 Makefile.in
