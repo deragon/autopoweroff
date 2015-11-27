@@ -5,7 +5,7 @@ import threading
 import time
 import logging
 
-class ApoHostsStillAliveCheckThread(threading.Thread):
+class ApoObserverHostsAlive(threading.Thread):
 
   def __init__(self, hosts):
     self.logger = logging.getLogger("apo.observer.hosts.alive")

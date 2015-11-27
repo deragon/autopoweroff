@@ -131,11 +131,11 @@ sendmsg("Command to execute when all conditions are met:  " + command)
 # Starting thread that checks if any host is still alive.
 # The global gHostsStillAlive variable is updated by this thread
 # and used by the main one to get the list of all hosts still alive.
-import ApoHostsStillAliveCheckThread
+import ApoObserverHostsAlive
 
 gHostsStillAlive = []
-ApoHostsStillAliveCheckThread. \
-        ApoHostsStillAliveCheckThread(configuration.hosts).start()
+ApoObserverHostsAlive. \
+        ApoObserverHostsAlive(configuration.hosts).start()
 
 ######################################################################
 # Lock file creation to ensure only one instance of this script is running.
@@ -148,8 +148,8 @@ lockFile.close()
 # For the moment, not required.
 # commands.getstatusoutput("/sbin/modprobe apm")
 
-import ApoDeviceObserverThread
-apoDeviceObserverManager = ApoDeviceObserverThread.ApoDeviceObserverManager()
+import ApoObserverDevice
+apoDeviceObserverManager = ApoObserverDevice.ApoDeviceObserverManager()
 
 ######################################################################
 try:
@@ -233,7 +233,7 @@ try:
                       timeElapsedSinceLastEvent < configuration.idletime * 60:
         sleepTime = None
         if gTestMode:
-          sleepTime = 2
+          sleepTime = 10
         else:
           sleepTime = configuration.idletime * 60
         logger.debug("Sleeping for " + str(sleepTime) + \

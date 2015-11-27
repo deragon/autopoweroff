@@ -48,7 +48,7 @@ class ApoDeviceObserverManager():
 
     for device in self.devicesArray:
       self.logger.debug("Device = " + device)
-      apoDevObs = ApoDeviceObserverThread(device)
+      apoDevObs = ApoObserverDevice(device)
       apoDevObs.start()
       self.apoDevObsArray.append(apoDevObs)
 
@@ -58,7 +58,7 @@ class ApoDeviceObserverManager():
 
 
 
-class ApoDeviceObserverThread(threading.Thread):
+class ApoObserverDevice(threading.Thread):
   def __init__(self, sDevice):
     threading.Thread.__init__(self, name=sDevice)
     self.logger = logging.getLogger("apo.observer.device.thread")
@@ -69,7 +69,7 @@ class ApoDeviceObserverThread(threading.Thread):
   def run(self):
     global gLastInputEventTime
     fd = open(self.sDevice, 'r')
-    self.logger.info("ApoDeviceObserverThread.run():  Check on " +
+    self.logger.info("ApoObserverDevice.run():  Check on " +
                      self.sDevice + " started.")
     self.finish = False
     lastEventTime = 0.0
@@ -96,7 +96,7 @@ class ApoDeviceObserverThread(threading.Thread):
       # to much.
       if currentTime > lastEventTime + 0.01:
         self.logger.debug(
-            "ApoDeviceObserverThread.run():  Activity detected on " + \
+            "ApoObserverDevice.run():  Activity detected on " + \
             self.sDevice + " at " + str(currentTime))
       lastEventTime = currentTime
     fd.close()
