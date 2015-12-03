@@ -88,6 +88,7 @@ In the first panel named *Status & Commands*, the user can enable or
 disable Autopoweroff and poweroff or reboot the computer.
 
 ![Status & Commands screenshot](doc/autopoweroff_cfg-statusandcmd.png)
+
 *Status & commands*
 
 In the second panel named *Status & Commands*, the user can configure
@@ -96,6 +97,7 @@ configuration file](#config_autopoweroff_file) for a description of the
 different parameters.
 
 ![Configuration screenshot](doc/autopoweroff_cfg-config.png)
+
 *Configuration*
 
 ##Autopoweroff configuration file (autopoweroff.conf)
