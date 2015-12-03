@@ -104,96 +104,98 @@ The `/etc/autopoweroff.conf` (or `${prefix}/etc/autopoweroff.conf`, for
 those who installed from the tarball) configuration file is well
 documented and easy to understand. Following is an example:
 
-> # Autopoweroff Test version configuration file.
-> 
-> # WARNING:  If you decide to edit this file, edit only the values of the
-> #           parameters.  If you add comments, they will be lost at the next
-> #           software upgrade or when the GUI configurator is being used to
-> #           update the file.  Only values persists.
-> 
-> 
-> # StartHour and EndHour parameters (expressed in hours):
-> #
-> #   Following is the time range where the computer should not shutdown even if
-> #   all conditions are met.  In this example where StartHour=5 and EndHour=22,
-> #   the computer will not shut down between 05:00 and 22:00, local time.
-> 
-> [NO_SHUTDOWN_TIME_RANGE]
-> StartHour=6
-> EndHour=7
-> 
-> 
-> # StartupDelay parameter (expressed in minutes):
-> #
-> #   When the computer is booting up, if all the conditions are met and the
-> #   computer is in the shutdown time range, as soon as Autopoweroff is
-> #   started, the computer will shutdown.  Thus, the user will never have the
-> #   chance to boot into the computer.  This is where the "delay" parameter
-> #   comes in.  If "delay" is set to 15 for example, Autopoweroff will not
-> #   poweroff the computer even if all the conditions are met, for a period of
-> #   15 minutes after the computer has booted.  This allows the user to login
-> #   and change Autopoweroff's configuration.
-> #
-> #
-> # IdleTime parameter (expressed in minutes):
-> #
-> #   Like a screensaver, Autopoweroff detects keyboard and mouse activity, and
-> #   if there is no activity on the server after a certain time, it activates.
-> #   In the case of Autopoweroff, it means that this condition is met, i.e.
-> #   no user has touched this computer for <IdleTime>.
-> #
-> #   A value of 0 (zero) means that this condition should not be verified.
-> 
-> [TIMEOUTS]
-> StartupDelay=5
-> IdleTime=15
-> 
-> 
-> # Hosts parameter (list of hostnames or IPs, separated by commas):
-> #
-> #   Here you list the list of hosts your machine is dependant, i.e. this
-> #   computer should not shutdown if any of the hosts declared here is still up
-> #   (responding to ping).
-> 
-> [DEPENDANTS]
-> Hosts=milomana, demloka, dsafas
-> 
-> 
-> #  [ACTION]
-> #
-> #  Action
-> #
-> #   Action to be taken when all conditions are met.
-> #
-> #   Choices are:
-> #
-> #     - Shutdown
-> #     - Sleep     (suspend to ram)
-> #     - Hibernate (suspend to disk)
-> #     - Other     (ActionCommand must be supplied)
-> #
-> # ActionCommand
-> #
-> #   In some cases, users want to specifiy the action command.  It could be a
-> #   script, a special version of /usr/sbin/shutdown, etc...  Arguments are
-> #   added after the command.  Example:
-> #
-> #   ActionCommand=/usr/sbin/shutdown -r now
-> #
-> #   Strictly speaking, the command could be anything, including actions that
-> #   has nothing to do with powering down a computer.  In that sense,
-> #   'Autopoweroff' is a misnomer; it should have been called something like
-> #   'ScheduledAction'.
-> #
-> #   Autopoweroff already have standard Linux command hardcoded for shutting
-> #   down, sleep or hibernate the computer.  Therefore, this command comes
-> #   commented in the default configuration file.
-> #
-> #   Since this option is an advance one, it is not available from the GUI.
-> 
-> [ACTION]
-> Action=sleep
-> ActionCommand=
+```
+# Autopoweroff Test version configuration file.
+
+# WARNING:  If you decide to edit this file, edit only the values of the
+#           parameters.  If you add comments, they will be lost at the next
+#           software upgrade or when the GUI configurator is being used to
+#           update the file.  Only values persists.
+
+
+# StartHour and EndHour parameters (expressed in hours):
+#
+#   Following is the time range where the computer should not shutdown even if
+#   all conditions are met.  In this example where StartHour=5 and EndHour=22,
+#   the computer will not shut down between 05:00 and 22:00, local time.
+
+[NO_SHUTDOWN_TIME_RANGE]
+StartHour=6
+EndHour=7
+
+
+# StartupDelay parameter (expressed in minutes):
+#
+#   When the computer is booting up, if all the conditions are met and the
+#   computer is in the shutdown time range, as soon as Autopoweroff is
+#   started, the computer will shutdown.  Thus, the user will never have the
+#   chance to boot into the computer.  This is where the "delay" parameter
+#   comes in.  If "delay" is set to 15 for example, Autopoweroff will not
+#   poweroff the computer even if all the conditions are met, for a period of
+#   15 minutes after the computer has booted.  This allows the user to login
+#   and change Autopoweroff's configuration.
+#
+#
+# IdleTime parameter (expressed in minutes):
+#
+#   Like a screensaver, Autopoweroff detects keyboard and mouse activity, and
+#   if there is no activity on the server after a certain time, it activates.
+#   In the case of Autopoweroff, it means that this condition is met, i.e.
+#   no user has touched this computer for <IdleTime>.
+#
+#   A value of 0 (zero) means that this condition should not be verified.
+
+[TIMEOUTS]
+StartupDelay=5
+IdleTime=15
+
+
+# Hosts parameter (list of hostnames or IPs, separated by commas):
+#
+#   Here you list the list of hosts your machine is dependant, i.e. this
+#   computer should not shutdown if any of the hosts declared here is still up
+#   (responding to ping).
+
+[DEPENDANTS]
+Hosts=milomana, demloka, dsafas
+
+
+#  [ACTION]
+#
+#  Action
+#
+#   Action to be taken when all conditions are met.
+#
+#   Choices are:
+#
+#     - Shutdown
+#     - Sleep     (suspend to ram)
+#     - Hibernate (suspend to disk)
+#     - Other     (ActionCommand must be supplied)
+#
+# ActionCommand
+#
+#   In some cases, users want to specifiy the action command.  It could be a
+#   script, a special version of /usr/sbin/shutdown, etc...  Arguments are
+#   added after the command.  Example:
+#
+#   ActionCommand=/usr/sbin/shutdown -r now
+#
+#   Strictly speaking, the command could be anything, including actions that
+#   has nothing to do with powering down a computer.  In that sense,
+#   'Autopoweroff' is a misnomer; it should have been called something like
+#   'ScheduledAction'.
+#
+#   Autopoweroff already have standard Linux command hardcoded for shutting
+#   down, sleep or hibernate the computer.  Therefore, this command comes
+#   commented in the default configuration file.
+#
+#   Since this option is an advance one, it is not available from the GUI.
+
+[ACTION]
+Action=sleep
+ActionCommand=
+```
 
 #BIOS configuration
 
