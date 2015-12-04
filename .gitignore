@@ -6,6 +6,7 @@
 *.rpm
 *.sar
 *.pid
+*.html
 .idea/
 Makefile
 Makefile.in
