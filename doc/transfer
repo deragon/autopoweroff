@@ -1,6 +1,0 @@
-scp \
-  index.html \
-  style.css \
-  autopoweroff_cfg-config.png \
-  autopoweroff_cfg-statusandcmd.png \
-  deragon@autopoweroff.sourceforge.net:autopoweroff_website/htdocs/
