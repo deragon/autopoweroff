@@ -385,7 +385,6 @@ chmod a+x \
   etc/init.d/autopoweroff.redhat \
   apoinstall
 
-#export AUTOPOWEROFF_CONF_CONTENT=`sed "s/^/> /g" etc/autopoweroff/autopoweroff.conf`
 export AUTOPOWEROFF_CONF_CONTENT=`cat etc/autopoweroff/autopoweroff.conf`
 
 # Auto tools eat up any square bracket ([]), so we must double them in the next
