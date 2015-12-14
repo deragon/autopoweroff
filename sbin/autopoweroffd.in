@@ -133,9 +133,15 @@ sendmsg("Command to execute when all conditions are met:  " + command)
 # and used by the main one to get the list of all hosts still alive.
 import ApoObserverHostsAlive
 
+global gHostsStillAlive
 gHostsStillAlive = []
+print "ggHostsStillAlive=" + str(gHostsStillAlive)
 ApoObserverHostsAlive. \
         ApoObserverHostsAlive(configuration.hosts).start()
+
+
+aoha=ApoObserverHostsAlive.ApoObserverHostsAlive(configuration.hosts)
+aoha.start()
 
 ######################################################################
 # Lock file creation to ensure only one instance of this script is running.
@@ -241,10 +247,17 @@ try:
         time.sleep(sleepTime)
         continue
 
-      logger.debug("gHostsStillAlive = " + str(gHostsStillAlive))
-      if len(gHostsStillAlive) > 0:
+      # Taking a snapshot because if aoha.hostsStillAlive is used everywhere,
+      # its value might change during its utilisation, as aoha.hostsStillAlive
+      # is set in another thread.  By taking a snapshot, the value will not
+      # change since the ApoObserverHostsAlive does not play with the content
+      # of the list, but replace it completely with a new one.
+      hostsStillAlive = aoha.hostsStillAlive
+
+      logger.debug("aoha.hostsStillAlive = " + str(hostsStillAlive))
+      if len(hostsStillAlive) > 0:
         if not alivePrint:
-          sendmsg("Some hosts are still alive:  " + str(gHostsStillAlive))
+          sendmsg("Some hosts are still alive:  " + str(hostsStillAlive))
         alivePrint = True
         continue
       else:
