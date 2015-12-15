@@ -56,8 +56,6 @@ class ApoDeviceObserverManager():
     for thread in self.apoDevObsArray:
       thread.terminate()
 
-
-
 class ApoObserverDevice(threading.Thread):
   def __init__(self, sDevice):
     threading.Thread.__init__(self, name=sDevice)
@@ -67,7 +65,6 @@ class ApoObserverDevice(threading.Thread):
     self.sleep = 0
 
   def run(self):
-    global gLastInputEventTime
     fd = open(self.sDevice, 'r')
     self.logger.info("ApoObserverDevice.run():  Check on " +
                      self.sDevice + " started.")
@@ -89,6 +86,7 @@ class ApoObserverDevice(threading.Thread):
         else:
           raise
       currentTime = time.time()
+      global gLastInputEventTime
       gLastInputEventTime = currentTime
       # print currentTime-lastEventTime
       # To reduce the quantity of output, we print only a few
