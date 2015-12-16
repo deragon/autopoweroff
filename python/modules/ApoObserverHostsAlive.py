@@ -3,7 +3,6 @@
 import commands
 import threading
 import time
-import logging
 from ApoLibrary import *
 
 class ApoObserverHostsAlive(threading.Thread):
@@ -25,7 +24,7 @@ class ApoObserverHostsAlive(threading.Thread):
       # global variable until all tests are completed.  Thus this is why we
       # use a local variable and only set the global variable once all
       # tests are completed.
-      hostsStillAlive=[]
+      newListOfHostsStillAlive=[]
       for host in self.hostsToPing:
         #self.logger.debug("Pinging host:  >>" + host + "<<")
         status = commands.getstatusoutput("ping -c 1 -w 10 " + host)[0]
@@ -34,7 +33,7 @@ class ApoObserverHostsAlive(threading.Thread):
         exitcode = (status >> 8) & 0xFF
         #self.logger.debug(exitcode)
         if exitcode == 0:
-          hostsStillAlive = hostsStillAlive + [ host ]
+          newListOfHostsStillAlive = newListOfHostsStillAlive + [ host ]
           break
 
         # Experimental use of arping.
@@ -50,24 +49,24 @@ class ApoObserverHostsAlive(threading.Thread):
           exitcode = (status >> 8) & 0xFF
           #self.logger.debug(exitcode)
           if exitcode == 0:
-            hostsStillAlive = hostsStillAlive + [ host ]
+            newListOfHostsStillAlive = newListOfHostsStillAlive + [ host ]
             break
 
       # If the list of hosts alive changed, we report it.
-      if hostsStillAlive != self.hostsStillAlive:
-        hostsStillAliveSet = set(hostsStillAlive)
-        previousHostsStillAliveSet = set(self.hostsStillAlive)
+      if newListOfHostsStillAlive != self.hostsStillAlive:
+        newListOfHostsStillAliveSet = set(newListOfHostsStillAlive)
+        previousListOfHostsStillAliveSet = set(self.hostsStillAlive)
 
-        newHostAliveSet = hostsStillAliveSet - previousHostsStillAliveSet
-        newHostDeadSet = previousHostsStillAliveSet - hostsStillAliveSet
+        newHostAliveSet = newListOfHostsStillAliveSet & previousListOfHostsStillAliveSet
+        newHostDeadSet = set(self.hostsToPing) - newHostAliveSet
         # Converting the set to list, simply because the display then
         # is nicer.
         sendmsg("Newly alive:  " + str(list(newHostAliveSet)) + \
             "  Newly dead:  " + str(list(newHostDeadSet)), self.logger)
 
       # Now that all the testing is done, we can update the global variable.
-      self.hostsStillAlive=hostsStillAlive
-      self.logger.debug("Hosts being checked and still alive:  " + str(hostsStillAlive))
+      self.hostsStillAlive=newListOfHostsStillAlive
+      self.logger.debug("Hosts being checked and still alive:  " + str(newListOfHostsStillAlive))
 
       # Poll hosts again in 10s.
       time.sleep(10)
