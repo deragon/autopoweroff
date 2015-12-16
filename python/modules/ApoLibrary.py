@@ -10,7 +10,7 @@ from __main__ import scriptname,gTestMode,programname
 #
 #def enable(rundir):
   #cancelfile = rundir + "/" + scriptname + ".cancel"
-  
+
 def createDirs(aDirs):
   for directory in aDirs:
     try:
