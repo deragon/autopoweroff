@@ -136,9 +136,6 @@ import ApoObserverHostsAlive
 global gHostsStillAlive
 gHostsStillAlive = []
 print "ggHostsStillAlive=" + str(gHostsStillAlive)
-ApoObserverHostsAlive. \
-        ApoObserverHostsAlive(configuration.hosts).start()
-
 
 aoha=ApoObserverHostsAlive.ApoObserverHostsAlive(configuration.hosts)
 aoha.start()
