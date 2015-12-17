@@ -79,8 +79,7 @@ if os.path.exists(pidfile):
 def sigtermHandler(_signo, _stack_frame):
   print "sigtermHandler() called."
 
-  global apoDeviceObserverThread
-  apoDeviceObserverThread.terminate()
+  apoDeviceObserverManager.terminate()
 
   global pidfile
   os.remove(pidfile)
