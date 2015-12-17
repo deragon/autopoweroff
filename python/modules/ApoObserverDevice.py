@@ -52,7 +52,7 @@ class ApoDeviceObserverManager():
       apoDevObs.start()
       self.apoDevObsArray.append(apoDevObs)
 
-  def terminate():
+  def terminate(self):
     for thread in self.apoDevObsArray:
       thread.terminate()
 

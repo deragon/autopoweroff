@@ -40,13 +40,13 @@ else:
 
 logging.config.fileConfig(etcdir + "/" + loggingFile)
 logger = logging.getLogger(programname)
+pid = str(os.getpid())
 logger.info("══════════════════════════════════════════════════════════")
-logger.info(programname + " started.")
 
 sys.path.append(sharedir + '/python/modules')
-
-import ApoConfig
 from ApoLibrary import *
+
+sendmsg(programname + " started with PID '" + pid + "'.")
 
 if os.getuid() != 0:
   sendmsg("Must be executed as root.")
@@ -73,17 +73,24 @@ if os.path.exists(pidfile):
       # If such is the case, we ignore the exception, else, we raise it.
       raise
 
+######################################################################
+# Lock file creation to ensure only one instance of this script is running.
+lockFile = open(pidfile, 'w')
+lockFile.write(pid)
+lockFile.close()
 
 # ======================================================================
 # SIGTERM Handler
 def sigtermHandler(_signo, _stack_frame):
   print "sigtermHandler() called."
 
+  global apoDeviceObserverManager
   apoDeviceObserverManager.terminate()
 
   global pidfile
   os.remove(pidfile)
   sendmsg("Ending.")
+  sys.exit(0)
 
 
 # ======================================================================
@@ -98,6 +105,7 @@ signal.signal(signal.SIGTERM, sigtermHandler)
 
 # ======================================================================
 # Configuration
+import ApoConfig
 configuration = ApoConfig.Configuration(None, None, None, None)
 try:
   configuration.read()
@@ -123,7 +131,6 @@ else:
 
 # logger.debug("idletime=" + str(configuration.idletime))
 
-sendmsg("Successfully started as PID: " + str(os.getpid()))
 sendmsg("Command to execute when all conditions are met:  " + command)
 
 ######################################################################
@@ -138,12 +145,6 @@ print "ggHostsStillAlive=" + str(gHostsStillAlive)
 
 aoha=ApoObserverHostsAlive.ApoObserverHostsAlive(configuration.hosts)
 aoha.start()
-
-######################################################################
-# Lock file creation to ensure only one instance of this script is running.
-lockFile = open(pidfile, 'w')
-lockFile.write(str(os.getpid()))
-lockFile.close()
 
 ######################################################################
 # Loading kernel power management module.
