@@ -1,7 +1,5 @@
 ﻿#Autopoweroff: User Guide
 
-WARNING:  This documentation is work in progress
-
 #About Autopoweroff
 
 Autopoweroff is a daemon that is started at boot time, and which function is to run a command at a specific time, but only if some conditions are met. Originally, this application would only shutdown the computer, thus its
