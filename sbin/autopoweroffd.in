@@ -82,7 +82,7 @@ lockFile.close()
 # ======================================================================
 # SIGTERM Handler
 def sigtermHandler(_signo, _stack_frame):
-  print "sigtermHandler() called."
+  logger.debug("sigtermHandler() called.")
 
   global apoDeviceObserverManager
   apoDeviceObserverManager.terminate()
@@ -141,7 +141,6 @@ import ApoObserverHostsAlive
 
 global gHostsStillAlive
 gHostsStillAlive = []
-print "ggHostsStillAlive=" + str(gHostsStillAlive)
 
 aoha=ApoObserverHostsAlive.ApoObserverHostsAlive(configuration.hosts)
 aoha.start()
@@ -274,8 +273,9 @@ try:
                 priority=syslog.LOG_ALERT)
 
         if gTestMode:
-          print "Test mode:  would have run action '" + command + "' at " + \
-                time.strftime("%H:%M:%S", (time.localtime(time.time())))
+          logger.info( \
+              "Test mode:  would have run action '" + command + "' at " + \
+              time.strftime("%H:%M:%S", (time.localtime(time.time()))))
         else:
           # commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
           commands.getstatusoutput(command)
