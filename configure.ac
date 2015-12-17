@@ -1,5 +1,10 @@
 process this file with autoconf to produce a configure script.
 
+# Setting default to Linux standard, since when creating directories
+# line /etc/autopoweroff, we want it to have 755 permissions, not the
+# one that is set by the user's environment.
+umask 022
+
 # Need to setup PATH with sbin directories so calls to testprg() work.
 # When called with a non-root account, sbin directories are not in the
 # PATH by default, causing binaries such as "shutdown" not to be found.
