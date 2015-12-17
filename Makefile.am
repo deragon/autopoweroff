@@ -3,7 +3,6 @@
 #   automake --add-missing --copy
 #   aclocal
 
-AUTOMAKE_OPTIONS = gnu
 CLEANFILES = *.rpm *.gz *.bz2 aclocal.m4 glade/*.bak configure Makefile.in *.out
 
 DESCRIPTION_SHORT = "Unused:  Defined here so the multi-line defintion will not break 'Makefile'"

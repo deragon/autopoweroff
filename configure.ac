@@ -6,10 +6,22 @@ process this file with autoconf to produce a configure script.
 PATH=/sbin:/usr/sbin:${PATH}
 
 AC_INIT([autopoweroff], [3.0.0])
-AC_CONFIG_SRCDIR([.])
-AM_INIT_AUTOMAKE
 AC_REVISION($Revision: 1.4 $)
 AC_COPYRIGHT([Hans Deragon, Copyright 2003-2011, GPL 2.0])
+
+# If no README file is available, by default the following error occurs:
+#
+#   Makefile.am: required file `./README' not found
+#
+# This tells it that your # software does not conform to the typical gnu
+# standards, and thus omitting README is not an error.
+#
+# See:
+#
+# http://stackoverflow.com/questions/15013672/use-autotools-with-readme-md
+AM_INIT_AUTOMAKE([foreign])
+
+AC_CONFIG_SRCDIR([.])
 
 DESCRIPTION_SHORT="Automatically power off a computer if not used"
 
