@@ -10,6 +10,7 @@ if [ "$1" != '--make' ]; then
   make deb
   exit
 else
+  umask 022
   # Calling configure with --enable-install-for-deb so that the spec file
   # is properly generated.
   echo "======================================================================"
