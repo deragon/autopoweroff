@@ -148,7 +148,7 @@ aoha.start()
 ######################################################################
 # Loading kernel power management module.
 # For the moment, not required.
-# commands.getstatusoutput("/sbin/modprobe apm")
+# import commands;commands.getstatusoutput("/sbin/modprobe apm")
 
 import ApoObserverDevice
 apoDeviceObserverManager = ApoObserverDevice.ApoDeviceObserverManager()
@@ -278,6 +278,7 @@ try:
               time.strftime("%H:%M:%S", (time.localtime(time.time()))))
         else:
           # commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
+          import commands
           commands.getstatusoutput(command)
 
         # If the command is executed and we return, we get out of the inner
