@@ -15,7 +15,6 @@ aclocal.m4
 apoinstall
 autom4te.cache/
 configure
-doc/README.md
 doc/index.html
 sbin/autopoweroff
 sbin/autopoweroff-uninstall
