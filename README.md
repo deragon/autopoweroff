@@ -287,11 +287,8 @@ See: [Ubuntu Bug
 Autopoweroff might be of interest to developers because of the
 following reasons:
 
-* This project is a very nice example on how to write a Python daemon that
-  probes input devices, make use of threads
-* It is also a very good example about packaging for .deb and .rpm based
-  distributions, and universal tarball. It makes heavy use of autoconf and
-  automake.
+* This project is a very nice example on how to write a Python daemon that probes input devices, make use of threads
+* It is also a very good example about packaging for .deb and .rpm based distributions, and universal tarball. It makes heavy use of autoconf and automake.
 * Finally, be this project a lesson; if you distribute your software with a
   tarball, provide an easy solution to de-install it. Either provide a script
   like Autopoweroff is doing, or provide a "make uninstall" target.
@@ -313,29 +310,22 @@ The following are features to be added in future releases.
 The following changes have been incorporated in the below mentioned
 versions:
 
-##Version 3.0.0 - 2016/01/01
+##Version 3.0.0 - 2016/02/01
 
-Since 2.9.1 was reported stable, 3.0.0 was released with only minor fixes
-added.
+3.0.0 has been a major rework of the project.
 
-* Upgraded the GUI to the latest GTK API available on Ubuntu LTS 14.01 Trusty
-  Thar.
-* PID and cancel file where previously stored under /tmp, which under Ubuntu
-  (and probably Debian), is erased at each reboot. They were moved under /var
-  where they should have been in the first place.
+* Autopoweroff is not limited any more to only poweroff the computer.  It can now execute any command when all conditions are met.
+* The GUI has been improved and extended to support the new functionality.  The GUI framework was upgraded to the latest GTK API available on Ubuntu LTS 14.01 Trusty Thar.
+* More multithreading has been introduced to simplify the management of asynchronous events.
+* PID and cancel file where previously stored under /tmp, which under Ubuntu (and probably Debian), is erased at each reboot. They were moved under /var where they should have been in the first place.
 * Made the /etc/init.d/autopoweroff LSB version compliant to the standard.
-* Introduced a new icon in SVG format, now the default. PNG format is
-  available for window managers which do not support the SVG format.
-* Replaced the GNU 2.0 License text with another GNU 2.0 License text which
-  was updated by the Free Software Foundation. Fundementaly though, the
-  license has not changed.
-* Fixed bug regarding 'no shutdown range' crossing over midnight.  Thanks to
-  Kyle Shim (kyle.s.shim@gmail.com) for reporting and proving a patch to fix
-  it.
-* Fixed bug in script building .deb package where the wrong value of
-  \${autopoweroff\_bindir} was being used.
-* Fixed bug in .deb package; previously, autopoweroff-upgrade was not called
-  upon installation of the package.
+* Introduced a new icon in SVG format, now the default. PNG format is available for window managers which do not support the SVG format.
+* Replaced the GNU 2.0 License text with another GNU 2.0 License text which was updated by the Free Software Foundation. Fundamentally though, the license has not changed.
+* Fixed bug regarding 'no shutdown range' crossing over midnight.  Thanks to Kyle Shim (kyle.s.shim@gmail.com) for reporting and proving a patch to fix it.
+* Fixed bug in script building .deb package where the wrong value of \${autopoweroff\_bindir} was being used.
+* Fixed bug in .deb package; previously, autopoweroff-upgrade was not called upon installation of the package.
+* The documentation was converted from [AurigaDoc](http://aurigadoc.sourceforge.net/) to Markdown.
+* Moved the source from [Sourceforge](http://autopoweroff.sourceforge.net) to [GitHub](https://github.com/deragon/autopoweroff).
 
 ##Version 2.9.1 - 2008/06/01
 
@@ -419,8 +409,7 @@ This release is a complete overhaul of the project.\
 
 #Miscelleanous
 
-This document has been created with
-[AurigaDoc](http://aurigadoc.sourceforge.net/)
+* This document source is a Markdown document.  [MdCharm]( http://www.mdcharm.com) is used to edit it.
 
 #Contact
 
