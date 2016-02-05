@@ -2,4 +2,4 @@ scp \
   index.html \
   markdown.css \
   autopoweroff.png \
-  deragon@web.sourceforge.net:autopoweroff_website/htdocs/
+  deragon@web.sourceforge.net:autopoweroff_website/htdocs/.
