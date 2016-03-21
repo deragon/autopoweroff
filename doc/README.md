@@ -223,7 +223,7 @@ The following are features to be added in future releases.
 The following changes have been incorporated in the below mentioned
 versions:
 
-##Version 3.0.0 - 2016/02/01
+##Version 3.0.0 - 2016-02-01
 
 3.0.0 has been a major rework of the project.
 
@@ -240,7 +240,7 @@ versions:
 * The documentation was converted from [AurigaDoc](http://aurigadoc.sourceforge.net/) to Markdown.
 * Moved the source from [Sourceforge](http://autopoweroff.sourceforge.net) to [GitHub](https://github.com/deragon/autopoweroff).
 
-##Version 2.9.1 - 2008/06/01
+##Version 2.9.1 - 2008-06-01
 
 Following feedback received from user [Tomas Klema](http://tklema.info)
 and another anonymous one, multiple small improvements and fixes were
@@ -262,7 +262,7 @@ introduced in this version of Autopoweroff:
 * Files in subversion were moved to trunk/. branches/ and tags/ where created
   to better manage the software.
 
-##Version 2.9.0 - 2008/05/11
+##Version 2.9.0 - 2008-05-11
 
 This release is a complete overhaul of the project.\
 
@@ -272,7 +272,7 @@ This release is a complete overhaul of the project.\
   required.
 * Subversion is now used instead of CVS for software configuration management.
 
-##Version 2.1.0 - 2004/01/19
+##Version 2.1.0 - 2004-01-19
 
 * Like a screensaver, Autopoweroff now detects idle time on the server by
   scanning for keyboard and mouse activity. Currently, PS/2 keyboards and PS/2
@@ -288,7 +288,7 @@ This release is a complete overhaul of the project.\
   "shutdown" command. Some user wrote to me asking where reboot and poweroff
   could be obtained, so I assume that they are not always available.
 
-##Version 2.0.0 - 2003/11/23
+##Version 2.0.0 - 2003-11-23
 
 * Created a user interface to simplify configuration. See [Autopoweroff GUI
   configuration tool](#config_autopoweroff_gui).
@@ -296,25 +296,25 @@ This release is a complete overhaul of the project.\
   purposes.
 * Removed Gnome dependency, for servers running in text mode only.
 
-##Version 1.2.0 - 2003/06/07
+##Version 1.2.0 - 2003-06-07
 
 * Fixed \*.desktop files so that the icons now appear in the gnome "system
   tools" menu even if no locale is set.
 
-##Version 1.1.1 - 2003/05/03
+##Version 1.1.1 - 2003-05-03
 
 * RPM installation now fully recognize Mandrake.
 * Improved the Autopoweroff Configuration section of the document and the
   comments in /etc/autopoweroff.conf.
 * Added the `Supported distributions` section.
 
-##Version 1.1.0 - 2003/04/27
+##Version 1.1.0 - 2003-04-27
 
 * Automatic Gnome installation. Under Red Hat 9.0, the cancel and enable
   scripts now have icons showing up under the "System tools" menu.
 * Improved the installation and uninstallation of the software from a tarball.
 
-##Version 1.0.1 - 2003/04/14
+##Version 1.0.1 - 2003-04-14
 
 * Used autoconf to allow installation from a tarball.
 * Started using [AurigaDoc](http://aurigadoc.sourceforge.net/) for creating
