@@ -79,7 +79,7 @@ EXTRA_DIST =                            \
 	${etc_DATA}                           \
 	doc/autopoweroff_cfg-config.png       \
 	doc/autopoweroff_cfg-statusandcmd.png \
-	doc/autopoweroff.xml                  \
+	doc/README.md                         \
 	doc/COPYING                           \
 	packages/rpm/buildrpm                 \
 	postinstall                           \
