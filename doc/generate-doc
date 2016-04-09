@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This script takes as input <autopoweroff dir>/doc/README.md and process it
+# to create the final version for release under <autopoweroff dir>/README.md.
+
+import re, os, sys;
+
+scriptPathAbs=os.path.realpath(os.path.dirname(sys.argv[0]))
+templateContent = open(scriptPathAbs + "/doc/README.md", "r").read()
+
+# Saving the content of the following file 
+autopoweroffConfContent = open(scriptPathAbs + "/../etc/autopoweroff/autopoweroff.conf", 'r').read()
+
+newContent = re.sub("@>>etc/autopoweroff/autopoweroff.conf<<@", \
+                    autopoweroffConfContent ,templateContent)
+
+outputFD = open(scriptPathAbs + "/../README.md", "w")
+outputFD.write(newContent)

@@ -195,6 +195,7 @@ Hosts=milomana, demloka, dsafas
 [ACTION]
 Action=sleep
 ActionCommand=
+
 ```
 
 #BIOS configuration
@@ -289,7 +290,7 @@ following reasons:
 
 * This project is a very nice example on how to write a Python daemon that probes input devices, make use of threads
 * It is also a very good example about packaging for .deb and .rpm based distributions, and universal tarball. It makes heavy use of autoconf and automake.
-* Finally, be this project a lesson; if you distribute your software with a
+* Finally, be this project a lesson; if you distribute your software as a
   tarball, provide an easy solution to de-install it. Either provide a script
   like Autopoweroff is doing, or provide a "make uninstall" target.
 
@@ -305,12 +306,14 @@ The following are features to be added in future releases.
   English.
 * New GUI that follows more closely the Gnome recommendations.
 * Better documentation, including writing a man page.
-* Support for a wider range of Linux distributions.  #Change history
+* Support for a wider range of Linux distributions.
+
+#Change history
 
 The following changes have been incorporated in the below mentioned
 versions:
 
-##Version 3.0.0 - 2016/02/01
+##Version 3.0.0 - 2016/04/09
 
 3.0.0 has been a major rework of the project.
 
@@ -419,4 +422,3 @@ the following persons:
 Author:    Hans Deragon
 Email:     <hans@deragon.biz>
 Website:   [www.deragon.biz](http://www.deragon.biz)
-
