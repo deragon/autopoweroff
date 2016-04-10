@@ -3,7 +3,7 @@
 #   automake --add-missing --copy
 #   aclocal
 
-CLEANFILES = *.rpm *.gz *.bz2 aclocal.m4 glade/*.bak configure Makefile.in *.out
+CLEANFILES = *.rpm *.gz *.bz2 aclocal.m4 glade/*.bak configure Makefile.in *.out *.log
 
 DESCRIPTION_SHORT = "Unused:  Defined here so the multi-line defintion will not break 'Makefile'"
 
@@ -107,7 +107,10 @@ transfer:
 clean-generic:
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 	rm -rf doc/out autom4te.cache
-	find . -name "*.pyc" -exec rm -f {} \;
+	find . \
+	  -name "*.pyc" -o \
+		-name "*.log" \
+		-exec rm -f {} \;
 
 # dist-exec-hook:
 # 	echo "dist-exec-hook called."
