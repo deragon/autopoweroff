@@ -31,3 +31,5 @@ packages/deb/postrm
 packages/rpm/autopoweroff.spec
 desktop/autopoweroff.desktop
 packages/deb/build/
+packages/deb/*.tar.gz
+packages/rpm/*.tar.gz
