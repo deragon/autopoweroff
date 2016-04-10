@@ -63,7 +63,7 @@ start the server manually.
 
 Contact:
 
-  Project website:   http://autopoweroff.sourceforge.net
+  Project website:   https://github.com/deragon/autopoweroff
   Business website:  http://www.deragon.biz
   Email:             hans@deragon.biz"
 

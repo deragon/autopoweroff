@@ -32,7 +32,7 @@ gchar *s = N_("Configuration");
 gchar *s = N_("Autopoweroff\n"
               "@version@\n"
               "\n"
-              "autopoweroff.sourceforge.net\n"
+              "https://github.com/deragon/autopoweroff\n"
               "\n"
               "Written by Hans Deragon\n"
               "\n"

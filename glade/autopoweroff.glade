@@ -48,7 +48,7 @@
     <property name="comments" translatable="yes">Poweroff, sleep, hibernate or run any other action on
 your computer automatically when conditions
 you set are met, such as having no more activity on the keyboard/mouse and no dependencies against other hosts.</property>
-    <property name="website">http://autopoweroff.sourceforge.net</property>
+    <property name="website">https://github.com/deragon/autopoweroff</property>
     <property name="website_label" translatable="yes">Autopoweroff website</property>
     <property name="authors">Hans Deragon
 Computer consultant

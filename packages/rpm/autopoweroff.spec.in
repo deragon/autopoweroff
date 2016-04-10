@@ -25,8 +25,8 @@ BuildRoot : /var/tmp/%{name}-buildroot
 # This spec file is meant to work for multiple distributions.
 Requires  : @autopoweroff_rpm_requirements@
 BuildArch : %{arch}
-URL       : autopoweroff.sourceforge.net
-#Source    : http://autopoweroff.sourceforge.net
+URL       : https://github.com/deragon/autopoweroff
+#Source    : https://github.com/deragon/autopoweroff
 
 %description
 @DESCRIPTION_LONG@
@@ -192,5 +192,5 @@ rm -rf %{_bindir}/autopoweroff >dev/null 2>&1
 
 %changelog
 * Wed Nov 12 2003 Hans Deragon <hans@deragon.biz>
-- See http://autopoweroff.sourceforge.net/#change_history for full history
+- See https://github.com/deragon/autopoweroff#change-history for full history
 of Autopoweroff.
