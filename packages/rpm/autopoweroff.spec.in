@@ -2,6 +2,9 @@
 %define version     @VERSION@
 %define release     1
 %define arch        @ARCH@
+# _sysconfdir Needs to be set to '/etc'.  Do not attempt to set it
+# to '/etc/autopoweroff'; pam and other configuration files will not be
+# properly setup.
 %define _sysconfdir /etc
 
 Summary   : @DESCRIPTION_SHORT@
@@ -119,8 +122,9 @@ WARNING:  Since Autopoweroff will start next time this machine is
           in a terminal the command "autopoweroff".
 
           Another alternative is to edit
-          %{_sysconfdir}/autopoweroff.conf directly.  This configuration
-          file contains the instructions on how to setup each section.
+          %{_sysconfdir}/autopoweroff/autopoweroff.conf directly.  This
+          %configuration file contains the instructions on how to setup each
+          %section.
 
 
 To start Autopoweroff now instead of waiting for the next reboot, run:
@@ -161,7 +165,8 @@ rm -f @autopoweroff_initdir@/autopoewroff
 # Since we do not include /etc/autopoweroff.conf in the %files section,
 # we most manually perform the operation that rpm -e would otherwise
 # perform.
-mv /etc/autopoweroff.conf /etc/autopoweroff.conf.rpmsave
+mv @autopoweroff_etcdir@/autopoweroff.conf \
+   @autopoweroff_etcdir@/autopoweroff.conf.rpmsave
 echo "warning: /etc/autopoweroff.conf saved as /etc/autopoweroff.conf.rpmsave"
 
 %postun
@@ -180,7 +185,9 @@ rm -rf %{_bindir}/autopoweroff >dev/null 2>&1
 
 # sbindir == /urs/sbin, not /sbin
 
-%{_sysconfdir}/autopoweroff.conf
+@autopoweroff_etcdir@/autopoweroff.conf
+@autopoweroff_etcdir@/autopoweroff-logging-debug.conf
+@autopoweroff_etcdir@/autopoweroff-logging.conf
 %{_sysconfdir}/pam.d/autopoweroff
 # %{_sysconfdir}/init.d/autopoweroff.lsb
 # %{_sysconfdir}/init.d/autopoweroff.redhat

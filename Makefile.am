@@ -83,7 +83,8 @@ EXTRA_DIST =                            \
 	doc/COPYING                           \
 	packages/rpm/buildrpm                 \
 	postinstall                           \
-  packages/rpm/${PACKAGE}.spec.in
+  packages/rpm/${PACKAGE}.spec.in       \
+	doc/generate-doc
 
 
 deb:

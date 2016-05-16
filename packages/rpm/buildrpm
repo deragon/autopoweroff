@@ -1,11 +1,29 @@
 #!/bin/bash -x
 
 {
+
+# All operation must be executed relative to the directory which this
+# script resides.
+SCRIPT_PATH_ABS=`dirname $(readlink -f "${BASH_SOURCE[0]}")` # Fetch real directory, not symlink.
+cd "${SCRIPT_PATH_ABS}"
+
 #ARCH=`uname -i`
 ARCH="noarch"
 
+if [ -f ~/.rpmmacros ]; then
+  export RPMDIR=`fgrep %_topdir ~/.rpmmacros | awk -F " " "{print \\\$2}"`
+else \
+  RPMDIR="/tmp/autopoweroff-build"
+  rm -rf "${RPMDIR}"
+  mkdir -p \
+    "${RPMDIR}/BUILD" \
+    "${RPMDIR}/SOURCES" \
+    "${RPMDIR}/RPMS"
+
+  #RPMDIR="/usr/src/redhat"
+fi
+
 for DISTRIBUTION in fedora suse; do
-#for DISTRIBUTION in suse; do
   echo "======================================================================"
   echo "== Building rpm for ${DISTRIBUTION}"
 
@@ -21,34 +39,31 @@ for DISTRIBUTION in fedora suse; do
     ./configure --enable-install-for-rpm --enable-install-for-${DISTRIBUTION}
   fi
   cd -
-
-  if [ -f ~/.rpmmacros ]; then
-    export RPMDIR=`fgrep %_topdir ~/.rpmmacros | awk -F " " "{print \\\$2}"`
-  else \
-    RPMDIR="/usr/src/redhat"
-  fi
   mv ${PACKAGE}-${VERSION}.tar.gz ${RPMDIR}/SOURCES/.
   RELEASE=`egrep "^%define release" ${PACKAGE}.spec | awk "{print \\\$3; }"`;
 
   echo "----------------------------------------------------------------------"
   echo "-- buildrpm:  rpmbuild now called."
-  rpmbuild -bb ${PACKAGE}.spec
+  rpmbuild --define "_topdir ${RPMDIR}" -bb "${PACKAGE}.spec"
 
-  if [ $? == 0 ]; then
+  RV=$?
+  if (( ${RV} == 0 )); then
     IDENT="${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}"
     SRC="${RPMDIR}/RPMS/${ARCH}/${IDENT}.rpm"
     DST="./${IDENT}.${DISTRIBUTION}.rpm"
     #mv ${RPMDIR}/RPMS/${ARCH}/${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.rpm .
-    mv ${SRC} ${DST}
+    mv "${SRC}" "${DST}"
     if [ "${DISTRIBUTION}" = "fedora" ]; then
-      rm -f ${PACKAGE}.${ARCH}.rpm
-      ln -s ${DST} ${PACKAGE}.${ARCH}.rpm
+      rm -f "${PACKAGE}.${ARCH}.rpm"
+      ln -s "${DST}" "${PACKAGE}.${ARCH}.rpm"
     fi
   #  rm ${PACKAGE}-${VERSION}-0.fdr.${RELEASE}.${ARCH}.rpm >/dev/null 2>&1
   #   ln -s ${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.rpm \
   #         ${PACKAGE}-${VERSION}-0.fdr.${RELEASE}.${ARCH}.rpm;
     echo -e "RPM built with sucess!  Following, its content:\n"
-    rpm -qpl ${DST}
+    rpm -qpl "${DST}"
+  else
+    exit ${RV}
   fi
 done
 } 2>&1 | tee buildrpm.log
