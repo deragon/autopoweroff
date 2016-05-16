@@ -7,7 +7,9 @@
 import re, os, sys;
 
 scriptPathAbs=os.path.realpath(os.path.dirname(sys.argv[0]))
-templateContent = open(scriptPathAbs + "/doc/README.md", "r").read()
+#print scriptPathAbs
+templateContent = open(scriptPathAbs + "/README.md", "r").read()
+#print templateContent 
 
 # Saving the content of the following file 
 autopoweroffConfContent = open(scriptPathAbs + "/../etc/autopoweroff/autopoweroff.conf", 'r').read()
