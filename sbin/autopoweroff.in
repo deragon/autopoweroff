@@ -43,6 +43,8 @@ import ApoDocumentation
 
 gnomeversion="3.0"
 try:
+  import gi
+  gi.require_version('Gtk', gnomeversion)
   from gi.repository import Gtk
 except ImportError, errormsg:
   print """
@@ -454,7 +456,8 @@ def terminateProgram(*args):
 ############################################################
 
 if gTestMode:
-  print "Using GTK " + \
+  print programname + ":  Test mode enabled.\n" + \
+        programname + ":  Using GTK " + \
         str(Gtk.get_major_version()) + "." + \
         str(Gtk.get_minor_version()) + "." + \
         str(Gtk.get_micro_version())
