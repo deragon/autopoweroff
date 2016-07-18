@@ -16,7 +16,7 @@ apoinstall
 autom4te.cache/
 configure
 doc/index.html
-sbin/autopoweroff
+sbin/autopoweroff-gui
 sbin/autopoweroff-uninstall
 sbin/autopoweroff-upgrade
 sbin/autopoweroffd
