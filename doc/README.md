@@ -223,7 +223,7 @@ The following are features to be added in future releases.
 The following changes have been incorporated in the below mentioned
 versions:
 
-##Version 3.0.0 - 2016-04-10
+##Version 3.0.0 - 2016-07-18
 
 3.0.0 has been a major rework of the project.
 
