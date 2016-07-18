@@ -13,26 +13,29 @@ scriptname = os.path.basename(sys.argv[0])
 
 gTestMode = "@production@" != "true"
 
+print scriptname + " started."
+
 if gTestMode:
   # We are in test mode.  Using relative values.
   print "Test mode activated."
-  osetcdir    = "../etc"
+  etcdir      = "../etc"
+  confdir     = etcdir + "/autopoweroff"
   sharedir    = ".."
   programname = "autopoweroff"
   version     = "Test version"
 else:
-  osetcdir    = "@autopoweroff_etcdir@"
+  etcdir      = "@autopoweroff_etcdir@"
+  confdir     = "@autopoweroff_confdir@"
   sharedir    = "@autopoweroff_sharedir@"
   programname = "@PACKAGE_NAME@"
   version     = "@VERSION@"
 
-etcdir = osetcdir  + "/@PACKAGE_NAME@"
-if not os.path.isdir(etcdir):
-  os.makedirs(etcdir)
-  os.makedirs(etcdir + "/@PACKAGE_NAME@.d")
+if not os.path.isdir(confdir):
+  os.makedirs(confdir)
+  os.makedirs(confdir + "/@PACKAGE_NAME@.d")
 
-  shutil.move(osetcdir + "/@PACKAGE_NAME@.conf",
-              etcdir + "/@PACKAGE_NAME@.conf")
+  shutil.move(etcdir + "/@PACKAGE_NAME@.conf",
+              confdir + "/@PACKAGE_NAME@.conf")
 
 sys.path.append(sharedir + '/python/modules')
 

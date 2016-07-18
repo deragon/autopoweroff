@@ -20,25 +20,25 @@ if not gTestMode and os.fork() != 0:
 
 scriptname = os.path.basename(sys.argv[0])
 
-if gTestMode:
-  # We are in test mode.  Using relative values.
-  programname = "Autopoweroff"
-  sharedir    = ".."
-  etcdir      = "../etc/" + programname.lower()
-  rundir      = "/tmp/" + programname.lower() + "-test/var"
-  piddir      = rundir
-  pidfile     = "autopoweroff-test.pid"
-  loggingFile = "autopoweroff-logging-debug.conf"
-else:
+if not gTestMode:
   programname = "@program_name@"
   sharedir    = "@autopoweroff_sharedir@"
-  etcdir      = "@autopoweroff_etcdir@"
+  confdir     = "@autopoweroff_confdir@"
   rundir      = "@autopoweroff_rundir@"
   piddir      = "@autopoweroff_piddir@"
   pidfile     = "@autopoweroff_pidfile@"
   loggingFile = "autopoweroff-logging.conf"
+else:
+  # We are in test mode.  Using relative values.
+  programname = "Autopoweroff"
+  sharedir    = ".."
+  confdir     = "../etc/" + programname.lower()
+  rundir      = "/tmp/" + programname.lower() + "-test/var"
+  piddir      = rundir
+  pidfile     = "autopoweroff-test.pid"
+  loggingFile = "autopoweroff-logging-debug.conf"
 
-logging.config.fileConfig(etcdir + "/" + loggingFile)
+logging.config.fileConfig(confdir + "/" + loggingFile)
 logger = logging.getLogger(programname)
 pid = str(os.getpid())
 logger.info("══════════════════════════════════════════════════════════")
@@ -54,7 +54,7 @@ if os.getuid() != 0:
 
 createDirs([piddir, rundir])
 cancelfile = rundir + "/" + scriptname + ".cancel"
-conffile = etcdir + "/" + scriptname + ".conf"
+conffile = confdir + "/" + scriptname + ".conf"
 
 # The "No shutdown range" is the range, expressed in hours, during which no
 # shutdown is to be performed.

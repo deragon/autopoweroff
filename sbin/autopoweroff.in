@@ -16,20 +16,20 @@ gTestMode = "@production@" != "true"
 if not gTestMode:
   sharedir    = "@autopoweroff_sharedir@"
   initdir     = "@autopoweroff_initdir@"
-  etcdir      = "@autopoweroff_etcdir@/@PACKAGE_NAME@"
+  confdir     = "@autopoweroff_confdir@"
   rundir      = "@autopoweroff_rundir@"
   bindir      = "@autopoweroff_bindir@"
   version     = "@VERSION@"
   programname = "@PACKAGE_NAME@"
 else:
   # We are in test mode.  Using relative values.
-  sharedir = ".."
-  initdir  = "../rc"
-  etcdir   = "../etc/autopoweroff"
-  version  = "Test version"
-  rundir   = "/tmp/autopoweroff/var"
-  bindir   = "bin"
-  programname = "autopoweroff"
+  programname = "Autopoweroff"
+  sharedir    = ".."
+  initdir     = "../etc/init.d"
+  confdir     = "../etc/" + programname.lower()
+  rundir      = "/tmp/" + programname.lower() + "-test/var"
+  version     = "Test version"
+  bindir      = "bin"
   try:
     os.makedirs(rundir)
   except:

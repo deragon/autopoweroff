@@ -165,8 +165,8 @@ rm -f @autopoweroff_initdir@/autopoewroff
 # Since we do not include /etc/autopoweroff.conf in the %files section,
 # we most manually perform the operation that rpm -e would otherwise
 # perform.
-mv @autopoweroff_etcdir@/autopoweroff.conf \
-   @autopoweroff_etcdir@/autopoweroff.conf.rpmsave
+mv @autopoweroff_confdir@/autopoweroff.conf \
+   @autopoweroff_confdir@/autopoweroff.conf.rpmsave
 echo "warning: /etc/autopoweroff.conf saved as /etc/autopoweroff.conf.rpmsave"
 
 %postun
@@ -185,9 +185,9 @@ rm -rf %{_bindir}/autopoweroff >dev/null 2>&1
 
 # sbindir == /urs/sbin, not /sbin
 
-@autopoweroff_etcdir@/autopoweroff.conf
-@autopoweroff_etcdir@/autopoweroff-logging-debug.conf
-@autopoweroff_etcdir@/autopoweroff-logging.conf
+@autopoweroff_confdir@/autopoweroff.conf
+@autopoweroff_confdir@/autopoweroff-logging-debug.conf
+@autopoweroff_confdir@/autopoweroff-logging.conf
 %{_sysconfdir}/pam.d/autopoweroff
 # %{_sysconfdir}/init.d/autopoweroff.lsb
 # %{_sysconfdir}/init.d/autopoweroff.redhat

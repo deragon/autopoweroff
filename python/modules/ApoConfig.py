@@ -20,8 +20,8 @@ from ApoLibrary import *
 # "scriptname" gets the value autopoweroffd when it is the daemon
 # running, thus setting "conffile" to ".../autopoweroffd.conf", which is
 # non existant.
-#conffile = etcdir + "/autopoweroff.conf"
-conffile = etcdir + "/" + programname.lower() + ".conf"
+#conffile = confdir + "/autopoweroff.conf"
+conffile = confdir + "/" + programname.lower() + ".conf"
 
 STARTHOUR=0
 ENDHOUR=1

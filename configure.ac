@@ -253,8 +253,9 @@ if [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
 
   set -x
   autopoweroff_sharedir="/usr/share/autopoweroff"
-  autopoweroff_etcdir="/etc/autopoweroff"
-  autopoweroff_etccrondir="${autopoweroff_etcdir}/cron.d"
+  autopoweroff_etcdir="/etc"
+  autopoweroff_confdir="${autopoweroff_etcdir}/autopoweroff"
+  autopoweroff_etccrondir="${autopoweroff_confdir}/cron.d"
   autopoweroff_crondir="${autopoweroff_sharedir}/cron"
   autopoweroff_bindir="/usr/bin"
   autopoweroff_sbindir="/usr/sbin"
@@ -284,14 +285,15 @@ else
 
   set -x
   autopoweroff_sharedir="${datadir}"
-  autopoweroff_etcdir=${sysconfdir}/autopoweroff
-  autopoweroff_etccrondir=${autopoweroff_etcdir}/cron.d
-  autopoweroff_crondir=${autopoweroff_sharedir}/cron
-  autopoweroff_vardir=${autopoweroff_sharedir}/var
-  autopoweroff_logdir=${autopoweroff_sharedir}/log
-  autopoweroff_bindir=${bindir}
-  autopoweroff_sbindir=${sbindir}
-  autopoweroff_initdir=${sysconfdir}/init.d
+  autopoweroff_etcdir="${sysconfdir}"
+  autopoweroff_confdir="${autopoweroff_etcdir}/autopoweroff"
+  autopoweroff_etccrondir="${autopoweroff_etcdir}/cron.d"
+  autopoweroff_crondir="${autopoweroff_sharedir}/cron"
+  autopoweroff_vardir="${autopoweroff_sharedir}/var"
+  autopoweroff_logdir="${autopoweroff_sharedir}/log"
+  autopoweroff_bindir="${bindir}"
+  autopoweroff_sbindir="${sbindir}"
+  autopoweroff_initdir="${sysconfdir}/init.d"
   set +x
 fi
 
@@ -375,6 +377,7 @@ AC_SUBST(program_name)
 AC_SUBST(autopoweroff_sharedir)
 AC_SUBST(autopoweroff_etcdir)
 AC_SUBST(autopoweroff_etccrondir)
+AC_SUBST(autopoweroff_confdir)
 AC_SUBST(autopoweroff_crondir)
 AC_SUBST(autopoweroff_vardir)
 AC_SUBST(autopoweroff_logdir)
