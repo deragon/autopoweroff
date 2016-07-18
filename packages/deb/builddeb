@@ -10,16 +10,18 @@ if [ "$1" != '--make' ]; then
   make deb
   exit
 else
+  set -e
   umask 022
   # Calling configure with --enable-install-for-deb so that the spec file
   # is properly generated.
   echo "======================================================================"
   echo "== builddeb:  ./configure called for setting everything properly"
-  env
+  #env
 
   BUILD=`pwd`"/build"
   rm -rf "${BUILD}"
   mkdir -p "${BUILD}/DEBIAN"
+  rm -f autopoweroff*.deb
 
   cd ../..
   ./configure --prefix=${BUILD} \
@@ -50,7 +52,6 @@ else
   rm -rf init.d
   cd -
 
-  env
   mkdir -p ${BUILD}${autopoweroff_bindir}
   cat >${BUILD}${autopoweroff_bindir}/autopoweroff <<EOS
 #!/bin/bash
@@ -65,14 +66,28 @@ EOS
   chmod 755 postinst postrm
   cp -p conffiles "${BUILD}/DEBIAN/."
   mv postinst postrm "${BUILD}/DEBIAN/."
+  set -e
   fakeroot dpkg-deb --build "${BUILD}"  # Build package with files owned by root:root
   dpkg -c build.deb  # Simply show content of debian package.
+  set +e
   lintian build.deb  # Check if package is properly setup.
-  mv build.deb ${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb
+  DEB="${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb"
+  mv build.deb "${DEB}" 
   rm -f ${PACKAGE}.${ARCH}.deb
-  ln -s ${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb \
-        ${PACKAGE}.${ARCH}.deb
-  echo -e "To install the created package, run:\n\n  sudo dpkg -i ${PWD}/${PACKAGE}.${ARCH}.deb"
+  ln -s "${DEB} ${PACKAGE}.${ARCH}.deb"
+
+  cat <<EOM
+Note that if you have issues with configuration files /etc/${PACKAGE}/*
+not being installed, it is caused by Debian's packaging system being out
+of sync with the filesystem.  To fix this, run:
+
+  sudo apt purge ${PACKAGE};
+
+To install the created package, run:
+
+  sudo dpkg -i "${PWD}/${DEB}"
+
+EOM
 
 fi
 } 2>&1 | tee builddeb.log
