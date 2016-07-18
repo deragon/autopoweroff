@@ -42,6 +42,7 @@ else
   #  variables from the generated files.  Thus we have no choice to
   #  hardcode the variables here, overwritting their wrong values.
   export autopoweroff_bindir="/usr/bin"
+  export autopoweroff_sbindir="/usr/sbin"
 
   # Setting up the proper init file for Ubuntu/Debian.
 
@@ -55,7 +56,7 @@ else
   mkdir -p ${BUILD}${autopoweroff_bindir}
   cat >${BUILD}${autopoweroff_bindir}/autopoweroff <<EOS
 #!/bin/bash
-gksu ${autopoweroff_sbindir}/autopoweroff
+gksu ${autopoweroff_sbindir}/autopoweroff-gui
 EOS
   chmod 755 ${BUILD}${autopoweroff_bindir}/autopoweroff
 

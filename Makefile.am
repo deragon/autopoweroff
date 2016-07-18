@@ -11,7 +11,7 @@ DESCRIPTION_LONG     = $(DESCRIPTION_SHORT)
 DESCRIPTION_LONG_DEB = $(DESCRIPTION_SHORT)
 
 sbin_SCRIPTS = \
-	sbin/autopoweroff \
+	sbin/autopoweroff-gui \
 	sbin/autopoweroffd \
 	sbin/autopoweroff-uninstall \
 	sbin/autopoweroff-upgrade

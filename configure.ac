@@ -351,7 +351,7 @@ AC_CONFIG_FILES([ \
   packages/deb/postinst \
   packages/deb/postrm \
   sbin/autopoweroffd \
-  sbin/autopoweroff \
+  sbin/autopoweroff-gui \
   sbin/autopoweroff-upgrade \
   sbin/autopoweroff-uninstall \
   etc/security/console.apps/autopoweroff \
@@ -397,7 +397,7 @@ AC_OUTPUT
 
 chmod a+x \
   sbin/autopoweroffd \
-  sbin/autopoweroff \
+  sbin/autopoweroff-gui \
   sbin/autopoweroff-uninstall \
   sbin/autopoweroff-upgrade \
   etc/init.d/autopoweroff.lsb \
