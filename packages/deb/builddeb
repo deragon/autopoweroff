@@ -75,7 +75,7 @@ EOS
   DEB="${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb"
   mv build.deb "${DEB}" 
   rm -f ${PACKAGE}.${ARCH}.deb
-  ln -s "${DEB} ${PACKAGE}.${ARCH}.deb"
+  ln -s "${DEB}" "${PACKAGE}.${ARCH}.deb"
 
   cat <<EOM
 Note that if you have issues with configuration files /etc/${PACKAGE}/*
