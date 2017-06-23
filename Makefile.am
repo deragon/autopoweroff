@@ -100,7 +100,9 @@ rpm: dist
 	cd packages/rpm; \
 	buildrpm --make
 
-pkg: deb rpm
+# Call this target to build *.deb, *.rpm and *.tar.gz files for
+# distribution.
+build: deb rpm dist
 
 transfer:
 	./ftp-transfer ${PACKAGE} ${VERSION}
