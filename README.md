@@ -1,16 +1,33 @@
-﻿#Autopoweroff: User Guide
+Autopoweroff: User Guide
+======================================================================
 
-#About Autopoweroff
+Status as of 2017 - Fully supported.
+======================================================================
 
-Autopoweroff is a daemon that is started at boot time, and which function is to run a command at a specific time, but only if some conditions are met. Originally, this application would only shutdown the computer, thus its
-name, but now it can suspend, hibernate, or run any custom command provided by the user.
+This program is actively supported, but is simply not being developed much
+anymore because it is now mature and nobody reports any problem with it.
+There is no more need for new features either.  So do not judge the software
+by the number of commits.
+
+It is compatible with many current Linux distributions.  Try it and if you
+have any issue, please report it; we will work hard to get things fixed.
+
+
+About Autopoweroff
+======================================================================
+
+Autopoweroff is a daemon that is started at boot time, and which function is
+to run a command at a specific time, but only if some conditions are met.
+Originally, this application would only shutdown the computer, thus its name,
+but now it can suspend, hibernate, or run any custom command provided by the
+user.
 
 This software is meant for the Linux operating system only.  It should work on any modern Linux distribution.  Deb and RPM packages are available.
 
 The computer will execute the command (suspend by default) if all the above
 conditions are met:
 
-* Any hosts that the computer is dependant on is not answering ping anymore.
+* Any hosts that the computer is dependent on is not answering ping anymore.
 * No keyboard or mouse activity has been detected on the computer for a while.
 * The user has not disabled Autopoweroff.
 
@@ -39,7 +56,9 @@ A nice GUI is provided to configure Autopoweroff's parameters.  See
 
 Note that one day, it might be possible to replace this piece of software with SystemD.  Currently I have no OS with SystemD installed to test.
 
-#Supported Linux distributions
+
+Supported Linux distributions
+======================================================================
 
 Autopoweroff will work on most distributions. However, for some
 distribution you might have to manually move files to the right place to
@@ -59,18 +78,31 @@ edit `/etc/autopoweroff.conf` to your particular needs. Autopoweroff
 will be eventually submitted to Ubuntu's and Fedora's repositories,
 making it even easier to install.
 
-##Help wanted
+Help wanted
+--------------------------------------------------
 
 If you are running a distribution that is not yet supported by Autopoweroff,
 write to me. I will ask you some questions about your distribution and
 probably be able to add support for it.
 
-#Download
+
+Download / Releases
+======================================================================
 
 The latest version of Autopoweroff can be downloaded from
-[GitHub](https://github.com/deragon/autopoweroff)
+[GitHub](https://github.com/deragon/autopoweroff/releases)
 
-#Autopoweroff configuration
+
+Following the project status
+======================================================================
+
+You may follow the project's status also from the following sites:
+
+* [OpenHub](https://www.openhub.net/p/autopoweroff)
+
+
+Autopoweroff configuration
+======================================================================
 
 There are two ways to configure Autopoweroff.
 
@@ -78,9 +110,10 @@ There are two ways to configure Autopoweroff.
 * Edit manually the configuration file
     [`autopoweroff.conf`](#config_autopoweroff_file).
 
-##Autopoweroff GUI configuration tool
+Autopoweroff GUI configuration tool
+--------------------------------------------------
 
-The Autopoweroff GUI configuration tool is pretty easy.
+The Autopoweroff GUI configuration tool is mostly self explanatory.  To start the GUI configuration tool simply search for "autopoweroff" on your desktop.  If all else fail, you can call `/usr/bin/autopoweroff` from a file manager or a terminal.
 
 In the first panel named *Status & Commands*, the user can enable or
 disable Autopoweroff and poweroff or reboot the computer.
@@ -98,7 +131,8 @@ different parameters.
 
 *Configuration*
 
-##Autopoweroff configuration file (autopoweroff.conf)
+Autopoweroff configuration file (autopoweroff.conf)
+--------------------------------------------------
 
 The `/etc/autopoweroff.conf` (or `${prefix}/etc/autopoweroff.conf`, for
 those who installed from the tarball) configuration file is well
@@ -197,11 +231,15 @@ ActionCommand=None
 
 ```
 
-#BIOS configuration
+UEFI / BIOS configuration
+======================================================================
 
-It is possible to setup the BIOS so that the computer will boot itself
-every day. Each BIOS is different, but they are pretty much similar.
-Following are the instructions on how to setup an Award BIOS.
+It is possible to setup the UEFI / BIOS so that the computer will boot itself
+every day. Each UEFI / BIOS is different, but they are pretty much similar.
+Following are the instructions on how to setup on various systems.
+
+Award BIOS
+--------------------------------------------------
 
 On the main page, select the menu *POWER*, then the *POWER UP CONTROL*
 item. Once the new screen shows up, move the cursor to the *Automatic
@@ -209,7 +247,9 @@ Power Up* line and select *Everyday*. On the following line, set the
 time at which the computer should start everyday. Save the settings and
 voilà.
 
-#Installation
+
+Installation
+======================================================================
 
 To install the .deb package, simply run:
 
@@ -228,7 +268,9 @@ For the tarball, extract it and run `configure` followed by `make install`.
 
 You will need to setup the init script properly. Two versions exists.
 
-#Uninstallation
+
+Uninstallation
+======================================================================
 
 To uninstall the .deb package, simply run:
 
@@ -242,31 +284,30 @@ If you installed from the tarball, run
 
     autopoweroff_uninstall
 
-#License
+
+License
+======================================================================
 
 This software is covered by the [GPL
 2.0](http://www.gnu.org/licenses/gpl.html#TOC1) license. For a local
 copy of the license, see file COPYING.
 
-#Troubleshooting
 
-##Troubleshooting Glade warnings
+Troubleshooting
+======================================================================
+
+Troubleshooting Glade warnings
+--------------------------------------------------
 
 Do not be alarmed by glade warning message showing up when you are
 running the `autopoweroff` command (the GUI configurator). These warning
 appears because you are running a different version of Gnome than the
 one upon which Autopoweroff was built. Probably you are running an older
 version, thus some new properties that were introduced are not supported
-on your older system. For instance, On a Fedora Core 4 system, you will
-get the following errors:
+on your older system.
 
-` (autopoweroff:7785): Gtk-CRITICAL **: gtk_radio_button_set_group: assertion '!g_slist_find (group, radio_button)' failed     `
-
-` (autopoweroff:7785): Gtk-WARNING **: No object called:    `
-
-This is nothing to be concerned about.
-
-##Troubleshooting /etc/init.d/autopoweroff upgrade
+Troubleshooting /etc/init.d/autopoweroff upgrade
+--------------------------------------------------
 
 Under Debian Policy, /etc/init.d files are considered configuration file
 like any other /etc file. Thus when Autopoweroff upgrades its
@@ -282,7 +323,9 @@ version of Linux (this comment was written in September 2008).
 See: [Ubuntu Bug
 \#246550](https://bugs.launchpad.net/ubuntu/+source/sysvinit/+bug/246550)
 
-#For Developers
+
+For Developers
+======================================================================
 
 Autopoweroff might be of interest to developers because of the
 following reasons:
@@ -293,7 +336,9 @@ following reasons:
   tarball, provide an easy solution to de-install it. Either provide a script
   like Autopoweroff is doing, or provide a "make uninstall" target.
 
-#To do
+
+To do
+======================================================================
 
 The following are features to be added in future releases.
 
@@ -307,12 +352,15 @@ The following are features to be added in future releases.
 * Better documentation, including writing a man page.
 * Support for a wider range of Linux distributions.
 
-#Change history
+
+Change history
+======================================================================
 
 The following changes have been incorporated in the below mentioned
 versions:
 
-##Version 3.0.0 - 2016-07-18
+Version 3.0.0 - 2016-07-18
+--------------------------------------------------
 
 3.0.0 has been a major rework of the project.
 
@@ -329,7 +377,8 @@ versions:
 * The documentation was converted from [AurigaDoc](http://aurigadoc.sourceforge.net/) to Markdown.
 * Moved the source from [Sourceforge](http://autopoweroff.sourceforge.net) to [GitHub](https://github.com/deragon/autopoweroff).
 
-##Version 2.9.1 - 2008-06-01
+Version 2.9.1 - 2008-06-01
+--------------------------------------------------
 
 Following feedback received from user [Tomas Klema](http://tklema.info)
 and another anonymous one, multiple small improvements and fixes were
@@ -351,7 +400,8 @@ introduced in this version of Autopoweroff:
 * Files in subversion were moved to trunk/. branches/ and tags/ where created
   to better manage the software.
 
-##Version 2.9.0 - 2008-05-11
+Version 2.9.0 - 2008-05-11
+--------------------------------------------------
 
 This release is a complete overhaul of the project.\
 
@@ -361,7 +411,8 @@ This release is a complete overhaul of the project.\
   required.
 * Subversion is now used instead of CVS for software configuration management.
 
-##Version 2.1.0 - 2004-01-19
+Version 2.1.0 - 2004-01-19
+--------------------------------------------------
 
 * Like a screensaver, Autopoweroff now detects idle time on the server by
   scanning for keyboard and mouse activity. Currently, PS/2 keyboards and PS/2
@@ -377,7 +428,8 @@ This release is a complete overhaul of the project.\
   "shutdown" command. Some user wrote to me asking where reboot and poweroff
   could be obtained, so I assume that they are not always available.
 
-##Version 2.0.0 - 2003-11-23
+Version 2.0.0 - 2003-11-23
+--------------------------------------------------
 
 * Created a user interface to simplify configuration. See [Autopoweroff GUI
   configuration tool](#config_autopoweroff_gui).
@@ -385,35 +437,47 @@ This release is a complete overhaul of the project.\
   purposes.
 * Removed Gnome dependency, for servers running in text mode only.
 
-##Version 1.2.0 - 2003-06-07
+Version 1.2.0 - 2003-06-07
+--------------------------------------------------
 
 * Fixed \*.desktop files so that the icons now appear in the gnome "system
   tools" menu even if no locale is set.
 
-##Version 1.1.1 - 2003-05-03
+Version 1.1.1 - 2003-05-03
+--------------------------------------------------
 
 * RPM installation now fully recognize Mandrake.
 * Improved the Autopoweroff Configuration section of the document and the
   comments in /etc/autopoweroff.conf.
 * Added the `Supported distributions` section.
 
-##Version 1.1.0 - 2003-04-27
+Version 1.1.0 - 2003-04-27
+--------------------------------------------------
 
 * Automatic Gnome installation. Under Red Hat 9.0, the cancel and enable
   scripts now have icons showing up under the "System tools" menu.
 * Improved the installation and uninstallation of the software from a tarball.
 
-##Version 1.0.1 - 2003-04-14
+Version 1.0.1 - 2003-04-14
+--------------------------------------------------
 
 * Used autoconf to allow installation from a tarball.
 * Started using [AurigaDoc](http://aurigadoc.sourceforge.net/) for creating
   this document.
 
-#Miscelleanous
 
-* This document source is a Markdown document.  [MdCharm]( http://www.mdcharm.com) is used to edit it.
+Miscelleanous
+======================================================================
 
-#Contact
+* This document source is a Markdown document.  The following tools are used
+  for editing it.
+
+  * [Vim text editor](http://www.vim.org/)
+  * [MdCharm](http://www.mdcharm.com/)
+
+
+Contact
+======================================================================
 
 If you have any questions or issues with this software, you can contact
 the following persons:
