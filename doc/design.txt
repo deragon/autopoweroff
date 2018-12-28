@@ -41,3 +41,17 @@ GNOMESU
 ══════════════════════════════════════════════════════════════════════════════
 
   /usr/bin/gnomesu -c autopoweroff
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  Change log
+  ────────────────────────────────────────────────────────────────────────────
+
+    Change log format used described at:  https://keepachangelog.com/en/1.0.0/
+
+    Strictly speaking, the content of CHANGELOG.md is not following
+    specifically any standard, but is inspired by many and follows the spirit
+    of what the community would expect.
