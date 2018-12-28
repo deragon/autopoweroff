@@ -205,7 +205,7 @@ try:
         if sleepTimeLogged == False:
           sendmsg("Currently not in time range " + \
                   str(configuration.noshutdownrange) + \
-                  " for " + commandtext + ".  Sleeping for " + \
+                  " for '" + commandtext + "'.  Sleeping for " + \
                   time.strftime("%H:%M:%S", time.gmtime(sleepTime)))
           sleepTimeLogged = True
         alivePrint = False
