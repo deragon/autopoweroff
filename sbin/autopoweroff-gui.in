@@ -81,8 +81,8 @@ def on_BtnConfigRevert_clicked(*args):
 def on_BtnConfigSave_clicked(*args):
   saveConfiguration()
   DlgQuestionYesNoSetup( \
-    "The configuration has been saved.  It will take effect next time" \
-    "Autopoweroff is restarted (usually at next reboot).  However, if you wish," \
+    "The configuration has been saved.  It will take effect next time " \
+    "Autopoweroff is restarted (usually at the next reboot).  However, if you wish, " \
     "you can enable the new configuration now.  Do you wish to proceed?", \
     on_BtnSavedConfirmedYes_clicked \
     )
@@ -93,7 +93,7 @@ def on_BtnSavedConfirmedYes_clicked(*args):
   status = status >> 8
   if status != 0:
     DlgErrorSetup("""ERROR:
-    
+
 The following error occurred:
 
   command:\t""" + str(cmd) + """
@@ -150,10 +150,10 @@ def on_BtnEditHostOk_clicked(*args):
 def on_DlgEditHost_close(*args):
   xml.get_widget("DlgEditHost").hide()
   return gTRUE
-  
+
 def on_BtnEditHostCancel_clicked(*args):
   on_DlgEditHost_close(args)
-  
+
 
 ############################################################
 # AddHost Dialog popup
@@ -247,7 +247,7 @@ def on_RBOther_toggled(*args):
     txtActionCommand.set_editable(True)
   else:
     txtActionCommand.set_editable(False)
-  
+
 def on_RBOther_activate(*args):
   print "on_RBOther_activate:  " + str(args)
 
@@ -282,7 +282,7 @@ def setRadioStatusButtons():
 
 ############################################################
 def readConfiguration():
-  global LMConfigHosts 
+  global LMConfigHosts
 
   configuration = ApoConfig.Configuration(None, None, None, None, None, None, False)
   try:
@@ -348,7 +348,7 @@ def saveConfiguration():
       hosts.append(LMConfigHosts.get_value(iter, 0))
       iter = LMConfigHosts.iter_next(iter)
       index = index+1
-    
+
     if builder.get_object("RBPoweroff").get_active():
       action=APOCommand.SHUTDOWN
     elif builder.get_object("RBSleep").get_active():
@@ -372,7 +372,7 @@ def saveConfiguration():
     stacktrace = traceback.format_exc()
     builder.get_object("DlgError").set_markup(str(exception) + "\n" + stacktrace)
     builder.get_object("DlgError").show()
-     
+
 
 def DlgInformSetup(message, affirmativeFunction=None, negativeFunction=None):
   return DlgSetup(message, "DlgInform", affirmativeFunction, negativeFunction)
@@ -466,8 +466,8 @@ builder = Gtk.Builder()
 # Following line causes a warning to be generated.  No clue why
 # this happens, the warning is not helpfull at all:
 #
-#   (autopoweroff.in:12065): Gtk-WARNING **: No object called: 
-# 
+#   (autopoweroff.in:12065): Gtk-WARNING **: No object called:
+#
 # Bug report opened on 2014-04-21 about this useless warning:
 #
 #  https://bugzilla.gnome.org/show_bug.cgi?id=748234
@@ -527,7 +527,7 @@ The Autopoweroff GUI needs to run as root and the following executable
 """
   gDlgCloseFunction=sys.exit
   DlgErrorSetup(msg)
-else: 
+else:
   builder.get_object("Autopoweroff").show()
 
 DlgAbout = builder.get_object("DlgAbout");
