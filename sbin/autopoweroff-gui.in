@@ -3,9 +3,7 @@
 
 import sys
 import os
-import ConfigParser
 import commands
-import inspect
 import traceback
 
 scriptname        = os.path.basename(sys.argv[0])
@@ -307,7 +305,6 @@ def readConfiguration():
   LMConfigHosts.clear()  # Maybe not necessary, but lets not take chances.
   for host in configuration.hosts:
     LMConfigHosts.set(LMConfigHosts.append(), 0, host)
-  #print inspect.getmembers(LMConfigHosts)
 
   if configuration.action == APOCommand.SHUTDOWN:
     builder.get_object("RBPoweroff").set_active(True)
