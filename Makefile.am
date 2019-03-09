@@ -3,7 +3,7 @@
 #   automake --add-missing --copy
 #   aclocal
 
-CLEANFILES = *.rpm *.gz *.bz2 aclocal.m4 glade/*.bak configure Makefile.in *.out *.log
+CLEANFILES = *.rpm *.gz *.bz2 aclocal.m4 glade/*.bak configure Makefile.in *.out *.log packages/deb/build
 
 DESCRIPTION_SHORT = "Unused:  Defined here so the multi-line defintion will not break 'Makefile'"
 
@@ -65,7 +65,7 @@ doc_DATA = \
   ChangeLog \
   INSTALL \
   NEWS \
-	README.md
+  README.md
 
 EXTRA_DIST =                            \
 	${sbin_SCRIPTS}                       \
@@ -108,20 +108,20 @@ transfer:
 	./ftp-transfer ${PACKAGE} ${VERSION}
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+	-test -z "$(CLEANFILES)" || rm -rf $(CLEANFILES)
 	rm -rf doc/out autom4te.cache
 	find . \
-	  -name "*.pyc" -o \
+		-name "*.pyc" -o \
 		-name "*.log" \
 		-exec rm -f {} \;
 
 # dist-exec-hook:
-# 	echo "dist-exec-hook called."
+#		echo "dist-exec-hook called."
 
 # install-exec-hook target is called after binaries are installed, but
 #	before the other files are.
 # install-exec-hook:
-# 	echo "install-exec-hook called."
+#		echo "install-exec-hook called."
 
 # install-data-hook target is called after binaries and data files (thus
 # all files) are installed.
