@@ -56,7 +56,7 @@ else
   mkdir -p ${BUILD}${autopoweroff_bindir}
   cat >${BUILD}${autopoweroff_bindir}/autopoweroff <<EOS
 #!/bin/bash
-gksu ${autopoweroff_sbindir}/autopoweroff-gui
+pkexec ${autopoweroff_sbindir}/autopoweroff-gui
 EOS
   chmod 755 ${BUILD}${autopoweroff_bindir}/autopoweroff
 
@@ -73,7 +73,7 @@ EOS
   set +e
   lintian build.deb  # Check if package is properly setup.
   DEB="${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.deb"
-  mv build.deb "${DEB}" 
+  mv build.deb "${DEB}"
   rm -f ${PACKAGE}.${ARCH}.deb
   ln -s "${DEB}" "${PACKAGE}.${ARCH}.deb"
 

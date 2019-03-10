@@ -39,6 +39,9 @@ etc_DATA = etc/autopoweroff/autopoweroff.conf \
            etc/autopoweroff/autopoweroff-logging.conf \
            etc/autopoweroff/autopoweroff-logging-debug.conf
 
+polkitdir = $(datarootdir)/polkit-1/actions
+polkit_DATA = usr/share/polkit-1/actions/com.github.deragon.autopoweroff.policy
+
 pamdir = $(sysconfdir)/pam.d
 pam_DATA = etc/pam.d/autopoweroff
 
@@ -77,6 +80,7 @@ EXTRA_DIST =                            \
 	${pam_DATA}                           \
 	${security_DATA}                      \
 	${etc_DATA}                           \
+	${polkit_DATA}                        \
 	doc/autopoweroff_cfg-config.png       \
 	doc/autopoweroff_cfg-statusandcmd.png \
 	doc/README.md                         \

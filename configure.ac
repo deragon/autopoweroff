@@ -10,9 +10,9 @@ umask 022
 # PATH by default, causing binaries such as "shutdown" not to be found.
 PATH=/sbin:/usr/sbin:${PATH}
 
-AC_INIT([autopoweroff], [3.0.0])
+AC_INIT([autopoweroff], [3.1.0])
 AC_REVISION($Revision: 1.4 $)
-AC_COPYRIGHT([Hans Deragon, Copyright 2003-2011, GPL 2.0])
+AC_COPYRIGHT([Hans Deragon, Copyright 2003-2019, GPL 2.0])
 
 # If no README file is available, by default the following error occurs:
 #
@@ -241,9 +241,9 @@ AC_PATH_PROG([consolehelperpath], [consolehelper], [not found])
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 if ((${SUSECOMPATIBLE})); then
-  autopoweroff_rpm_requirements="python, iputils, sysvinit"
+  autopoweroff_rpm_requirements="python, polkit, iputils, sysvinit"
 else
-  autopoweroff_rpm_requirements="python, iputils, SysVinit"
+  autopoweroff_rpm_requirements="python, polkit, iputils, SysVinit"
 fi
 
 if [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
