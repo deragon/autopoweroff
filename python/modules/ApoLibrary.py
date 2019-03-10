@@ -6,10 +6,6 @@ import os
 import logging
 from __main__ import scriptname,gTestMode,programname
 
-#def disableFile():
-#
-#def enable(rundir):
-  #cancelfile = rundir + "/" + scriptname + ".cancel"
 
 def createDirs(aDirs):
   for directory in aDirs:
@@ -25,6 +21,7 @@ def createDirs(aDirs):
       if oserror[0] != errno.EEXIST:
         raise oserror
 
+
 def sendmsg(msg, logger=None, priority=syslog.LOG_INFO, tosyslog=True):
   # Ill attempt to use the stacktrace to determine the name of the logger.
   # But it is not viable.  For the moment, the code remains, commented,
@@ -35,11 +32,13 @@ def sendmsg(msg, logger=None, priority=syslog.LOG_INFO, tosyslog=True):
     logger = logging.getLogger(programname)
   logger.info(str(msg))
   if tosyslog:
-    syslog.syslog(scriptname + ":  " + str(msg))
+    syslog.syslog(str(msg))
+
 
 def commentString(text):
   regexp=re.compile("(?m)^")
   return regexp.sub("# ", text.rstrip().lstrip())
+
 
 class APOCommand:
 
@@ -73,6 +72,7 @@ class APOCommand:
 
   parse = staticmethod(parse)
 
+
 class APOError(Exception):
   def __init__(self, header, lines, footer, errorcode):
     self.lines=lines.split("\n")
@@ -88,6 +88,7 @@ class APOError(Exception):
 
   def __str__(self):
     return "Err #" + str(self.errorcode) + ":  " + self.message
+
 
 class APOWarning(Exception):
   pass
