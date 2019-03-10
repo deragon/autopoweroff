@@ -356,7 +356,7 @@ def saveConfiguration():
       action=APOCommand.OTHER
     else:
       raise APOError("BUG", \
-              " - Could not detect action from radio buttons.", \
+              " - Could not detect action from radio buttons. ", \
               "Please report this bug.")
 
     actioncommand = builder.get_object("TxtActionCommand").get_text()
