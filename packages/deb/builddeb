@@ -84,9 +84,13 @@ of sync with the filesystem.  To fix this, run:
 
   sudo apt purge ${PACKAGE};
 
+To list the content of the created package, run:
+
+  dpkg --contents "${PWD}/${DEB}"
+
 To install the created package, run:
 
-  sudo dpkg -i "${PWD}/${DEB}"
+  sudo dpkg --install "${PWD}/${DEB}"
 
 EOM
 
