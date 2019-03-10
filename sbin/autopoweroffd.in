@@ -38,15 +38,16 @@ else:
   pidfile     = "autopoweroff-test.pid"
   loggingFile = "autopoweroff-logging-debug.conf"
 
-logging.config.fileConfig(confdir + "/" + loggingFile)
+logConfigFile = confdir + "/" + loggingFile
+logging.config.fileConfig(logConfigFile)
 logger = logging.getLogger(programname)
 pid = str(os.getpid())
 logger.info("══════════════════════════════════════════════════════════")
-
 sys.path.append(sharedir + '/python/modules')
 from ApoLibrary import *
 
 sendmsg(programname + " started with PID '" + pid + "'.")
+logger.info("Logging configuration file used:  " + logConfigFile)
 
 if os.getuid() != 0:
   sendmsg("Must be executed as root.")
@@ -227,7 +228,7 @@ try:
       timeElapsedSinceLastEvent = \
           nowTime - ApoObserverDevice.gLastInputEventTime
 
-      logger.debug("timeElapsedSinceLastEvent = " + 
+      logger.debug("timeElapsedSinceLastEvent = " +
                    str(timeElapsedSinceLastEvent))
 
       # If configuration.idletime is set to 0, that means that the user does
