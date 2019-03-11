@@ -6,6 +6,7 @@ import logging
 import time
 import re
 import os
+import errno
 
 class ApoDeviceObserverManager():
 
@@ -17,7 +18,7 @@ class ApoDeviceObserverManager():
     try:
       spkrRE = re.compile(".*spkr.*")
       devicePath = None
-      # Ubuntu 06.06 does not have any /dev/input/by-paty,
+      # Ubuntu 06.06 does not have any /dev/input/by-path,
       # only /dev/input.
       for devicePath in ["/dev/input/by-path", "/dev/input"]:
         if os.path.exists(devicePath):
