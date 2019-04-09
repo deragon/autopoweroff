@@ -76,29 +76,29 @@ INSTALLICON=0
 #  [install-spreaded],
 #  [
 #   --enable-install-spreaded
-# 
+#
 #      Installs most files under the same directory hierarchy, but
-#      configuration files, desktop files and other are moved to 
+#      configuration files, desktop files and other are moved to
 #      their respective directories to be enabled.  For instance,
 #      the configuration file will be installed under /etc.
-# 
+#
 #      This option is recommended.
 #  ],
 #  [INSTALLTYPE="SPREADED"]
 # )
-# 
+#
 # AC_ARG_ENABLE(
 #  [install-same-dir],
 #  [
 #   --enable-install-same-dir (default)
-# 
+#
 #      Installs every files under the same directory hierarchy.  This
 #      includes configuration and destkop files.  If you choose this
 #      option, you will have to manually complete the installation.
 #  ],
 #  [INSTALLTYPE="SAMEDIR"]
 # )
- 
+
 AC_ARG_ENABLE(
  [install-for-suse],
  [
@@ -111,7 +111,7 @@ AC_ARG_ENABLE(
  ],
  [TARGET_DISTRIBUTION="suse"]
 )
- 
+
 AC_ARG_ENABLE(
  [install-for-fedora],
  [
@@ -240,11 +240,17 @@ AC_PATH_PROG([consolehelperpath], [consolehelper], [not found])
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
-if ((${SUSECOMPATIBLE})); then
-  autopoweroff_rpm_requirements="python, polkit, iputils, sysvinit"
-else
-  autopoweroff_rpm_requirements="python, polkit, iputils, SysVinit"
-fi
+
+# As of 2019-04-08, without testing, we assume that the RPM requirements
+# are the same for Suse and Fedora (RedHat).
+
+#if ((${SUSECOMPATIBLE})); then
+#  autopoweroff_rpm_requirements=""
+#else
+#  autopoweroff_rpm_requirements=""
+#fi
+autopoweroff_rpm_requirements="python, python2-gobject-base, gtk3, polkit, iputils"
+
 
 if [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
   echo "Autopoweroff:  'configure' called for ${INSTALLTYPE} building."
