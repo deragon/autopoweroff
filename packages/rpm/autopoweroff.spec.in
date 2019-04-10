@@ -17,15 +17,6 @@ License   : GPL
 Group     : System Environment/Daemons
 Source    : /usr/src/redhat/SOURCES/@PACKAGE_TARNAME@-@PACKAGE_VERSION@.tar.gz
 BuildRoot : /var/tmp/%{name}-buildroot
-# SysVinit provides /sbin/shutdown
-#   sysvinit for SuSe
-#   SysVinit for RH
-# iputils  provides /bin/ping
-# usermode provides /usr/bin/consolehelper
-# python   provides /usr/bin/python
-# libgnomesu - consolehelper for SuSE..
-# See configure.in for list of requirements, per platform.
-# This spec file is meant to work for multiple distributions.
 Requires  : @autopoweroff_rpm_requirements@
 BuildArch : %{arch}
 URL       : https://github.com/deragon/autopoweroff
