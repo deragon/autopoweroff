@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 {
 
@@ -23,7 +23,7 @@ else \
   #RPMDIR="/usr/src/redhat"
 fi
 
-for DISTRIBUTION in fedora suse; do
+for DISTRIBUTION in opensuse fedora; do
   echo "======================================================================"
   echo "== Building rpm for ${DISTRIBUTION}"
 
@@ -50,20 +50,45 @@ for DISTRIBUTION in fedora suse; do
   if (( ${RV} == 0 )); then
     IDENT="${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}"
     SRC="${RPMDIR}/RPMS/${ARCH}/${IDENT}.rpm"
-    DST="./${IDENT}.${DISTRIBUTION}.rpm"
-    #mv ${RPMDIR}/RPMS/${ARCH}/${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.rpm .
+    DST="${IDENT}.${DISTRIBUTION}.rpm"
     mv "${SRC}" "${DST}"
+
+    echo -e "RPM built with sucess!  Following, its content:\n"
+    rpm -qpl "${DST}"
+
     if [ "${DISTRIBUTION}" = "fedora" ]; then
       rm -f "${PACKAGE}.${ARCH}.rpm"
       ln -s "${DST}" "${PACKAGE}.${ARCH}.rpm"
+
+      cat <<EOM
+
+To list the content of the created package, run:
+
+  rpm -qpl "${PWD}/${DST}"
+
+To install the created package, run:
+
+  dnf install "${PWD}/${DST}"
+
+EOM
+    else
+      # OpenSuse
+      cat <<EOM
+
+To list the content of the created package, run:
+
+  rpm -qpl "${PWD}/${DST}"
+
+To install the created package, run:
+
+  zypper install "${PWD}/${DST}"
+
+EOM
+
     fi
-  #  rm ${PACKAGE}-${VERSION}-0.fdr.${RELEASE}.${ARCH}.rpm >/dev/null 2>&1
-  #   ln -s ${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.rpm \
-  #         ${PACKAGE}-${VERSION}-0.fdr.${RELEASE}.${ARCH}.rpm;
-    echo -e "RPM built with sucess!  Following, its content:\n"
-    rpm -qpl "${DST}"
   else
     exit ${RV}
   fi
 done
+
 } 2>&1 | tee buildrpm.log

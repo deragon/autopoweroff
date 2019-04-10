@@ -100,16 +100,16 @@ INSTALLICON=0
 # )
 
 AC_ARG_ENABLE(
- [install-for-suse],
+ [install-for-opensuse],
  [
-  --enable-install-for-suse
+  --enable-install-for-opensuse
 
-     Setup spec files for SuSE.  This option is only needed if you plan
-     to build rpms for SuSE.
+     Setup spec files for openSUSE.  This option is only needed if you plan
+     to build rpms for openSUSE.
 
      Please avoid calling configure with this option.
  ],
- [TARGET_DISTRIBUTION="suse"]
+ [TARGET_DISTRIBUTION="opensuse"]
 )
 
 AC_ARG_ENABLE(
@@ -179,7 +179,7 @@ function testprg
 
 UBUNTUCOMPATIBLE=0
 FEDORACOMPATIBLE=0
-SUSECOMPATIBLE=0
+OPENSUSECOMPATIBLE=0
 
 # Check if target is first forced, and if not then try to detect current
 # platform.
@@ -189,9 +189,9 @@ if [[ "${TARGET_DISTRIBUTION}" = "ubuntu" ]]; then
 elif [[ "${TARGET_DISTRIBUTION}" = "fedora" ]]; then
   FEDORACOMPATIBLE=1
   echo "Target forced to Fedora."
-elif [[ "${TARGET_DISTRIBUTION}" = "suse" ]]; then
-  SUSECOMPATIBLE=1
-  echo "Target forced to SuSE."
+elif [[ "${TARGET_DISTRIBUTION}" = "opensuse" ]]; then
+  OPENSUSECOMPATIBLE=1
+  echo "Target forced to openSUSE."
 else
   if [[ -f /etc/fedora-release ]]; then
     FEDORACOMPATIBLE=1
@@ -203,8 +203,8 @@ else
     FEDORACOMPATIBLE=1
     echo "Mandrake distribution detected."
   elif [[ -f /etc/SuSE-release ]]; then
-    SUSECOMPATIBLE=1
-    echo "SuSE distribution detected."
+    OPENSUSECOMPATIBLE=1
+    echo "openSUSE distribution detected."
   elif [[ -f /etc/lsb-release ]]; then
     . /etc/lsb-release
     if [[ "${DISTRIB_ID}" = "Ubuntu" ]]; then
@@ -242,14 +242,15 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 
 # As of 2019-04-08, without testing, we assume that the RPM requirements
-# are the same for Suse and Fedora (RedHat).
+# are the same for openSUSE and Fedora (RedHat).
 
-#if ((${SUSECOMPATIBLE})); then
-#  autopoweroff_rpm_requirements=""
-#else
-#  autopoweroff_rpm_requirements=""
-#fi
-autopoweroff_rpm_requirements="python, python2-gobject-base, gtk3, polkit, iputils"
+if ((${OPENSUSECOMPATIBLE})); then
+  # This list is up to date with OpenSuse 15.
+  autopoweroff_rpm_requirements="python, python-gobject, gtk3, typelib-1_0-Gtk-3_0, polkit, iputils"
+else
+  # This list is up to date with Fedora 29.
+  autopoweroff_rpm_requirements="python, python2-gobject-base, gtk3, polkit, iputils"
+fi
 
 
 if [[ "${INSTALLTYPE}" = "RPM" -o "${INSTALLTYPE}" = "DEB" ]]; then
