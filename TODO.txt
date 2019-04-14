@@ -1,8 +1,6 @@
-Nouvelles dépendance:
-
-python-gi-dev
-
-Faut retirer les vielles dépendances.
+======================================================================
+Convert to Python3
+======================================================================
 
 # Comment by Hans Deragon (hans@deragon.biz), 2016-07-15 07:11:25 EDT
 Are those files obsolete?  They do not find their way under the deb package.
@@ -25,20 +23,3 @@ Touchpad not getting detected.
 
 http://wiki.archlinux.org/index.php/Touchpad_Synaptics
 http://www.wlug.org.nz/HotPlugNotes
-======================================================================
-PolicyKit integration
-======================================================================
-COPYING
-
-======================================================================
-Test canceling/disabling.  Ca ne semble pas marché.
-
-======================================================================
-Stop SPAMING SYSLOG
-
-======================================================================
-Restrict running autopoweroff to root.
-
-======================================================================
-Try to find out how to prevent Makefile to call "configure --no-create".
-This causes apoinstall not being "chmod +x" and the installation fails.
