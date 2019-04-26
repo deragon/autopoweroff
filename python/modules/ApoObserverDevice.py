@@ -8,6 +8,8 @@ import re
 import os
 import errno
 
+from ApoLibrary import *
+
 class ApoDeviceObserverManager():
 
   def __init__(self):
