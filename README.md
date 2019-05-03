@@ -68,7 +68,7 @@ start at booting. If you install Autopoweroff from the tarball, this is
 more likely.
 
 Fully supported distributions include: **Ubuntu**, **Debian**, **Fedora/Red
-Hat** and **openSuSE/SLED/SLES**. It should also work with any derivative of
+Hat** and **openSUSE**. It should also work with any derivative of
 these distributions. Download the .rpm or .deb package and everything will be
 installed and enabled automatically. This include setting up Autopoweroff to
 start at the next computer boot. And if you decide to remove Autopoweroff,
@@ -78,6 +78,7 @@ With a package, you will only have to run the GUI configuration tool or
 edit `/etc/autopoweroff.conf` to your particular needs. Autopoweroff
 will be eventually submitted to Ubuntu's and Fedora's repositories,
 making it even easier to install.
+
 
 Help wanted
 --------------------------------------------------
@@ -331,11 +332,22 @@ For Developers
 Autopoweroff might be of interest to developers because of the
 following reasons:
 
-* This project is a very nice example on how to write a Python daemon that probes input devices, make use of threads
-* It is also a very good example about packaging for .deb and .rpm based distributions, and universal tarball. It makes heavy use of autoconf and automake.
-* Finally, be this project a lesson; if you distribute your software as a
-  tarball, provide an easy solution to de-install it. Either provide a script
-  like Autopoweroff is doing, or provide a "make uninstall" target.
+* This project is a very nice example on how to write a Python daemon that
+  probes input devices and make use of threads>
+
+* It is also a very good example about packaging for .deb and .rpm based
+  distributions, and universal tarball.
+
+* However, as it makes heavy use of `autoconf` and `automake`, it is NOT a
+  good example on how to package a Python project.  Autopoweroff started way
+  before there was better packaging systems and thus why it makes use of
+  `autoconf` and `automake`, but if you start a new project from scratch,
+  choose something more modern.
+
+* Finally, this project is an example on how to provide a mean to uninstall a
+  tarball.  If you distribute your software as a tarball, please provide an
+  easy solution to uninstall it by either providing a script like Autopoweroff
+  is doing, or provide a "make uninstall" target.
 
 
 To do
@@ -343,6 +355,9 @@ To do
 
 The following are features to be added in future releases.
 
+* Move to Python 3.
+* Move to systemd.
+* Ignore accelerator when available.
 * Detect activity from a remote login, either it be console or an X session.
   Currently, if someone is working remotly on the computer, this will go
   undetected and Autopoweroff will proceed with the shutdown if all other
@@ -354,14 +369,20 @@ The following are features to be added in future releases.
 * Support for a wider range of Linux distributions.
 
 
-Miscelleanous
+Miscellaneous
 ======================================================================
+
+* There is no funding for this project.  There is only one contributor
 
 * This document source is a Markdown document.  The following tools are used
   for editing it.
 
   * [Vim text editor](http://www.vim.org/)
   * [MdCharm](http://www.mdcharm.com/)
+
+* Autopoweroff was mentioned in the following articles
+
+  * https://www.ostechnix.com/auto-shutdown-reboot-suspend-hibernate-linux-system-specific-time/
 
 
 Change log
