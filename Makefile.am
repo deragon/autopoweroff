@@ -65,7 +65,7 @@ docdir = $(docdir_base)/$(PACKAGE)-$(VERSION)
 doc_DATA = \
   AUTHORS \
   COPYING \
-  ChangeLog \
+  doc/CHANGELOG.md \
   INSTALL \
   NEWS \
   README.md
@@ -84,6 +84,7 @@ EXTRA_DIST =                            \
 	doc/autopoweroff_cfg-config.png       \
 	doc/autopoweroff_cfg-statusandcmd.png \
 	doc/README.md                         \
+	doc/CHANGELOG.md                      \
 	doc/COPYING                           \
 	packages/rpm/buildrpm                 \
 	postinstall                           \
