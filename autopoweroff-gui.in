@@ -1,0 +1,533 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sys
+import os
+import commands
+import traceback
+
+scriptname        = os.path.basename(sys.argv[0])
+scriptnameandpath = os.path.realpath(sys.argv[0])
+
+gTestMode = "@production@" != "true"
+
+if not gTestMode:
+  sharedir    = "@autopoweroff_sharedir@"
+  initdir     = "@autopoweroff_initdir@"
+  confdir     = "@autopoweroff_confdir@"
+  rundir      = "@autopoweroff_rundir@"
+  bindir      = "@autopoweroff_bindir@"
+  version     = "@VERSION@"
+  programname = "@PACKAGE_NAME@"
+else:
+  # We are in test mode.  Using relative values.
+  programname = "Autopoweroff"
+  sharedir    = ".."
+  initdir     = "../etc/init.d"
+  confdir     = "../etc/" + programname.lower()
+  rundir      = "/tmp/" + programname.lower() + "-test/var"
+  version     = "Test version"
+  bindir      = "bin"
+  try:
+    os.makedirs(rundir)
+  except:
+    pass
+
+sys.path.append(sharedir + '/python/modules')
+
+from ApoLibrary import *
+import ApoConfig
+import ApoDocumentation
+
+gnomeversion="3.0"
+try:
+  import gi
+  gi.require_version('Gtk', gnomeversion)
+  from gi.repository import Gtk
+except ImportError, errormsg:
+  print """
+Sorry, but this application requires Gnome """ + gnomeversion + """ resources that are not
+installed on this machine.  Following is the specific error
+
+      """ + str(errormsg) + "\n"
+  sys.exit(1)
+
+cancelfile = rundir + "/" + scriptname + ".cancel"
+initfile   = initdir + "/autopoweroff"
+
+LMConfigHosts = None
+edithostiter  = None
+gDlgAffirmativeFunction = None
+gDlgNegativeFunction    = None
+gDlgCloseFunction       = None
+
+def quit():
+  Gtk.main_quit()
+
+def on_Autopoweroff_delete_event(*args):
+  quit()
+
+def on_BtnStatusCmdQuit_clicked(*args):
+  quit()
+
+def on_BtnConfigQuit_clicked(*args):
+  quit()
+
+def on_BtnConfigRevert_clicked(*args):
+  readConfiguration()
+
+def on_BtnConfigSave_clicked(*args):
+  saveConfiguration()
+  DlgQuestionYesNoSetup( \
+    "The configuration has been saved.  It will take effect next time " \
+    "Autopoweroff is restarted (usually at the next reboot).  However, if you wish, " \
+    "you can enable the new configuration now.  Do you wish to proceed?", \
+    on_BtnSavedConfirmedYes_clicked \
+    )
+
+def on_BtnSavedConfirmedYes_clicked(*args):
+  cmd = initfile + " restart"
+  (status, output) = commands.getstatusoutput(cmd)
+  status = status >> 8
+  if status != 0:
+    DlgErrorSetup("""ERROR:
+
+The following error occurred:
+
+  command:\t""" + str(cmd) + """
+  exit status:\t""" + str(status) + """
+  output:\t\t""" + str(output) \
+     )
+
+
+  dialog=builder.get_object("DlgInform")
+  dialog.set_markup("Autopoweroff has been restarted with the new configuration.");
+  dialog.show();
+
+def on_BtnAbout_clicked(self, *args):
+  builder.get_object("DlgAbout").show()
+
+def on_BtnConfigRemoveHost_clicked(*args):
+  tvDependants=builder.get_object("TVDependants")
+  selection = tvDependants.get_selection()
+  result = selection.get_selected()
+  if result: #result could be None
+    model, iter = result
+    model.remove(iter)
+
+
+############################################################
+# EditHost Dialog popup
+########################################
+
+def on_BtnConfigEditHost_clicked(*args):
+  global edithostiter
+  tvDependants=builder.get_object("TVDependants")
+  selection = tvDependants.get_selection()
+  result = selection.get_selected()
+  print "HANS:  To remove:  result = " + str(result)
+  if result: # result could be None
+    model, edithostiter = result
+    if edithostiter != None:
+      text=model.get_value(edithostiter, 0)
+      EntryEditHost=builder.get_object("EntryEditHost")
+      EntryEditHost.set_text(text)
+      DlgEditHost=builder.get_object("DlgEditHost")
+      DlgEditHost.show()
+  else:
+    print "ERROR:  Serious problem here."
+
+def on_BtnEditHostOk_clicked(*args):
+  DlgEditHost=builder.get_object("DlgEditHost")
+  EntryEditHost = builder.get_object("EntryEditHost")
+  host = EntryEditHost.get_text()
+  EntryEditHost.set_text("")
+  LMConfigHosts.set(edithostiter, 0, host)
+  DlgEditHost.hide()
+
+def on_DlgEditHost_close(*args):
+  xml.get_widget("DlgEditHost").hide()
+  return gTRUE
+
+def on_BtnEditHostCancel_clicked(*args):
+  on_DlgEditHost_close(args)
+
+
+############################################################
+# AddHost Dialog popup
+########################################
+
+def on_BtnConfigAddHost_clicked(*args):
+  DlgAddHost=builder.get_object("DlgAddHost")
+  DlgAddHost.show()
+
+def on_BtnAddHostOk_clicked(*args):
+  DlgAddHost=builder.get_object("DlgAddHost")
+  EntryAddHost = builder.get_object("EntryAddHost")
+  host = EntryAddHost.get_text()
+  EntryAddHost.set_text("")
+  LMConfigHosts.set(LMConfigHosts.append(), 0, host)
+  DlgAddHost.hide()
+
+def on_DlgAddHost_close(*args):
+  xml.get_widget("DlgAddHost").hide()
+  return gTRUE
+
+def on_BtnAddHostCancel_clicked(*args):
+  on_DlgAddHost_close(args)
+
+
+############################################################
+# Reboot Dialog popup
+########################################
+
+def on_BtnStatusCmdReboot_clicked(*args):
+  DlgWarningSetup( \
+    "Press OK to confirm your wish to reboot this computer now.", reboot)
+
+def reboot():
+  commands.getstatusoutput("/sbin/shutdown -r now")
+
+
+
+############################################################
+# Poweroff Dialog popup
+########################################
+
+def on_BtnStatusCmdPoweroff_clicked(*args):
+  DlgWarningSetup( \
+    "Press OK to confirm your wish to poweroff this computer now.", powerOff)
+
+def powerOff():
+  commands.getstatusoutput("/sbin/shutdown -h now")
+
+
+############################################################
+# Suspend Dialog popup
+########################################
+
+def on_BtnStatusCmdSuspend_clicked(*args):
+  DlgWarningSetup( \
+    "Press OK to confirm your wish to suspend this computer now.", suspend)
+
+def suspend():
+  status, output = commands.getstatusoutput("echo mem >/sys/power/state")
+
+
+############################################################
+# Hibernate Dialog popup
+########################################
+
+def on_BtnStatusCmdHibernate_clicked(*args):
+  DlgWarningSetup( \
+    "Press OK to confirm your wish to hibernate this computer now.", hibernate)
+
+def hibernate():
+  commands.getstatusoutput("echo disk >/sys/power/state")
+
+
+############################################################
+# Logout Dialog popup
+########################################
+
+def on_BtnStatusCmdLogout_clicked(*args):
+  DlgWarningSetup( \
+    "Press OK to confirm your wish to logout now.", logout)
+
+def logout(*args):
+  # Sadly, there exist no shell command to logoff a user.
+  pass
+
+
+def on_RBOther_toggled(*args):
+  txtActionCommand=builder.get_object("TxtActionCommand")
+  if args[0].get_active():
+    txtActionCommand.set_editable(True)
+  else:
+    txtActionCommand.set_editable(False)
+
+def on_RBOther_activate(*args):
+  print "on_RBOther_activate:  " + str(args)
+
+############################################################
+# Enable/Disable Autopoweroff
+########################################
+
+def on_BtnStatusCmdApply_clicked(*args):
+  radio_StatusEnabled = builder.get_object("RadioStatusEnabled");
+  value = radio_StatusEnabled.get_active()
+  dialog=builder.get_object("DlgInform")
+  if value == 0:
+    file = os.open(cancelfile, os.O_CREAT, 0444)
+    os.close(file)
+    dialog.set_markup("Autopoweroff is now disabled.");
+  else:
+    try:
+      os.remove(cancelfile)
+      dialog.set_markup("Autopoweroff is now enabled.");
+    except OSError:
+      dialog.set_markup("Autopoweroff was already enabled.");
+  dialog.show();
+
+def setRadioStatusButtons():
+  radio_StatusEnabled  = builder.get_object("RadioStatusEnabled");
+  radio_StatusDisabled = builder.get_object("RadioStatusDisabled");
+  if os.path.exists(cancelfile):
+    radio_StatusDisabled.set_active(1)
+  else:
+    radio_StatusEnabled.set_active(1)
+
+
+############################################################
+def readConfiguration():
+  global LMConfigHosts
+
+  configuration = ApoConfig.Configuration(None, None, None, None, None, None, None, False)
+  try:
+    configuration.read()
+  except ApoConfig.APOWarning:
+    pass
+  except ApoConfig.APOError, exception:
+    builder.get_object("DlgError").set_markup(str(exception.message))
+    builder.get_object("DlgError").show()
+
+
+  builder.get_object("SbStartHour"). \
+    set_value(configuration.noshutdownrange[0])
+  builder.get_object("SbEndHour").  \
+    set_value(configuration.noshutdownrange[1])
+  builder.get_object("SbIdleTime"). \
+    set_value(configuration.idletime)
+  builder.get_object("SbBootDelay"). \
+    set_value(configuration.startupdelay)
+
+  LMConfigHosts = builder.get_object("LSLMConfigHosts")
+  LMConfigHosts.clear()  # Maybe not necessary, but lets not take chances.
+  for host in configuration.hosts:
+    LMConfigHosts.set(LMConfigHosts.append(), 0, host)
+
+  if configuration.action == APOCommand.SHUTDOWN:
+    builder.get_object("RBPoweroff").set_active(True)
+  elif configuration.action == APOCommand.SLEEP:
+    builder.get_object("RBSleep").set_active(True)
+  elif configuration.action == APOCommand.HIBERNATE:
+    builder.get_object("RBHibernate").set_active(True)
+  else:
+    builder.get_object("RBOther").set_active(True)
+
+  if configuration.actioncommand != None:
+    builder.get_object("TxtActionCommand").set_text(\
+            str(configuration.actioncommand))
+  else:
+    builder.get_object("TxtActionCommand").set_text("")
+
+
+############################################################
+def saveConfiguration():
+  try:
+    hosts=range(0)
+    noshutdownrange=range(2)
+    noshutdownrange[0]=builder.get_object("SbStartHour"). \
+      get_value_as_int()
+    noshutdownrange[1]=builder.get_object("SbEndHour").  \
+      get_value_as_int()
+    idletime=builder.get_object("SbIdleTime"). \
+      get_value_as_int()
+    startupdelay=builder.get_object("SbBootDelay"). \
+      get_value_as_int()
+
+    radio_StatusEnabled = builder.get_object("RadioStatusEnabled");
+    value = radio_StatusEnabled.get_active()
+
+    iter=LMConfigHosts.get_iter_first()
+    index=0
+    while iter:
+      hosts.append(LMConfigHosts.get_value(iter, 0))
+      iter = LMConfigHosts.iter_next(iter)
+      index = index+1
+
+    if builder.get_object("RBPoweroff").get_active():
+      action=APOCommand.SHUTDOWN
+    elif builder.get_object("RBSleep").get_active():
+      action=APOCommand.SLEEP
+    elif builder.get_object("RBHibernate").get_active():
+      action=APOCommand.HIBERNATE
+    elif builder.get_object("RBOther").get_active():
+      action=APOCommand.OTHER
+    else:
+      raise APOError("BUG", \
+              " - Could not detect action from radio buttons. ", \
+              "Please report this bug.")
+
+    actioncommand = builder.get_object("TxtActionCommand").get_text()
+
+    configuration = ApoConfig.Configuration( \
+                      noshutdownrange, idletime, startupdelay, \
+                      hosts, action, actioncommand)
+    configuration.save()
+  except Exception as exception:
+    stacktrace = traceback.format_exc()
+    builder.get_object("DlgError").set_markup(str(exception) + "\n" + stacktrace)
+    builder.get_object("DlgError").show()
+
+
+def DlgInformSetup(message, affirmativeFunction=None, negativeFunction=None):
+  return DlgSetup(message, "DlgInform", affirmativeFunction, negativeFunction)
+
+def DlgWarningSetup(message, affirmativeFunction=None, negativeFunction=None):
+  return DlgSetup(message, "DlgWarning", affirmativeFunction, negativeFunction)
+
+def DlgErrorSetup(message, affirmativeFunction=None, negativeFunction=None):
+  return DlgSetup(message, "DlgError", affirmativeFunction, negativeFunction)
+
+def DlgQuestionYesNoSetup(message, affirmativeFunction=None, negativeFunction=None):
+  return DlgSetup(message, "DlgQuestionYesNo", affirmativeFunction, negativeFunction)
+
+def DlgSetup(message, dialogId, affirmativeFunction=None, negativeFunction=None):
+  global gDlgAffirmativeFunction
+  gDlgAffirmativeFunction=affirmativeFunction
+
+  global gDlgNegativeFunction
+  gDlgNegativeFunction=negativeFunction
+
+  dialog=builder.get_object(dialogId)
+  dialog.set_markup(message)
+  dialog.show()
+
+# Cannot find this function in any library, so it has been decided
+# to define it here.
+#
+# This function needs to be conneced to "Signals / GtkWidget / delete-event"
+#
+# By hiding the window and returning True, the window/dialog will not be
+# destroyed, thus reuse would then become possible.
+#
+# See:  https://developer.gnome.org/gtk3/stable/GtkWidget.html#gtk-widget-hide-on-delete
+def gtk_widget_hide_on_delete(*args):
+  args[0].hide()
+  return True
+
+def hideAndResetDialog(*args):
+  args[0].set_markup("<b>BUG</b>:  message is not set.  Contact the author.");
+  gDlgAffirmativeFunction = None
+  gDlgNegativeFunction    = None
+  gDlgCloseFunction       = None
+  return gtk_widget_hide_on_delete(*args)
+
+def messageDialogResonseHander(widget, response_id):
+
+#   print "DEBUG:  " + str(widget) + " - " + str(response_id) + " - " + \
+#         str(gDlgAffirmativeFunction) + " - " + \
+#         str(gDlgNegativeFunction) + " - " + \
+#         str(gDlgCloseFunction)
+  global gDlgAffirmativeFunction
+  if gDlgAffirmativeFunction != None and \
+     (
+         response_id == Gtk.ResponseType.OK or \
+         response_id == Gtk.ResponseType.YES \
+     ):
+    gDlgAffirmativeFunction()
+
+  global gDlgNegativeFunction
+  if gDlgNegativeFunction != None and \
+     ( \
+         response_id == Gtk.ResponseType.CANCEL or \
+         response_id == Gtk.ResponseType.CLOSE or \
+         response_id == Gtk.ResponseType.NO \
+     ):
+    gDlgNegativeFunction()
+
+  global gDlgCloseFunction
+  if gDlgCloseFunction != None:
+    gDlgCloseFunction()
+
+  return hideAndResetDialog(widget, response_id)
+
+def terminateProgram(*args):
+  sys.exit()
+
+############################################################
+#
+# MAIN
+#
+############################################################
+
+if gTestMode:
+  print programname + ":  Test mode enabled.\n" + \
+        programname + ":  Using GTK " + \
+        str(Gtk.get_major_version()) + "." + \
+        str(Gtk.get_minor_version()) + "." + \
+        str(Gtk.get_micro_version())
+
+builder = Gtk.Builder()
+# Following line causes a warning to be generated.  No clue why
+# this happens, the warning is not helpfull at all:
+#
+#   (autopoweroff.in:12065): Gtk-WARNING **: No object called:
+#
+# Bug report opened on 2014-04-21 about this useless warning:
+#
+#  https://bugzilla.gnome.org/show_bug.cgi?id=748234
+builder.add_from_file(sharedir + '/glade/autopoweroff.glade')
+builder.connect_signals(locals())
+
+gTRUE=True
+# Following lines register the delete_event of various dialog boxes to
+# functions that hide them instead of destroying them.  Thus when the
+# user clicks on the "close" widget on the window frame, the dialog is
+# not destroyed (causing exceptions to be subsequently raised), but hidden.
+#
+# See http://www.async.com.br/faq/pygtk/index.py?req=show&file=faq10.006.htp
+# for more details.
+builder.get_object("DlgEditHost").connect("delete_event", on_DlgEditHost_close)
+builder.get_object("DlgAddHost").connect("delete_event", on_DlgAddHost_close)
+
+# Todo:  à réimplémenter
+#tooltip=gtk.Tooltips()
+#tooltip.set_tip(builder.get_object("SbStartHour"), \
+#                ApoDocumentation.get("config-StartHour&EndHour"))
+#tooltip.set_tip(builder.get_object("SbEndHour"), \
+#                ApoDocumentation.get("config-StartHour&EndHour"))
+
+# Setting up the single column for TVDependants
+#tvDependants=builder.get_object("TVDependants")
+
+# Todo:  à réimplémenter
+#renderer = gtk.CellRendererText()
+#column = gtk.TreeViewColumn("Hosts", renderer, text=0)
+#num = tvDependants.append_column(column)
+
+setRadioStatusButtons()
+readConfiguration()
+
+if not gTestMode and os.getuid() != 0:
+  msg="""
+<b>This executable should not have been called directly.</b>
+
+Instead, <i>""" + bindir + "/" + scriptname + """</i> should be called.  Try with
+that executable.
+
+This application will now abort.
+
+══════════════════════════════════════════════════
+
+Technical information:
+
+The Autopoweroff GUI needs to run as root and the following executable
+
+  <i>""" + bindir + "/" + scriptname + """</i>
+
+...actually calls as root the executable you just called which is:
+
+  <i>""" + scriptnameandpath + """</i>
+
+"""
+  gDlgCloseFunction=sys.exit
+  DlgErrorSetup(msg)
+else:
+  builder.get_object("Autopoweroff").show()
+
+DlgAbout = builder.get_object("DlgAbout");
+DlgAbout.set_version(version)
+
+Gtk.main()

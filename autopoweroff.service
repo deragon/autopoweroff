@@ -1,0 +1,16 @@
+[Unit]
+Description=autopoweroff daemon
+After=network.target
+
+[Service]
+Type=simple
+User=root
+NotifyAccess=all
+PIDFile=/var/run/autopoweroffd/autopoweroffd.pid
+ExecStart=/usr/sbin/autopoweroffd start
+RemainAfterExit=true
+ExecStop=/usr/sbin/autopoweroffd stop
+ExecReload=/usr/sbin/autopoweroffd reload
+
+[Install]
+WantedBy=multi-user.target
