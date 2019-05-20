@@ -23,13 +23,14 @@ class ApoObserverDisk(threading.Thread):
   global diskstats
   def diskstats(fd,diskname):
       line = fd.readline()
+      y = 0
       while line:
         if re.search(diskname,line):
           data = line.split()
-          y = 0
           for x in range(3, 13):
             y += int(data[x],10)
         line = fd.readline()
+      fd.seeek(0)
       return y
 
   def run(self):
@@ -55,7 +56,6 @@ class ApoObserverDisk(threading.Thread):
           diskActivity[diskname] = y
           currentTime = time.time()
           gLastDiskEventTime = currentTime
-      fd.seek(0)
       if y > gOldDiskCount:
         gOldDiskCount=y
       # print currentTime-lastEventTime
