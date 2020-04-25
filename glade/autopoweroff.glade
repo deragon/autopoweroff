@@ -1052,7 +1052,7 @@ Idle time is
     <property name="program_name">Autopoweroff</property>
     <property name="version">&amp;lt;put version here&amp;gt;</property>
     <property name="copyright" translatable="yes">Hans Deragon,
-(c) Copyright 2006-2019</property>
+(c) Copyright 2006-2020</property>
     <property name="comments" translatable="yes">Poweroff, sleep, hibernate or run any other action on
 your computer automatically when conditions
 you set are met, such as having no more activity on the keyboard/mouse and no dependencies against other hosts.</property>
