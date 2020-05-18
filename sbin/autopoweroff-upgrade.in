@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # This scripts upgrades the /etc/autopoweroff.conf file automatically.
 # ApoConfig.read() function supports old formats.  So we read the old
@@ -13,11 +13,11 @@ scriptname = os.path.basename(sys.argv[0])
 
 gTestMode = "@production@" != "true"
 
-print scriptname + " started."
+print(scriptname + " started.")
 
 if gTestMode:
   # We are in test mode.  Using relative values.
-  print "Test mode activated."
+  print("Test mode activated.")
   etcdir      = "../etc"
   confdir     = etcdir + "/autopoweroff"
   sharedir    = ".."
@@ -44,16 +44,16 @@ import ApoConfig
 configuration = ApoConfig.Configuration()
 try:
   configuration.read()
-except ApoConfig.APOWarning, message:
+except ApoConfig.APOWarning as message:
   # We ignore warning messages.
   pass
-except ApoConfig.APOError, exception:
+except ApoConfig.APOError as exception:
   if exception.errorcode != 1:
-    print exception.msg
+    print(exception.msg)
     sys.exit(1)
 
 try:
   configuration.save()
-except Exception, message:
-  print message
+except Exception as message:
+  print(message)
   sys.exit(2)

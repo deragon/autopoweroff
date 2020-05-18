@@ -1,8 +1,7 @@
-import commands
 import os
 import sys
 import time
-import ConfigParser
+import configparser
 import re
 import syslog
 from types import *
@@ -63,7 +62,7 @@ class Configuration:
 
     self.warnings=""
     self.errors=""
-    self.configParser = ConfigParser.ConfigParser()
+    self.configParser = configparser.ConfigParser()
     self.action=action
     self.actioncommand=actioncommand
 
@@ -73,7 +72,7 @@ class Configuration:
   def deprecated(self, old, new):
     self.warn("\"" + old + "\" is deprecated.  Please use \"" + new + "\".")
 
-  # type:           StringType or IntType
+  # type:           str or int
   #
   # defaultvalue:   <any value>
   #
@@ -100,9 +99,9 @@ class Configuration:
         validOption = option
 
       try:
-        if type == IntType:
+        if type == int:
           value = self.configParser.getint(section, option)
-        elif type == StringType:
+        elif type == str:
           value = self.configParser.get(section, option)
 
         if validity != "v":
@@ -112,7 +111,7 @@ class Configuration:
         if value != None:
           break
 
-      except ConfigParser.NoOptionError:
+      except configparser.NoOptionError:
         value = defaultValue
         if validity == "v":
           # Setting a warning, but do not print it out yet.  If a deprecated
@@ -121,7 +120,7 @@ class Configuration:
           validWarn = "No \"" + option + "\" option defined in section \"" + \
                        section + "\"."
 
-      except ConfigParser.NoSectionError:
+      except configparser.NoSectionError:
         self.warn("No \"" + section + "\" section defined.")
 
     if validWarn:
@@ -142,25 +141,25 @@ class Configuration:
 
       # Shutdown range
       self.noshutdownrange[STARTHOUR]=self.optionalConfig( \
-          IntType, 0, "NO_SHUTDOWN_TIME_RANGE", "StartHour|v", "start|d")
+          int, 0, "NO_SHUTDOWN_TIME_RANGE", "StartHour|v", "start|d")
 
       self.noshutdownrange[ENDHOUR]=self.optionalConfig( \
-          IntType, 0, "NO_SHUTDOWN_TIME_RANGE", "EndHour|v", "end|d")
+          int, 0, "NO_SHUTDOWN_TIME_RANGE", "EndHour|v", "end|d")
 
       self.idletime=self.optionalConfig( \
-          IntType, 0, "TIMEOUTS", "IdleTime|v", "idle_time|d")
+          int, 0, "TIMEOUTS", "IdleTime|v", "idle_time|d")
 
       self.startupdelay=self.optionalConfig( \
-          IntType, 0, "TIMEOUTS", "StartupDelay|v", "startup_delay|d")
+          int, 0, "TIMEOUTS", "StartupDelay|v", "startup_delay|d")
 
       tmphosts=self.optionalConfig( \
-          StringType, 0, "DEPENDANTS", "Hosts|v", "hosts|d")
+          str, 0, "DEPENDANTS", "Hosts|v", "hosts|d")
 
       self.action=self.optionalConfig( \
-          StringType, None, "ACTION", "Action|v")
+          str, None, "ACTION", "Action|v")
 
       self.actioncommand=self.optionalConfig( \
-          StringType, None, "ACTION", "ActionCommand|v")
+          str, None, "ACTION", "ActionCommand|v")
 
       if self.action == None:
         self.errors = "No action command command provided."

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import commands
+import subprocess
 import threading
 import time
+import socket
 from ApoLibrary import *
 
 class ApoObserverHostsAlive(threading.Thread):
@@ -20,37 +21,40 @@ class ApoObserverHostsAlive(threading.Thread):
         str(self.hostsToPing) + " started.")
     while True:
 
-      # While testing for hosts, we do not want to initiale to false the
+      # While testing for hosts, we do not want to initialize to false the
       # global variable until all tests are completed.  Thus this is why we
       # use a local variable and only set the global variable once all
       # tests are completed.
       newListOfHostsStillAlive=[]
       for host in self.hostsToPing:
         #self.logger.debug("Pinging host:  >>" + host + "<<")
-        status = commands.getstatusoutput("ping -c 1 -w 10 " + host)[0]
-        #self.logger.debug(status)
-        #signal = status & 0xFF
-        exitcode = (status >> 8) & 0xFF
-        #self.logger.debug(exitcode)
-        if exitcode == 0:
+
+        # Searchiin on the net, as of 2020-04-25, it seams the easiest
+        # way to perform a ping is by calling the outside 'ping' command.
+        # Go figure why.
+        cmd = [ "ping", "-c", "1", "-w", "10", host ]
+        cp = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if cp.returncode == 0:
+          # Host return ping, thus confirming it exists.  Adding it to
+          # the lsit of hosts alive.
           newListOfHostsStillAlive = newListOfHostsStillAlive + [ host ]
           break
 
-        # Experimental use of arping.
-        interfacesList=commands.getstatusoutput(
-          "route -n | tail --lines=+3 | awk -F \" \" \"{print \$8}\" | sort -u")[1].split()
+        # Many hosts do not respond to ping for security reasons.  Lets
+        # check another way if they exists on the network by performing
+        # a reverse ARP lookup.
+        try:
+          # Performing a reverse ARP.  Works if 'host' is a hostname or an IP.
+          # If successful, add the host to the list, since it seams that it
+          # exists.
+          socket.gethostbyaddr(host)
 
-        self.logger.debug("Interfaces to probe for hosts with arp:  " + str(interfacesList))
-        for interface in interfacesList:
-          status = commands.getstatusoutput(
-            "arping -w 10 -I " + interface + " " + host)[0]
-          #self.logger.debug(status)
-          #signal = status & 0xFF
-          exitcode = (status >> 8) & 0xFF
-          #self.logger.debug(exitcode)
-          if exitcode == 0:
-            newListOfHostsStillAlive = newListOfHostsStillAlive + [ host ]
-            break
+          # Got here with no exception, thus Host is recognized by the
+          # network as existing.
+          newListOfHostsStillAlive = newListOfHostsStillAlive + [ host ]
+        except:
+          # Nope, not found, thus not adding it to the list.
+          pass
 
       # If the list of hosts alive changed, we report it.
       if newListOfHostsStillAlive != self.hostsStillAlive:
@@ -61,7 +65,9 @@ class ApoObserverHostsAlive(threading.Thread):
         newHostDeadSet = set(self.hostsToPing) - newHostAliveSet
         # Converting the set to list, simply because the display then
         # is nicer.
-        sendmsg("Newly alive:  " + str(list(newHostAliveSet)) + \
+        sendmsg( \
+            "Old alive:  " + str(self.hostsStillAlive) + \
+            "  Newly alive:  " + str(list(newHostAliveSet)) + \
             "  Newly dead:  " + str(list(newHostDeadSet)), self.logger)
 
       # Now that all the testing is done, we can update the global variable.

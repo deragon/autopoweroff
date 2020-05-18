@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import sys
 import os
-import commands
+import subprocess
 import traceback
 
 scriptname        = os.path.basename(sys.argv[0])
@@ -14,6 +14,7 @@ gTestMode = "@production@" != "true"
 if not gTestMode:
   sharedir    = "@autopoweroff_sharedir@"
   initdir     = "@autopoweroff_initdir@"
+  initfile    = initdir + "/autopoweroff"
   confdir     = "@autopoweroff_confdir@"
   rundir      = "@autopoweroff_rundir@"
   bindir      = "@autopoweroff_bindir@"
@@ -21,10 +22,13 @@ if not gTestMode:
   programname = "@PACKAGE_NAME@"
 else:
   # We are in test mode.  Using relative values.
+  scriptPath=os.path.dirname(sys.argv[0])
+  basePathAbs=os.path.realpath(scriptPath + "/..")
   programname = "Autopoweroff"
-  sharedir    = ".."
-  initdir     = "../etc/init.d"
-  confdir     = "../etc/" + programname.lower()
+  sharedir    = basePathAbs
+  confdir     = basePathAbs + "/etc/" + programname.lower()
+  initdir     = basePathAbs + "/etc/init.d"
+  initfile    = initdir + "/autopoweroff.lsb"
   rundir      = "/tmp/" + programname.lower() + "-test/var"
   version     = "Test version"
   bindir      = "bin"
@@ -44,16 +48,15 @@ try:
   import gi
   gi.require_version('Gtk', gnomeversion)
   from gi.repository import Gtk
-except ImportError, errormsg:
-  print """
+except ImportError as errormsg:
+  print("""
 Sorry, but this application requires Gnome """ + gnomeversion + """ resources that are not
 installed on this machine.  Following is the specific error
 
-      """ + str(errormsg) + "\n"
+      """ + str(errormsg) + "\n")
   sys.exit(1)
 
 cancelfile = rundir + "/" + scriptname + ".cancel"
-initfile   = initdir + "/autopoweroff"
 
 LMConfigHosts = None
 edithostiter  = None
@@ -86,17 +89,19 @@ def on_BtnConfigSave_clicked(*args):
     )
 
 def on_BtnSavedConfirmedYes_clicked(*args):
-  cmd = initfile + " restart"
-  (status, output) = commands.getstatusoutput(cmd)
-  status = status >> 8
-  if status != 0:
+  cmd = [ initfile , "restart" ]
+  # cp == CompletedProcess, class type of returned objected by
+  #       subprocess.run().
+  cp = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # Python 3.6 & +
+  if cp.returncode != 0:
     DlgErrorSetup("""ERROR:
 
 The following error occurred:
 
   command:\t""" + str(cmd) + """
-  exit status:\t""" + str(status) + """
-  output:\t\t""" + str(output) \
+  exit status:\t""" + str(cp.returncode) + """
+  stderr:\t\t""" + str(cp.stderr.decode('utf-8')) + """
+  stdout:\t\t""" + str(cp.stdout.decode('utf-8')) \
      )
 
 
@@ -125,7 +130,7 @@ def on_BtnConfigEditHost_clicked(*args):
   tvDependants=builder.get_object("TVDependants")
   selection = tvDependants.get_selection()
   result = selection.get_selected()
-  print "HANS:  To remove:  result = " + str(result)
+  print("HANS:  To remove:  result = " + str(result))
   if result: # result could be None
     model, edithostiter = result
     if edithostiter != None:
@@ -135,7 +140,7 @@ def on_BtnConfigEditHost_clicked(*args):
       DlgEditHost=builder.get_object("DlgEditHost")
       DlgEditHost.show()
   else:
-    print "ERROR:  Serious problem here."
+    print("ERROR:  Serious problem here.")
 
 def on_BtnEditHostOk_clicked(*args):
   DlgEditHost=builder.get_object("DlgEditHost")
@@ -186,7 +191,7 @@ def on_BtnStatusCmdReboot_clicked(*args):
     "Press OK to confirm your wish to reboot this computer now.", reboot)
 
 def reboot():
-  commands.getstatusoutput("/sbin/shutdown -r now")
+  subprocess.getstatusoutput("/sbin/shutdown -r now")
 
 
 
@@ -199,7 +204,7 @@ def on_BtnStatusCmdPoweroff_clicked(*args):
     "Press OK to confirm your wish to poweroff this computer now.", powerOff)
 
 def powerOff():
-  commands.getstatusoutput("/sbin/shutdown -h now")
+  subprocess.getstatusoutput("/sbin/shutdown -h now")
 
 
 ############################################################
@@ -211,7 +216,7 @@ def on_BtnStatusCmdSuspend_clicked(*args):
     "Press OK to confirm your wish to suspend this computer now.", suspend)
 
 def suspend():
-  status, output = commands.getstatusoutput("echo mem >/sys/power/state")
+  status, output = subprocess.getstatusoutput("echo mem >/sys/power/state")
 
 
 ############################################################
@@ -223,7 +228,7 @@ def on_BtnStatusCmdHibernate_clicked(*args):
     "Press OK to confirm your wish to hibernate this computer now.", hibernate)
 
 def hibernate():
-  commands.getstatusoutput("echo disk >/sys/power/state")
+  subprocess.getstatusoutput("echo disk >/sys/power/state")
 
 
 ############################################################
@@ -247,7 +252,7 @@ def on_RBOther_toggled(*args):
     txtActionCommand.set_editable(False)
 
 def on_RBOther_activate(*args):
-  print "on_RBOther_activate:  " + str(args)
+  print("on_RBOther_activate:  " + str(args))
 
 ############################################################
 # Enable/Disable Autopoweroff
@@ -258,7 +263,7 @@ def on_BtnStatusCmdApply_clicked(*args):
   value = radio_StatusEnabled.get_active()
   dialog=builder.get_object("DlgInform")
   if value == 0:
-    file = os.open(cancelfile, os.O_CREAT, 0444)
+    file = os.open(cancelfile, os.O_CREAT, 0o444)
     os.close(file)
     dialog.set_markup("Autopoweroff is now disabled.");
   else:
@@ -287,7 +292,7 @@ def readConfiguration():
     configuration.read()
   except ApoConfig.APOWarning:
     pass
-  except ApoConfig.APOError, exception:
+  except ApoConfig.APOError as exception:
     builder.get_object("DlgError").set_markup(str(exception.message))
     builder.get_object("DlgError").show()
 
@@ -325,8 +330,8 @@ def readConfiguration():
 ############################################################
 def saveConfiguration():
   try:
-    hosts=range(0)
-    noshutdownrange=range(2)
+    hosts=list(range(0))
+    noshutdownrange=list(range(2))
     noshutdownrange[0]=builder.get_object("SbStartHour"). \
       get_value_as_int()
     noshutdownrange[1]=builder.get_object("SbEndHour").  \
@@ -453,11 +458,11 @@ def terminateProgram(*args):
 ############################################################
 
 if gTestMode:
-  print programname + ":  Test mode enabled.\n" + \
+  print(programname + ":  Test mode enabled.\n" + \
         programname + ":  Using GTK " + \
         str(Gtk.get_major_version()) + "." + \
         str(Gtk.get_minor_version()) + "." + \
-        str(Gtk.get_micro_version())
+        str(Gtk.get_micro_version()))
 
 builder = Gtk.Builder()
 # Following line causes a warning to be generated.  No clue why

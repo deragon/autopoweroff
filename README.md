@@ -182,8 +182,8 @@ EndHour=7
 #   set to 0, user activity on the server will be ignored.
 
 [TIMEOUTS]
-StartupDelay=5
-IdleTime=15
+StartupDelay=0
+IdleTime=1
 
 
 # Hosts parameter (list of hostnames or IPs, separated by commas):
@@ -193,7 +193,7 @@ IdleTime=15
 #   still up (responding to ping).
 
 [DEPENDANTS]
-Hosts=server1, server2, server3
+Hosts=server1, server2
 
 
 #  [ACTION]
@@ -210,7 +210,7 @@ Hosts=server1, server2, server3
 #     - Other     (ActionCommand must be supplied)
 #
 # ActionCommand
-#
+# 
 #   In some cases, users want to specifiy the action command.  It could be a
 #   script, a special version of /usr/sbin/shutdown, etc...  Arguments are
 #   added after the command.  Example:
@@ -228,8 +228,8 @@ Hosts=server1, server2, server3
 #
 #   Since this option is an advance one, it is not available from the GUI.
 [ACTION]
-Action=sleep
-ActionCommand=None
+Action=other
+ActionCommand=echo "Hans pseudo command"
 
 ```
 

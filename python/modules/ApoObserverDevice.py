@@ -45,7 +45,7 @@ class ApoDeviceObserverManager():
           self.logger.debug("path = " + path)
           self.devicesArray.append(path)
 
-    except OSError, oserror:
+    except OSError as oserror:
       if oserror.errno != errno.ENOENT:  # No such file or directory
         raise
 
@@ -68,7 +68,7 @@ class ApoObserverDevice(threading.Thread):
     self.sleep = 0
 
   def run(self):
-    fd = open(self.sDevice, 'r')
+    fd = open(self.sDevice, 'rb')
     self.logger.info("ApoObserverDevice.run():  Check on " +
                      self.sDevice + " started.")
     self.finish = False
@@ -80,7 +80,7 @@ class ApoObserverDevice(threading.Thread):
 
       try:
         fd.read(1)
-      except IOError, ioerror:
+      except IOError as ioerror:
         if ioerror.errno == errno.ENODEV:
           self.finish = True
           sendmsg("Device " + self.sDevice + " absent (No such device error)", \

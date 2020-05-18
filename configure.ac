@@ -10,9 +10,9 @@ umask 022
 # PATH by default, causing binaries such as "shutdown" not to be found.
 PATH=/sbin:/usr/sbin:${PATH}
 
-AC_INIT([autopoweroff], [3.1.0])
+AC_INIT([autopoweroff], [3.2.0])
 AC_REVISION($Revision: 1.4 $)
-AC_COPYRIGHT([Hans Deragon, Copyright 2003-2019, GPL 2.0])
+AC_COPYRIGHT([Hans Deragon, Copyright 2003-2020, GPL 2.0])
 
 # If no README file is available, by default the following error occurs:
 #

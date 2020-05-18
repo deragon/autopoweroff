@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Autopoweroff, version @version@
@@ -30,15 +30,20 @@ if not gTestMode:
   loggingFile = "autopoweroff-logging.conf"
 else:
   # We are in test mode.  Using relative values.
+  scriptPath=os.path.dirname(sys.argv[0])
+  basePathAbs=os.path.realpath(scriptPath + "/..")
   programname = "Autopoweroff"
-  sharedir    = ".."
-  confdir     = "../etc/" + programname.lower()
+  sharedir    = basePathAbs
+  confdir     = basePathAbs + "/etc/" + programname.lower()
   rundir      = "/tmp/" + programname.lower() + "-test/var"
   piddir      = rundir
   pidfile     = "autopoweroff-test.pid"
   loggingFile = "autopoweroff-logging-debug.conf"
 
 logConfigFile = confdir + "/" + loggingFile
+print(f"logConfigFile = {logConfigFile }")
+logConfigFile
+
 logging.config.fileConfig(logConfigFile)
 logger = logging.getLogger(programname)
 pid = str(os.getpid())
@@ -68,7 +73,7 @@ if os.path.exists(pidfile):
   try:
     os.kill(int(pid), signal.SIGTERM)
     sendmsg("Currently running instance killed.", priority=syslog.LOG_ALERT)
-  except OSError, oserror:
+  except OSError as oserror:
     if oserror.errno != errno.ESRCH:  # No such process
       # errno ESRCH (#3) means that the process does not exist.
       # If such is the case, we ignore the exception, else, we raise it.
@@ -110,9 +115,9 @@ import ApoConfig
 configuration = ApoConfig.Configuration(None, None, None, None)
 try:
   configuration.read()
-except ApoConfig.APOWarning, message:
+except ApoConfig.APOWarning as message:
   sendmsg(message)
-except ApoConfig.APOError, message:
+except ApoConfig.APOError as message:
   sendmsg(message)
 
 command = ""
@@ -228,8 +233,7 @@ try:
       timeElapsedSinceLastEvent = \
           nowTime - ApoObserverDevice.gLastInputEventTime
 
-      logger.debug("timeElapsedSinceLastEvent = " +
-                   str(timeElapsedSinceLastEvent))
+      logger.debug(f"timeElapsedSinceLastEvent = {timeElapsedSinceLastEvent:2.2f}s.")
 
       # If configuration.idletime is set to 0, that means that the user does
       # not want any of the console inputs to influence the shutdown decision.
@@ -279,8 +283,8 @@ try:
               time.strftime("%H:%M:%S", (time.localtime(time.time()))))
         else:
           # commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
-          import commands
-          commands.getstatusoutput(command)
+          import subprocess
+          subprocess.getstatusoutput(command)
 
         # If the command is executed and we return, we get out of the inner
         # loop and fall into the outer loop, reinitializing some crucial
