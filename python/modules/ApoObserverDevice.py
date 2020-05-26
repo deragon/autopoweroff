@@ -43,6 +43,21 @@ class ApoDeviceObserverManager():
 
           path = devicePath + "/" + path
           self.logger.debug("path = " + path)
+          # TODO:  Improve catching.  Currently, only one model
+          #        of an accelerometer is hardcoded here.  This
+          #        code should 
+          if "lis3lv02d" in path:
+            # lis3lv02d:  https://www.kernel.org/doc/Documentation/misc-devices/lis3lv02d
+
+            # Accelerometers are devices that are way to sensitive for
+            # Autopoweroff.  A laptop laying on a stable table with nobody
+            # touching it will still have its accelerometer reporting
+            # movement.  Thus, it is not reasonable nor necessary to take this
+            # devices into account when attempting to figure out if the device
+            # is being used or not by a person.
+            self.logger.warn("path = " + path + " REJECTED because it is an accelerometer.")
+            continue
+
           self.devicesArray.append(path)
 
     except OSError as oserror:
