@@ -4,6 +4,20 @@ Autopoweroff - Change history
 The following changes have been incorporated in the below mentioned
 versions:
 
+Version 3.2.0 - 2020-05-26
+--------------------------------------------------
+
+* [GH009](https://github.com/deragon/autopoweroff/issues/9):  Python3 support
+
+>Code migrated to Python 3.
+
+* Accelerometer "lis3lv02d" ignored.
+
+>Code to ignore accelerometers has been introduced into Autopoweroff.  Currently, only the "lis3lv02d" accelerometer is being ignored, being hardcoded.  Not ideal; more work needs to be done so the code becomes generic and ignores any accelerometer.
+
+>Accelerometers are devices that are way to sensitive for Autopoweroff. A laptop laying on a stable table with nobody touching it will still have its accelerometer reporting movement.  Thus, it is not reasonable nor necessary to take this devices into account when attempting to figure out if the device is being used or not by a person.
+
+
 Version 3.1.0 - 2019-04-31
 --------------------------------------------------
 

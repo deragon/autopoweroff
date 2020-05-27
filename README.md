@@ -2,7 +2,7 @@ Autopoweroff
 ======================================================================
 
 
-Status as of 2019 - Fully supported.
+Status as of 2020 - Fully supported.
 ======================================================================
 
 This program is actively supported, but is simply not being developed much
@@ -182,8 +182,8 @@ EndHour=7
 #   set to 0, user activity on the server will be ignored.
 
 [TIMEOUTS]
-StartupDelay=0
-IdleTime=1
+StartupDelay=5
+IdleTime=15
 
 
 # Hosts parameter (list of hostnames or IPs, separated by commas):
@@ -193,7 +193,7 @@ IdleTime=1
 #   still up (responding to ping).
 
 [DEPENDANTS]
-Hosts=server1, server2
+Hosts=server1, server2, server3
 
 
 #  [ACTION]
@@ -210,7 +210,7 @@ Hosts=server1, server2
 #     - Other     (ActionCommand must be supplied)
 #
 # ActionCommand
-# 
+#
 #   In some cases, users want to specifiy the action command.  It could be a
 #   script, a special version of /usr/sbin/shutdown, etc...  Arguments are
 #   added after the command.  Example:
@@ -228,8 +228,8 @@ Hosts=server1, server2
 #
 #   Since this option is an advance one, it is not available from the GUI.
 [ACTION]
-Action=other
-ActionCommand=echo "Hans pseudo command"
+Action=sleep
+ActionCommand=None
 
 ```
 
