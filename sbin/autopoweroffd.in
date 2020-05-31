@@ -232,6 +232,28 @@ def performSleepForNoShutDownRange():
       break
 
 
+def performSleepForIdleTime():
+
+  # time.time() returns current time in epoch
+  # (seconds and fractions since 1970-01-01).
+  timeElapsedSinceLastEvent = time.time() - ApoObserverDevice.gLastInputEventTime
+
+  logger.debug(f"timeElapsedSinceLastEvent = {timeElapsedSinceLastEvent:2.2f}s.")
+
+  # If configuration.idletime is set to 0, that means that the user does
+  # not want any of the console inputs to influence the shutdown decision.
+  if configuration.idletime > 0 and \
+                  timeElapsedSinceLastEvent < configuration.idletime * 60:
+
+    sleepTime = configuration.idletime * 60
+    logger.debug("Sleeping for " + str(sleepTime) + \
+                   "s following IdleTime configuration.")
+    time.sleep(sleepTime)
+    return True
+  else:
+    return False
+
+
 ######################################################################
 try:
 
@@ -245,27 +267,9 @@ try:
     while True:  # Inner loop
 
       performSleepForNoShutDownRange()
-
-      # time.time() returns current time in epoch
-      # (seconds and fractions since 1970-01-01).
-      timeElapsedSinceLastEvent = time.time() - ApoObserverDevice.gLastInputEventTime
-
-      logger.debug(f"timeElapsedSinceLastEvent = {timeElapsedSinceLastEvent:2.2f}s.")
-
-      # If configuration.idletime is set to 0, that means that the user does
-      # not want any of the console inputs to influence the shutdown decision.
-      if configuration.idletime > 0 and \
-                      timeElapsedSinceLastEvent < configuration.idletime * 60:
-        sleepTime = None
-        if gTestMode:
-          sleepTime = 10
-          logger.debug("Sleeping for " + str(sleepTime) + \
-                       "s, ignoring IdleTime configuration and using 10s hardcoded because in test mode.")
-        else:
-          sleepTime = configuration.idletime * 60
-          logger.debug("Sleeping for " + str(sleepTime) + \
-                       "s following IdleTime configuration.")
-        time.sleep(sleepTime)
+      if performSleepForIdleTime():
+        # Sleep occurred, we thus rerun the loop to ensure that we run through
+        # performSleepForNoShutDownRange() before continuing.
         continue
 
       # Taking a snapshot because if aoha.hostsStillAlive is used everywhere,
