@@ -273,10 +273,11 @@ try:
         continue
 
       # Taking a snapshot because if aoha.hostsStillAlive is used everywhere,
-      # its value might change during its utilisation, as aoha.hostsStillAlive
-      # is set in another thread.  By taking a snapshot, the value will not
-      # change since the ApoObserverHostsAlive does not play with the content
-      # of the list, but replace it completely with a new one.
+      # its value might change during it's utilization, as
+      # aoha.hostsStillAlive is set in another thread.  By taking a snapshot,
+      # the value will not change since the ApoObserverHostsAlive does not
+      # play with the content of the list, but replace it completely with a
+      # new one.
       hostsStillAlive = aoha.hostsStillAlive
 
       logger.debug("aoha.hostsStillAlive = " + str(hostsStillAlive))
@@ -284,6 +285,11 @@ try:
         if not alivePrint:
           sendmsg("Some hosts are still alive:  " + str(hostsStillAlive))
         alivePrint = True
+
+        # Arbitrary 5s sleep.  If this sleep is removed, Autopoweroff will run
+        # at 100% CPU since it will endlessly loop until the condition
+        # changes.
+        time.sleep(5)
         continue
       else:
         while os.path.exists(cancelfile):
@@ -304,10 +310,16 @@ try:
           logger.info( \
               "Test mode:  would have run action '" + command + "' at " + \
               time.strftime("%H:%M:%S", (time.localtime(time.time()))))
+
         else:
           # commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
           import subprocess
           subprocess.getstatusoutput(command)
+
+        # Arbitrary 5s sleep.  If this sleep is removed, Autopoweroff will run
+        # at 100% CPU since it will endlessly loop until the condition
+        # changes.
+        time.sleep(5)
 
         # If the command is executed and we return, we get out of the inner
         # loop and fall into the outer loop, reinitializing some crucial
