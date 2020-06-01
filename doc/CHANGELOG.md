@@ -4,10 +4,19 @@ Autopoweroff - Change history
 The following changes have been incorporated in the below mentioned
 versions:
 
+
+Version 3.2.1 - 2020-05-31
+--------------------------------------------------
+
+* Fixed [GH008](https://github.com/deragon/autopoweroff/issues/8):  'Autopoweroff High CPU usage when only condition remaining is a living remote server'
+
+* Some refactoring in `autopoweroffd`.
+
+
 Version 3.2.0 - 2020-05-26
 --------------------------------------------------
 
-* [GH009](https://github.com/deragon/autopoweroff/issues/9):  Python3 support
+* Implemented [GH009](https://github.com/deragon/autopoweroff/issues/9):  Python3 support
 
 >Code migrated to Python 3.
 
@@ -21,11 +30,11 @@ Version 3.2.0 - 2020-05-26
 Version 3.1.0 - 2019-04-31
 --------------------------------------------------
 
-* [GH001](https://github.com/deragon/autopoweroff/issues/1):  Polkit replaces gksu.  This is the main feature of 3.1.0, allowing
+* Fixed [GH001](https://github.com/deragon/autopoweroff/issues/1):  Polkit replaces gksu.  This is the main feature of 3.1.0, allowing
           Autopoweroff to work under modern Linux distributions such as
           Ubuntu 18.04 LTS.  Thanks to @edgimar from GitHub for providing
           the solution.
-* [GH002](https://github.com/deragon/autopoweroff/issues/2):  Added Python's GI module as a dependency.
+* Fixed [GH002](https://github.com/deragon/autopoweroff/issues/2):  Added Python's GI module as a dependency.
 * Dependency fix for Fedora 29 and openSUSE 15.
 * Build improvements.
 * Various little fixes.
