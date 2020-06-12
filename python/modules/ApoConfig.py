@@ -24,11 +24,11 @@ conffile = confdir + "/" + programname.lower() + ".conf"
 
 STARTHOUR=0
 ENDHOUR=1
-            
+
 class APOConfigurationError(APOError):
 
   def __init__(self, lines, errorcode):
-    
+
     header="CONFIRGURATION ERROR\n\nThe following errors were found in configuration file:\n" + conffile
     footer="Please fix them with the GUI or by editing the file."
     super(APOConfigurationError, self).__init__(header, lines, footer, errorcode)
@@ -37,13 +37,13 @@ class Configuration:
 
   # Parameters can be all None.  In that circumstance, the object should
   # be used to call read() to read the content of a configuration file.
-  def __init__(self, noshutdownrange=None, idletime=None, startupdelay=None, hosts=None, action=None, actioncommand=None, tosyslog=True):
-    self.logger = logging.getLogger("apo.conf")
+  def __init__(self, noactiontimerange=None, idletime=None, startupdelay=None, hosts=None, action=None, actioncommand=None, tosyslog=True):
+    self.logger = logging.getLogger("apo")
     self.tosyslog = tosyslog
-    if noshutdownrange == None:
-      self.noshutdownrange=[4, 23] # hours
+    if noactiontimerange == None:
+      self.noactiontimerange=[4, 23] # hours
     else:
-      self.noshutdownrange=noshutdownrange
+      self.noactiontimerange=noactiontimerange
 
     if startupdelay == None:
       self.startupdelay=15 # minutes
@@ -139,12 +139,12 @@ class Configuration:
       fd.close()
       #print self.configParser.sections()
 
-      # Shutdown range
-      self.noshutdownrange[STARTHOUR]=self.optionalConfig( \
-          int, 0, "NO_SHUTDOWN_TIME_RANGE", "StartHour|v", "start|d")
+      # No action time range
+      self.noactiontimerange[STARTHOUR]=self.optionalConfig( \
+          int, 0, "NO_ACTION_TIME_RANGE", "StartHour|v", "start|d")
 
-      self.noshutdownrange[ENDHOUR]=self.optionalConfig( \
-          int, 0, "NO_SHUTDOWN_TIME_RANGE", "EndHour|v", "end|d")
+      self.noactiontimerange[ENDHOUR]=self.optionalConfig( \
+          int, 0, "NO_ACTION_TIME_RANGE", "EndHour|v", "end|d")
 
       self.idletime=self.optionalConfig( \
           int, 0, "TIMEOUTS", "IdleTime|v", "idle_time|d")
@@ -161,6 +161,18 @@ class Configuration:
       self.actioncommand=self.optionalConfig( \
           str, None, "ACTION", "ActionCommand|v")
 
+      # Legacy keywords support.  Do keep the following lines as long
+      # as possible here.  They should not be found in modern configuration
+      # file and should be automatically replaced during an upgrade, but
+      # it is always possible that an old file remains.
+      if self.noactiontimerange[STARTHOUR] == None:
+        self.noactiontimerange[STARTHOUR]=self.optionalConfig( \
+            int, 0, "NO_SHUTDOWN_TIME_RANGE", "StartHour|v", "start|d")
+
+      if self.noactiontimerange[ENDHOUR] == None:
+        self.noactiontimerange[ENDHOUR]=self.optionalConfig( \
+            int, 0, "NO_SHUTDOWN_TIME_RANGE", "EndHour|v", "end|d")
+
       if self.action == None:
         self.errors = "No action command command provided."
       else:
@@ -168,7 +180,7 @@ class Configuration:
         # if self.action is invalid.  But we still want to print out in
         # the error message the faulty section.
         action = APOCommand.parse(self.action)
-        if action == None: 
+        if action == None:
           self.errors = "Invalid action command:  \"" + \
                         str(self.action) + "\""
         else:
@@ -208,37 +220,36 @@ class Configuration:
 
 # StartHour and EndHour parameters (expressed in hours):
 #
-#   Following is the time range where the computer should not shutdown
-#   even if all conditions are met.  In this example where StartHour=5
-#   and EndHour=22, the computer will not shut down between 05:00 and
+#   Following is the time range where the computer should not take any action
+#   even if all conditions are met.  In this example where StartHour=5 and
+#   EndHour=22, the computer will not take action between 05:00 and
 #   22:00, local time.
 
-[NO_SHUTDOWN_TIME_RANGE]
+[NO_ACTION_TIME_RANGE]
 """)
-    fd.write("StartHour=" + str(int(self.noshutdownrange[0])) + "\n")
-    fd.write("EndHour="   + str(int(self.noshutdownrange[1])) + "\n")
+    fd.write("StartHour=" + str(int(self.noactiontimerange[0])) + "\n")
+    fd.write("EndHour="   + str(int(self.noactiontimerange[1])) + "\n")
 
     fd.write("""
 
 # StartupDelay parameter (expressed in minutes):
 #
-#   When the computer is booting up, if all the conditions are met and
-#   the computer is in the shutdown time range, as soon as Autopoweroff
-#   is started, the computer will shutdown.  Thus, the user will never
-#   have the chance to boot into the computer.  This is where the
-#   "delay" parameter comes in.  If "delay" is set to 15 for example,
-#   Autopoweroff will not poweroff the computer even if all the
-#   conditions are met, for a period of 15 minutes after the computer
-#   has booted.  This allows the user to login and change Autopoweroff's
-#   configuration.
+#   When the computer is booting up, if all the conditions are met and the
+#   computer is in the action time range, as soon as Autopoweroff is started,
+#   the computer will take action.  Thus, the user will never have the chance
+#   to boot into the computer.  This is where the "delay" parameter comes in.
+#   If "delay" is set to 15 for example, Autopoweroff will not poweroff the
+#   computer even if all the conditions are met, for a period of 15 minutes
+#   after the computer has booted.  This allows the user to login and change
+#   Autopoweroff's configuration.
 #
 #
 # IdleTime parameter (expressed in minutes):
 #
-#   Like a screensaver, Autopoweroff detects keyboard and mouse
-#   activity, and if there is any activity on the server, it would not
-#   be powered off regardless if all the other conditions are met.  If
-#   set to 0, user activity on the server will be ignored.
+#   Like a screensaver, Autopoweroff detects keyboard and mouse activity, and
+#   if there is any activity on the server, it would not be powered off
+#   regardless if all the other conditions are met.  If set to 0, user
+#   activity on the server will be ignored.
 
 [TIMEOUTS]
 """)
@@ -250,7 +261,7 @@ class Configuration:
 # Hosts parameter (list of hostnames or IPs, separated by commas):
 #
 #   Here you list the list of hosts your machine is dependant, i.e. this
-#   computer should not shutdown if any of the hosts declared here is
+#   computer should not take action if any of the hosts declared here is
 #   still up (responding to ping).
 
 [DEPENDANTS]
@@ -279,7 +290,7 @@ class Configuration:
 #     - Other     (ActionCommand must be supplied)
 #
 # ActionCommand
-# 
+#
 #   In some cases, users want to specifiy the action command.  It could be a
 #   script, a special version of /usr/sbin/shutdown, etc...  Arguments are
 #   added after the command.  Example:
@@ -299,7 +310,7 @@ class Configuration:
 [ACTION]
 """)
 
-    # TODO:  
+    # TODO:
     fd.write("Action="        + str(self.action)        + "\n")
     fd.write("ActionCommand=" + str(self.actioncommand) + "\n")
 

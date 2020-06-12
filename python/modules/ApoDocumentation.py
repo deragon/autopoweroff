@@ -23,8 +23,8 @@ IdleTime parameter (expressed in minutes):
 StartupDelay parameter (expressed in minutes):
 
   When the computer is booting up, if all the conditions are met and
-  the computer is in the shutdown time range, as soon as Autopoweroff
-  is started, the computer will shutdown.  Thus, the user will never
+  the computer is in the action time range, as soon as Autopoweroff
+  is started, the computer will take action.  Thus, the user will never
   have the chance to boot into the computer.  This is where the
   "delay" parameter comes in.  If "delay" is set to 15 for example,
   Autopoweroff will not poweroff the computer even if all the
@@ -39,9 +39,9 @@ StartupDelay parameter (expressed in minutes):
         """
 StartHour and EndHour parameters (expressed in hours):
 
-  Following is the time range where the computer should not shutdown
-  even if all conditions are met.  In this example where StartHour=5
-  and EndHour=22, the computer will not shut down between 05:00 and
+  Following is the time range where the computer should not take any action
+  even if all conditions are met.  In this example where StartHour=5 and
+  EndHour=22, the computer will not take action between 05:00 and
   22:00, local time.
 """
       },
@@ -52,7 +52,7 @@ StartHour and EndHour parameters (expressed in hours):
 Hosts parameter (list of hostnames or IPs, separated by commas):
 
   Here you list the list of hosts your machine is dependant, i.e. this
-  computer should not shutdown if any of the hosts declared here is
+  computer should not take any action if any of the hosts declared here is
   still up (responding to ping).
 """
       },

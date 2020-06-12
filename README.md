@@ -153,7 +153,7 @@ documented and easy to understand. Following is an example:
 #
 #   Following is the time range where the computer should not shutdown
 #   even if all conditions are met.  In this example where StartHour=5
-#   and EndHour=22, the computer will not shut down between 05:00 and
+#   and EndHour=22, the computer will not take action between 05:00 and
 #   22:00, local time.
 
 [NO_SHUTDOWN_TIME_RANGE]
@@ -360,7 +360,7 @@ The following are features to be added in future releases.
 * Ignore accelerator when available.
 * Detect activity from a remote login, either it be console or an X session.
   Currently, if someone is working remotly on the computer, this will go
-  undetected and Autopoweroff will proceed with the shutdown if all other
+  undetected and Autopoweroff will proceed with the action if all other
   conditions are met.
 * Internationalization (i18n). Autopoweroff is currently available only in
   English.

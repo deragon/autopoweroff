@@ -271,7 +271,7 @@ The following are features to be added in future releases.
 * Ignore accelerator when available.
 * Detect activity from a remote login, either it be console or an X session.
   Currently, if someone is working remotly on the computer, this will go
-  undetected and Autopoweroff will proceed with the shutdown if all other
+  undetected and Autopoweroff will proceed with the action if all other
   conditions are met.
 * Internationalization (i18n). Autopoweroff is currently available only in
   English.

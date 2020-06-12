@@ -298,9 +298,9 @@ def readConfiguration():
 
 
   builder.get_object("SbStartHour"). \
-    set_value(configuration.noshutdownrange[0])
+    set_value(configuration.noactiontimerange[0])
   builder.get_object("SbEndHour").  \
-    set_value(configuration.noshutdownrange[1])
+    set_value(configuration.noactiontimerange[1])
   builder.get_object("SbIdleTime"). \
     set_value(configuration.idletime)
   builder.get_object("SbBootDelay"). \
@@ -331,10 +331,10 @@ def readConfiguration():
 def saveConfiguration():
   try:
     hosts=list(range(0))
-    noshutdownrange=list(range(2))
-    noshutdownrange[0]=builder.get_object("SbStartHour"). \
+    noactiontimerange=list(range(2))
+    noactiontimerange[0]=builder.get_object("SbStartHour"). \
       get_value_as_int()
-    noshutdownrange[1]=builder.get_object("SbEndHour").  \
+    noactiontimerange[1]=builder.get_object("SbEndHour").  \
       get_value_as_int()
     idletime=builder.get_object("SbIdleTime"). \
       get_value_as_int()
@@ -367,7 +367,7 @@ def saveConfiguration():
     actioncommand = builder.get_object("TxtActionCommand").get_text()
 
     configuration = ApoConfig.Configuration( \
-                      noshutdownrange, idletime, startupdelay, \
+                      noactiontimerange, idletime, startupdelay, \
                       hosts, action, actioncommand)
     configuration.save()
   except Exception as exception:

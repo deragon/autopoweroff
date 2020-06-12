@@ -33,10 +33,10 @@ DESCRIPTION_SHORT="Automatically power off a computer if not used"
 DESCRIPTION_LONG="[GUI configurator available from menus System/Administration/Autopoweroff]
 
 Autopoweroff is a Python script that is started at boot time, and which
-function is to shutdown the computer at a specific time, but only if
-some conditions are met.
+function is to execute an action (run a script or shutdown the computer) at a
+specific time, but only if some conditions are met.
 
-The computer will shutdown if all the above conditions are met:
+Autopoweroff will take action if all the above conditions are met:
 
   1. Any hosts that the computer is dependent on is not answering ping
      anymore.
@@ -58,7 +58,7 @@ then go down.
 By setting the BIOS properly, the server can come up by itself every
 morning.  Autopoweroff has nothing to do with this process.  But with
 this setting, your home server does not need to run 24/7; you can save
-electricity and noise without the hassle of having to shut down and
+electricity and noise without the hassle of having to shutdown and
 start the server manually.
 
 Contact:

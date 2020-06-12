@@ -62,10 +62,6 @@ createDirs([piddir, rundir])
 cancelfile = rundir + "/" + scriptname + ".cancel"
 conffile = confdir + "/" + scriptname + ".conf"
 
-# The "No shutdown range" is the range, expressed in hours, during which no
-# shutdown is to be performed.
-# Expressed in local time, not UTC.
-
 if os.path.exists(pidfile):
   fdPidFile = open(pidfile)
   pid = fdPidFile.readline()
@@ -123,7 +119,7 @@ except ApoConfig.APOError as message:
 command = ""
 if configuration.action is None:
   # Default command is SLEEP.  It is safer as no actual data can be lost going
-  # to sleep where a shutdown my cause data lost because saving operations
+  # to sleep where a shutdown might cause data lost because saving operations
   # could not be performed.
   command = APOCommand.commands[APOCommand.SLEEP]
   commandtext = APOCommand.SLEEP
@@ -159,13 +155,16 @@ aoha.start()
 import ApoObserverDevice
 apoDeviceObserverManager = ApoObserverDevice.ApoDeviceObserverManager()
 
-def performSleepForNoShutDownRange():
+def performSleepForNoActionTimeRange():
 
   sleepTimeLogged = False
-  stringNoShutdownRange = f"{configuration.noshutdownrange[ApoConfig.STARTHOUR]:02}:00-{configuration.noshutdownrange[ApoConfig.ENDHOUR]:02}:00"
+  print(str(configuration))
+  print(str(configuration.noactiontimerange[ApoConfig.STARTHOUR]))
+  print(str(configuration.noactiontimerange[ApoConfig.ENDHOUR]))
+  stringNoActionTimeRange = f"{configuration.noactiontimerange[ApoConfig.STARTHOUR]:02}:00-{configuration.noactiontimerange[ApoConfig.ENDHOUR]:02}:00"
 
   while True:
-    # Checking if the current hour is within the poweroff shutdown range.
+    # Checking if the current hour is within the "no action range".
     # Now contains the current hour.
 
     now = time.time()
@@ -176,34 +175,35 @@ def performSleepForNoShutDownRange():
     # logger.debug(nowhour)
 
     sleepTime = 0;
-    if configuration.noshutdownrange[ApoConfig.STARTHOUR] <= \
-       configuration.noshutdownrange[ApoConfig.ENDHOUR]:
-      if nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and \
-         nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
-        shutdowntuple = (nowtuple[0], nowtuple[1], nowtuple[2],
-                         configuration.noshutdownrange[ApoConfig.ENDHOUR],
+    if configuration.noactiontimerange[ApoConfig.STARTHOUR] <= \
+       configuration.noactiontimerange[ApoConfig.ENDHOUR]:
+      if nowhour >= configuration.noactiontimerange[ApoConfig.STARTHOUR] and \
+         nowhour < configuration.noactiontimerange[ApoConfig.ENDHOUR]:
+        noactiontimerangetuple = (nowtuple[0], nowtuple[1], nowtuple[2],
+                         configuration.noactiontimerange[ApoConfig.ENDHOUR],
                          0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
-        # logger.debug(shutdowntuple)
+        # logger.debug(noactiontimerangetuple)
         # logger.debug(nowtuple)
-        sleepTime = time.mktime(shutdowntuple) - now + 1
+        sleepTime = time.mktime(noactiontimerangetuple) - now + 1
     else:
-      if (nowhour >= configuration.noshutdownrange[ApoConfig.STARTHOUR] and
+      if (nowhour >= configuration.noactiontimerange[ApoConfig.STARTHOUR] and
           nowhour <= 24) or \
-          nowhour < configuration.noshutdownrange[ApoConfig.ENDHOUR]:
-        shutdowntuple = (nowtuple[0], nowtuple[1], nowtuple[2] + 1,
-                         configuration.noshutdownrange[ApoConfig.ENDHOUR],
+          nowhour < configuration.noactiontimerange[ApoConfig.ENDHOUR]:
+        noactiontimerangetuple = (nowtuple[0], nowtuple[1], nowtuple[2] + 1,
+                         configuration.noactiontimerange[ApoConfig.ENDHOUR],
                          0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
-        # logger.debug(shutdowntuple)
+        # logger.debug(noactiontimerangetuple)
         # logger.debug(nowtuple)
-        sleepTime = time.mktime(shutdowntuple) - now + 1
+        sleepTime = time.mktime(noactiontimerangetuple) - now + 1
 
     if sleepTime > 0:
       # Using gmtime(sleepTime) here because localtime(0) is actually
       # 1969/12/31 19h00, thus if using localtime(sleepTime), we actually
       # print the sleepTime minus 5 hours, which is wrong.
       if sleepTimeLogged == False:
-        sendmsg("Currently in 'No shutdown' range " + stringNoShutdownRange + \
-                " for '" + commandtext + "'.  Sleeping for " + \
+        sendmsg("Currently in 'No action' time range " + \
+                stringNoActionTimeRange + " for '" + commandtext + \
+                "'.  Sleeping for " + \
                 time.strftime("%H:%M:%S", time.gmtime(sleepTime)))
         sleepTimeLogged = True
       alivePrint = False
@@ -227,8 +227,8 @@ def performSleepForNoShutDownRange():
       time.sleep(1 * 60)
       continue
     else:
-      logger.info("Not sleeping since out of 'No shutdown' range %s", \
-        stringNoShutdownRange)
+      logger.info("Not sleeping since out of 'No action' time range %s", \
+        stringNoActionTimeRange)
       break
 
 
@@ -241,7 +241,7 @@ def performSleepForIdleTime():
   logger.debug(f"timeElapsedSinceLastEvent = {timeElapsedSinceLastEvent:2.2f}s.")
 
   # If configuration.idletime is set to 0, that means that the user does
-  # not want any of the console inputs to influence the shutdown decision.
+  # not want any of the console inputs to influence the action decision.
   if configuration.idletime > 0 and \
                   timeElapsedSinceLastEvent < configuration.idletime * 60:
 
@@ -266,10 +266,10 @@ try:
 
     while True:  # Inner loop
 
-      performSleepForNoShutDownRange()
+      performSleepForNoActionTimeRange()
       if performSleepForIdleTime():
         # Sleep occurred, we thus rerun the loop to ensure that we run through
-        # performSleepForNoShutDownRange() before continuing.
+        # performSleepForNoActionTimeRange() before continuing.
         continue
 
       # Taking a snapshot because if aoha.hostsStillAlive is used everywhere,
@@ -312,7 +312,6 @@ try:
               time.strftime("%H:%M:%S", (time.localtime(time.time()))))
 
         else:
-          # commands.getstatusoutput("nohup " + gShutdownCmd + " -h now")
           import subprocess
           subprocess.getstatusoutput(command)
 
