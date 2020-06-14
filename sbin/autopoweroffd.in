@@ -158,9 +158,9 @@ apoDeviceObserverManager = ApoObserverDevice.ApoDeviceObserverManager()
 def performSleepForNoActionTimeRange():
 
   sleepTimeLogged = False
-  print(str(configuration))
-  print(str(configuration.noactiontimerange[ApoConfig.STARTHOUR]))
-  print(str(configuration.noactiontimerange[ApoConfig.ENDHOUR]))
+  #print(str(configuration))
+  #print(str(configuration.noactiontimerange[ApoConfig.STARTHOUR]))
+  #print(str(configuration.noactiontimerange[ApoConfig.ENDHOUR]))
   stringNoActionTimeRange = f"{configuration.noactiontimerange[ApoConfig.STARTHOUR]:02}:00-{configuration.noactiontimerange[ApoConfig.ENDHOUR]:02}:00"
 
   while True:
@@ -171,30 +171,31 @@ def performSleepForNoActionTimeRange():
     # logger.debug("UTC:  ", time.gmtime(now))
     # logger.debug("LOCAL:  ", time.localtime(now))
     nowtuple = time.localtime(now)
-    nowhour = nowtuple[3]
+    nowhour = nowtuple.tm_hour
     # logger.debug(nowhour)
 
     sleepTime = 0;
+    noactiontimerangetuple = None
     if configuration.noactiontimerange[ApoConfig.STARTHOUR] <= \
        configuration.noactiontimerange[ApoConfig.ENDHOUR]:
       if nowhour >= configuration.noactiontimerange[ApoConfig.STARTHOUR] and \
          nowhour < configuration.noactiontimerange[ApoConfig.ENDHOUR]:
-        noactiontimerangetuple = (nowtuple[0], nowtuple[1], nowtuple[2],
-                         configuration.noactiontimerange[ApoConfig.ENDHOUR],
-                         0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
-        # logger.debug(noactiontimerangetuple)
-        # logger.debug(nowtuple)
-        sleepTime = time.mktime(noactiontimerangetuple) - now + 1
+        noactiontimerangetuple = (
+           nowtuple.tm_year, nowtuple.tm_month, nowtuple.tm_day,
+           configuration.noactiontimerange[ApoConfig.ENDHOUR],
+           0, 0, nowtuple.tm_wday, nowtuple.tm_yday, nowtuple.tm_isdst)
     else:
-      if (nowhour >= configuration.noactiontimerange[ApoConfig.STARTHOUR] and
-          nowhour <= 24) or \
-          nowhour < configuration.noactiontimerange[ApoConfig.ENDHOUR]:
-        noactiontimerangetuple = (nowtuple[0], nowtuple[1], nowtuple[2] + 1,
-                         configuration.noactiontimerange[ApoConfig.ENDHOUR],
-                         0, 0, nowtuple[6], nowtuple[7], nowtuple[8])
-        # logger.debug(noactiontimerangetuple)
-        # logger.debug(nowtuple)
-        sleepTime = time.mktime(noactiontimerangetuple) - now + 1
+      if nowhour >= configuration.noactiontimerange[ApoConfig.STARTHOUR] or \
+         nowhour < configuration.noactiontimerange[ApoConfig.ENDHOUR]:
+        noactiontimerangetuple = (
+          nowtuple.tm_year, nowtuple.tm_month, nowtuple.tm_day + 1,
+          configuration.noactiontimerange[ApoConfig.ENDHOUR],
+          0, 0, nowtuple.tm_wday, nowtuple.tm_yday, nowtuple.tm_isdst)
+
+    if noactiontimerangetuple != None:
+      # logger.debug(noactiontimerangetuple)
+      # logger.debug(nowtuple)
+      sleepTime = time.mktime(noactiontimerangetuple) - now + 1
 
     if sleepTime > 0:
       # Using gmtime(sleepTime) here because localtime(0) is actually
