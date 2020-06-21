@@ -29,32 +29,16 @@ class ApoObserverHostsAlive(threading.Thread):
       for host in self.hostsToPing:
         #self.logger.debug("Pinging host:  >>" + host + "<<")
 
-        # Searchiin on the net, as of 2020-04-25, it seams the easiest
+        # Searching on the net, as of 2020-04-25, it seams the easiest
         # way to perform a ping is by calling the outside 'ping' command.
         # Go figure why.
         cmd = [ "ping", "-c", "1", "-w", "10", host ]
         cp = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if cp.returncode == 0:
           # Host return ping, thus confirming it exists.  Adding it to
-          # the lsit of hosts alive.
+          # the list of hosts alive.
           newListOfHostsStillAlive = newListOfHostsStillAlive + [ host ]
           break
-
-        # Many hosts do not respond to ping for security reasons.  Lets
-        # check another way if they exists on the network by performing
-        # a reverse ARP lookup.
-        try:
-          # Performing a reverse ARP.  Works if 'host' is a hostname or an IP.
-          # If successful, add the host to the list, since it seams that it
-          # exists.
-          socket.gethostbyaddr(host)
-
-          # Got here with no exception, thus Host is recognized by the
-          # network as existing.
-          newListOfHostsStillAlive = newListOfHostsStillAlive + [ host ]
-        except:
-          # Nope, not found, thus not adding it to the list.
-          pass
 
       # If the list of hosts alive changed, we report it.
       if newListOfHostsStillAlive != self.hostsStillAlive:
