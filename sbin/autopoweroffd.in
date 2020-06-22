@@ -147,6 +147,11 @@ gHostsStillAlive = []
 aoha=ApoObserverHostsAlive.ApoObserverHostsAlive(configuration.hosts)
 aoha.start()
 
+import ApoObserverNoActionTimeRange
+apoObserverNoActionTimeRange=ApoObserverNoActionTimeRange.ApoObserverNoActionTimeRange(configuration)
+apoObserverNoActionTimeRange.start()
+
+
 ######################################################################
 # Loading kernel power management module.
 # For the moment, not required.
@@ -154,84 +159,6 @@ aoha.start()
 
 import ApoObserverDevice
 apoDeviceObserverManager = ApoObserverDevice.ApoDeviceObserverManager()
-
-def performSleepForNoActionTimeRange():
-
-  sleepTimeLogged = False
-  #print(str(configuration))
-  #print(str(configuration.noactiontimerange[ApoConfig.STARTHOUR]))
-  #print(str(configuration.noactiontimerange[ApoConfig.ENDHOUR]))
-  stringNoActionTimeRange = f"{configuration.noactiontimerange[ApoConfig.STARTHOUR]:02}:00-{configuration.noactiontimerange[ApoConfig.ENDHOUR]:02}:00"
-
-  while True:
-    # Checking if the current hour is within the "no action range".
-    # Now contains the current hour.
-
-    now = time.time()
-    # logger.debug("UTC:  ", time.gmtime(now))
-    # logger.debug("LOCAL:  ", time.localtime(now))
-    nowtuple = time.localtime(now)
-    nowhour = nowtuple.tm_hour
-    # logger.debug(nowhour)
-
-    sleepTime = 0;
-    noactiontimerangetuple = None
-    if configuration.noactiontimerange[ApoConfig.STARTHOUR] <= \
-       configuration.noactiontimerange[ApoConfig.ENDHOUR]:
-      if nowhour >= configuration.noactiontimerange[ApoConfig.STARTHOUR] and \
-         nowhour < configuration.noactiontimerange[ApoConfig.ENDHOUR]:
-        noactiontimerangetuple = (
-           nowtuple.tm_year, nowtuple.tm_month, nowtuple.tm_day,
-           configuration.noactiontimerange[ApoConfig.ENDHOUR],
-           0, 0, nowtuple.tm_wday, nowtuple.tm_yday, nowtuple.tm_isdst)
-    else:
-      if nowhour >= configuration.noactiontimerange[ApoConfig.STARTHOUR] or \
-         nowhour < configuration.noactiontimerange[ApoConfig.ENDHOUR]:
-        noactiontimerangetuple = (
-          nowtuple.tm_year, nowtuple.tm_month, nowtuple.tm_day + 1,
-          configuration.noactiontimerange[ApoConfig.ENDHOUR],
-          0, 0, nowtuple.tm_wday, nowtuple.tm_yday, nowtuple.tm_isdst)
-
-    if noactiontimerangetuple != None:
-      # logger.debug(noactiontimerangetuple)
-      # logger.debug(nowtuple)
-      sleepTime = time.mktime(noactiontimerangetuple) - now + 1
-
-    if sleepTime > 0:
-      # Using gmtime(sleepTime) here because localtime(0) is actually
-      # 1969/12/31 19h00, thus if using localtime(sleepTime), we actually
-      # print the sleepTime minus 5 hours, which is wrong.
-      if sleepTimeLogged == False:
-        sendmsg("Currently in 'No action' time range " + \
-                stringNoActionTimeRange + " for '" + commandtext + \
-                "'.  Sleeping for " + \
-                time.strftime("%H:%M:%S", time.gmtime(sleepTime)))
-        sleepTimeLogged = True
-      alivePrint = False
-
-      # Actually sleeping for 1 minute.  The problem is that when the system
-      # is suspended or hibernated prior the expiration time, the sleep will
-      # continue where it left of, without taking account the time that
-      # lapsed during the sleep.
-
-      # Say for example that sleepTime is 2 hours.  15 minutes after this
-      # thread started sleeping, the user manually suspends the computer for
-      # 3 hours.  Upon resuming, this thread will still continue to sleep for
-      # 1:45 hours, despite it should be stopped.
-
-      # Thus, we sleep for 1 minute and loop again reforce a recalculation
-      # of the remaining time.
-
-      # TODO:  Eventually, make use of Pause module:
-      #        (https://pypi.org/project/pause) to get around the problem
-      #        of suspension.
-      time.sleep(1 * 60)
-      continue
-    else:
-      logger.info("Not sleeping since out of 'No action' time range %s", \
-        stringNoActionTimeRange)
-      break
-
 
 def performSleepForIdleTime():
 
@@ -255,6 +182,14 @@ def performSleepForIdleTime():
     return False
 
 
+def conditionsArrayToString(conditions):
+  keyprint = "[ "
+  for key, value in conditions.items():
+    keyprint=keyprint + key + ":" + str(value[0]) + " "
+  keyprint=keyprint + "]"
+  return keyprint
+
+
 ######################################################################
 try:
 
@@ -263,14 +198,37 @@ try:
     ApoObserverDevice.gLastInputEventTime = time.time()
     isToBePutOnHold = False
     alivePrint      = False
+    conditions      = {}
     startupDelay()
+    isThereAnyConditionsNotMet = False
 
     while True:  # Inner loop
 
-      performSleepForNoActionTimeRange()
       if performSleepForIdleTime():
         # Sleep occurred, we thus rerun the loop to ensure that we run through
         # performSleepForNoActionTimeRange() before continuing.
+        continue
+
+      previousConditions = conditions.copy()
+
+      conditions["noActionTimeRange"] = apoObserverNoActionTimeRange.status()
+
+      if conditions != previousConditions:
+        isThereAnyConditionsNotMet = False
+        sendmsg("Conditions have changed.  New conditions:")
+        for key, value in conditions.items():
+          if(value[0] == True):
+            isThereAnyConditionsNotMet = True
+          sendmsg("  " + value[1])
+        sendmsg( \
+          "Conditions array:  " + conditionsArrayToString(conditions))
+
+      if isThereAnyConditionsNotMet:
+        logger.debug("At least one condition is not met.  Looping.")
+        # Arbitrary 5s sleep.  If this sleep is removed, Autopoweroff will
+        # run at 100% CPU since it will endlessly loop until the condition
+        # changes.
+        time.sleep(5)
         continue
 
       # Taking a snapshot because if aoha.hostsStillAlive is used everywhere,
@@ -282,6 +240,7 @@ try:
       hostsStillAlive = aoha.hostsStillAlive
 
       logger.debug("aoha.hostsStillAlive = " + str(hostsStillAlive))
+
       if len(hostsStillAlive) > 0:
         if not alivePrint:
           sendmsg("Some hosts are still alive:  " + str(hostsStillAlive))
@@ -308,7 +267,7 @@ try:
                 priority=syslog.LOG_ALERT)
 
         if gTestMode:
-          logger.info( \
+          sendmsg( \
               "Test mode:  would have run action '" + command + "' at " + \
               time.strftime("%H:%M:%S", (time.localtime(time.time()))))
 
