@@ -18,7 +18,6 @@ class ApoDeviceObserverManager():
     self.logger = logging.getLogger("apo.observer.device.manager")
 
     try:
-      spkrRE = re.compile(".*spkr.*")
       devicePath = None
       # Ubuntu 06.06 does not have any /dev/input/by-path,
       # only /dev/input.
@@ -31,24 +30,27 @@ class ApoDeviceObserverManager():
                 "Will not be able to detect user activity.")
       else:
         for path in os.listdir(devicePath):
-          if spkrRE.search(path) is not None:
+          if "spkr" in path:
             # Ignoring speaker devices.  I do not understand how a device
-            # related to a speaker can be considered an input device.  A
-            # microphone maybe?  Even if this is the case, if a user simply
-            # leave the microphone on, it will always receive some ambient
-            # sound even if the machine is not use.  We cannot make use of
-            # this.  This device is available in Ubuntu 07.04 and 08.10
-            # (2.6.24-17-generic).
+            # related to a speaker can be considered an input device.  The
+            # state of some volume buttons can be read from it?  Maybe
+            # microphones show up as "spkr" devices?  Even if it is a
+            # microphone, if a user simply leaves it on, it will always
+            # receive some ambient sound even if the machine is not use.  We
+            # cannot make use of this.
+            #
+            # This device was shown in Ubuntu 07.04 and 08.10
+            # (2.6.24-17-generic).  However, it was not seen showing under
+            # 18.04 and 19.10.
+            self.logger.warn("path = " + path + " REJECTED because it is a speaker.")
             continue
 
-          path = devicePath + "/" + path
-          self.logger.debug("path = " + path)
-          # TODO:  Improve catching.  Currently, only one model
-          #        of an accelerometer is hardcoded here.  This
-          #        code should 
+          # TODO:  Improve catching.  Currently, only one model of an
+          #        accelerometer is hardcoded here.  This code should made
+          #        generic and catch all accelerometers.
           if "lis3lv02d" in path:
             # lis3lv02d:  https://www.kernel.org/doc/Documentation/misc-devices/lis3lv02d
-
+            #
             # Accelerometers are devices that are way to sensitive for
             # Autopoweroff.  A laptop laying on a stable table with nobody
             # touching it will still have its accelerometer reporting
@@ -58,6 +60,8 @@ class ApoDeviceObserverManager():
             self.logger.warn("path = " + path + " REJECTED because it is an accelerometer.")
             continue
 
+          path = devicePath + "/" + path
+          self.logger.debug("path = " + path)
           self.devicesArray.append(path)
 
     except OSError as oserror:
