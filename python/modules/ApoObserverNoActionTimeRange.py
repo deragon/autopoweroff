@@ -10,8 +10,9 @@ import errno
 
 import ApoConfig
 from ApoLibrary import *
+from ApoObserver import ApoObserver
 
-class ApoObserverNoActionTimeRange(threading.Thread):
+class ApoObserverNoActionTimeRange(ApoObserver):
 
   def status(self):
 
@@ -23,8 +24,7 @@ class ApoObserverNoActionTimeRange(threading.Thread):
 
   def __init__(self, configuration):
 
-    threading.Thread.__init__(self, name=__name__)
-    self.daemon = True
+    ApoObserver.__init__(self)
     self.isInTimeRange = None
     self.logger = logging.getLogger("apo.observer.noaction.timerange")
     self.configuration = configuration
