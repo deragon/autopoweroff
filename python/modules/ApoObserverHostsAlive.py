@@ -9,9 +9,10 @@ from ApoLibrary import *
 class ApoObserverHostsAlive(threading.Thread):
 
   def __init__(self, hostsToPing):
+    threading.Thread.__init__(self, name="ApoObserverHostsAlive")
+    self.daemon = True
     self.logger = logging.getLogger("apo.observer.hosts.alive")
     self.logger.info("Initializing.")
-    threading.Thread.__init__(self, name="ApoObserverHostsAlive")
     self.setDaemon(True)
     self.hostsToPing = hostsToPing
     self.hostsStillAlive = hostsToPing

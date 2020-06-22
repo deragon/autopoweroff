@@ -23,10 +23,11 @@ class ApoObserverNoActionTimeRange(threading.Thread):
 
   def __init__(self, configuration):
 
+    threading.Thread.__init__(self, name=__name__)
+    self.daemon = True
     self.isInTimeRange = None
     self.logger = logging.getLogger("apo.observer.noaction.timerange")
     self.configuration = configuration
-    threading.Thread.__init__(self, name=__name__)
 
 
   def run(self):

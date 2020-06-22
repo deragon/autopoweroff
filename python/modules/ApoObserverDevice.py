@@ -75,8 +75,11 @@ class ApoDeviceObserverManager():
       thread.terminate()
 
 class ApoObserverDevice(threading.Thread):
+
   def __init__(self, sDevice):
     threading.Thread.__init__(self, name=sDevice)
+    self.daemon=True
+
     self.logger = logging.getLogger("apo.observer.device.thread")
     self.setDaemon(True)
     self.sDevice = sDevice
