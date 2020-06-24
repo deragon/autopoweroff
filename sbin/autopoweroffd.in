@@ -86,8 +86,8 @@ lockFile.close()
 def sigtermHandler(_signo, _stack_frame):
   logger.debug("sigtermHandler() called.")
 
-  global apoDeviceObserverManager
-  apoDeviceObserverManager.terminate()
+  global apoObserverDeviceManager
+  apoObserverDeviceManager.terminate()
 
   global pidfile
   os.remove(pidfile)
@@ -156,8 +156,8 @@ apoObserverNoActionTimeRange.start()
 # import commands;commands.getstatusoutput("/sbin/modprobe apm")
 
 import ApoObserverDevice
-apoDeviceObserverManager = \
-  ApoObserverDevice.ApoDeviceObserverManager(configuration)
+apoObserverDeviceManager = \
+  ApoObserverDevice.ApoObserverDeviceManager(configuration)
 
 
 def conditionsArrayToString(conditions):
@@ -200,7 +200,7 @@ try:
       previousConditionsState = conditionsState.copy()
 
       setConditions(apoObserverNoActionTimeRange.status())
-      setConditions(apoDeviceObserverManager.status())
+      setConditions(apoObserverDeviceManager.status())
 
       logger.debug("conditionsState:  " + str(conditionsState))
       logger.debug("previousConditionsState:  " + str(previousConditionsState))

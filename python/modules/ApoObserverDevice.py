@@ -11,7 +11,7 @@ import errno
 from ApoLibrary import *
 from ApoObserver import *
 
-class ApoDeviceObserverManager(ApoObserverManager):
+class ApoObserverDeviceManager(ApoObserverManager):
 
   def __init__(self, configuration):
     self.configuration      = configuration
