@@ -131,8 +131,6 @@ else:
   command = APOCommand.commands[configuration.action]
   commandtext = APOCommand.commands[configuration.action]
 
-# logger.debug("idletime=" + str(configuration.idletime))
-
 sendmsg("Command to execute when all conditions are met:  " + command)
 
 ######################################################################
@@ -158,73 +156,68 @@ apoObserverNoActionTimeRange.start()
 # import commands;commands.getstatusoutput("/sbin/modprobe apm")
 
 import ApoObserverDevice
-apoDeviceObserverManager = ApoObserverDevice.ApoDeviceObserverManager()
-
-def performSleepForIdleTime():
-
-  # time.time() returns current time in epoch
-  # (seconds and fractions since 1970-01-01).
-  timeElapsedSinceLastEvent = time.time() - ApoObserverDevice.gLastInputEventTime
-
-  logger.debug(f"timeElapsedSinceLastEvent = {timeElapsedSinceLastEvent:2.2f}s.")
-
-  # If configuration.idletime is set to 0, that means that the user does
-  # not want any of the console inputs to influence the action decision.
-  if configuration.idletime > 0 and \
-                  timeElapsedSinceLastEvent < configuration.idletime * 60:
-
-    sleepTime = configuration.idletime * 60
-    logger.debug("Sleeping for " + str(sleepTime) + \
-                   "s following IdleTime configuration.")
-    time.sleep(sleepTime)
-    return True
-  else:
-    return False
+apoDeviceObserverManager = \
+  ApoObserverDevice.ApoDeviceObserverManager(configuration)
 
 
 def conditionsArrayToString(conditions):
   keyprint = "[ "
   for key, value in conditions.items():
-    keyprint=keyprint + key + ":" + str(value[0]) + " "
+    keyprint=keyprint + key + ":" + str(value) + " "
   keyprint=keyprint + "]"
   return keyprint
+
+
+def setConditions(status):
+  isConditionMet = status[0]  # Boolean.
+  name           = status[1]  # String.
+  description    = status[2]  # String.
+
+  conditionsState      [name] = isConditionMet
+  conditionsDescription[name] = description
 
 
 ######################################################################
 try:
 
-  while True:  # Outer loop
+  while True:  # Outer loop.
 
-    ApoObserverDevice.gLastInputEventTime = time.time()
     isToBePutOnHold = False
     alivePrint      = False
-    conditions      = {}
-    startupDelay()
     isThereAnyConditionsNotMet = False
+
+    # Conditions descriptions are String that can change with time.
+    # Thus they must not be part of conditionsState else the comparison
+    # with previousConditionsState will always show that the state changed
+    # even though only the description changed, not the actual state.
+    conditionsDescription = {}
+    conditionsState       = {}
+
+    startupDelay()
 
     while True:  # Inner loop
 
-      if performSleepForIdleTime():
-        # Sleep occurred, we thus rerun the loop to ensure that we run through
-        # performSleepForNoActionTimeRange() before continuing.
-        continue
+      previousConditionsState = conditionsState.copy()
 
-      previousConditions = conditions.copy()
+      setConditions(apoObserverNoActionTimeRange.status())
+      setConditions(apoDeviceObserverManager.status())
 
-      conditions["noActionTimeRange"] = apoObserverNoActionTimeRange.status()
+      logger.debug("conditionsState:  " + str(conditionsState))
+      logger.debug("previousConditionsState:  " + str(previousConditionsState))
 
-      if conditions != previousConditions:
+      if conditionsState != previousConditionsState:
         isThereAnyConditionsNotMet = False
         sendmsg("Conditions have changed.  New conditions:")
-        for key, value in conditions.items():
-          if(value[0] == True):
+        for key, value in conditionsState.items():
+          if(value == False):
             isThereAnyConditionsNotMet = True
-          sendmsg("  " + value[1])
+          sendmsg("  " + conditionsDescription[key])
         sendmsg( \
-          "Conditions array:  " + conditionsArrayToString(conditions))
+          "Conditions array:  " + conditionsArrayToString(conditionsState))
 
       if isThereAnyConditionsNotMet:
-        logger.debug("At least one condition is not met.  Looping.")
+        logger.debug("At least one condition is not met.  Looping." + \
+                     str(conditionsState))
         # Arbitrary 5s sleep.  If this sleep is removed, Autopoweroff will
         # run at 100% CPU since it will endlessly loop until the condition
         # changes.

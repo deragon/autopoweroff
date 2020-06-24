@@ -7,12 +7,14 @@
 from abc import ABC, abstractmethod
 import threading
 
-class ApoObserver(ABC, threading.Thread):
-
-    def __init__(self):
-        threading.Thread.__init__(self, name=__name__)
-        self.daemon = True
-
+class ApoObserverManager(ABC):
 
     def status(self):
         pass
+
+
+class ApoObserverThread(ABC, threading.Thread):
+
+    def __init__(self):
+        threading.Thread.__init__(self, name=__name__)
+        self.setDaemon(True)

@@ -10,21 +10,21 @@ import errno
 
 import ApoConfig
 from ApoLibrary import *
-from ApoObserver import ApoObserver
+from ApoObserver import *
 
-class ApoObserverNoActionTimeRange(ApoObserver):
+class ApoObserverNoActionTimeRange(ApoObserverManager, ApoObserverThread):
 
   def status(self):
 
       if self.isInTimeRange:
-        return ( self.isInTimeRange, "✘ Currently in 'No ActionTimeRange'." )
+        return ( False, "noActionTimeRange", "✘ Currently in 'No ActionTimeRange'." )
       else:
-        return ( self.isInTimeRange, "✓ Currently out of 'No ActionTimeRange'." )
+        return ( True, "noActionTimeRange", "✓ Currently out of 'No ActionTimeRange'." )
 
 
   def __init__(self, configuration):
 
-    ApoObserver.__init__(self)
+    ApoObserverThread.__init__(self)
     self.isInTimeRange = None
     self.logger = logging.getLogger("apo.observer.noaction.timerange")
     self.configuration = configuration

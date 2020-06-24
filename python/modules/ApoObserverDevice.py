@@ -9,13 +9,16 @@ import os
 import errno
 
 from ApoLibrary import *
+from ApoObserver import *
 
-class ApoDeviceObserverManager():
+class ApoDeviceObserverManager(ApoObserverManager):
 
-  def __init__(self):
-    self.devicesArray   = []
-    self.apoDevObsArray = []
-    self.logger = logging.getLogger("apo.observer.device.manager")
+  def __init__(self, configuration):
+    self.configuration      = configuration
+    self.lastInputEventTime = time.time()
+    self.devicesArray       = []
+    self.apoDevObsArray     = []
+    self.logger             = logging.getLogger("apo.observer.device.manager")
 
     try:
       devicePath = None
@@ -70,24 +73,42 @@ class ApoDeviceObserverManager():
 
     for device in self.devicesArray:
       self.logger.debug("Device = " + device)
-      apoDevObs = ApoObserverDevice(device)
+      apoDevObs = ApoObserverDevice(self, device)
       apoDevObs.start()
       self.apoDevObsArray.append(apoDevObs)
+
+  # Return True if the time elapsed since the lastInputEventTime is bigger
+  # that that of the configuration IdleTime.
+  def status(self):
+    print("self.configuration = " + str(self.configuration.idletime))
+    elapsedTimeSinceLastEvent = time.time() - self.lastInputEventTime
+    condition = elapsedTimeSinceLastEvent > self.configuration.idletime * 60
+    self.logger.debug(f"elapsedTimeSinceLastEvent = {elapsedTimeSinceLastEvent:0.2f} condition = {condition}")
+
+    # Converting to minutes to make it eaiser 
+    elapsedTimeSinceLastEvent = elapsedTimeSinceLastEvent / 60.0
+    if condition :
+      return ( True,  "idleTime", f"✓ Last even time happened over {elapsedTimeSinceLastEvent:0.1} mins, greater than configuration IdleTime parameter set to {self.configuration.idletime:0} mins." )
+    else:
+      return ( False, "idleTime", f"✘ Last even time happened over {elapsedTimeSinceLastEvent:0.1} mins, lower than configuration IdleTime parameter set to {self.configuration.idletime:0} mins." )
+
+  def setLastInputEventTime(self, lastInputEventTime):
+    self.lastInputEventTime = lastInputEventTime
 
   def terminate(self):
     for thread in self.apoDevObsArray:
       thread.terminate()
 
-class ApoObserverDevice(threading.Thread):
 
-  def __init__(self, sDevice):
-    threading.Thread.__init__(self, name=sDevice)
-    self.daemon=True
+class ApoObserverDevice(ApoObserverThread):
+
+  def __init__(self, apoObserverDeviceManager, sDevice):
+    ApoObserverThread.__init__(self)
+    self.apoObserverDeviceManager = apoObserverDeviceManager
+    self.sDevice                  = sDevice
+    self.sleep                    = 0
 
     self.logger = logging.getLogger("apo.observer.device.thread")
-    self.setDaemon(True)
-    self.sDevice = sDevice
-    self.sleep = 0
 
   def run(self):
     fd = open(self.sDevice, 'rb')
@@ -111,8 +132,8 @@ class ApoObserverDevice(threading.Thread):
         else:
           raise
       currentTime = time.time()
-      global gLastInputEventTime
-      gLastInputEventTime = currentTime
+      self.apoObserverDeviceManager.setLastInputEventTime(currentTime)
+
       # print currentTime-lastEventTime
       # To reduce the quantity of output, we print only a few
       # of the events, for logger.debugging purposes.  Else, it is simply
