@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.6"/>
   <object class="GtkActionGroup" id="AGActionObsolete"/>
@@ -28,6 +28,11 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="AdjSpinButtonResourcesCpuPercentage">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="AdjSpinButtonStartHour">
     <property name="upper">23</property>
     <property name="step_increment">1</property>
@@ -37,31 +42,26 @@
   <object class="GtkImage" id="ImgDisconnect">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="xpad">4</property>
     <property name="stock">gtk-disconnect</property>
   </object>
   <object class="GtkImage" id="ImgHibernate">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="xpad">4</property>
     <property name="stock">gtk-media-record</property>
   </object>
   <object class="GtkImage" id="ImgPoweroff">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="xpad">4</property>
     <property name="pixbuf">autopoweroff.png</property>
   </object>
   <object class="GtkImage" id="ImgReboot">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="xpad">4</property>
     <property name="stock">gtk-refresh</property>
   </object>
   <object class="GtkImage" id="ImgSuspend">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="xpad">4</property>
     <property name="stock">gtk-go-down</property>
   </object>
   <object class="GtkListStore" id="LSLMConfigHosts">
@@ -82,6 +82,9 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Autopoweroff</property>
     <signal name="delete-event" handler="on_Autopoweroff_delete_event" after="yes" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkBox" id="vbox3">
         <property name="visible">True</property>
@@ -248,7 +251,6 @@
                                     <child>
                                       <object class="GtkButton" id="BtnStatusCmdPoweroff">
                                         <property name="label" translatable="yes">Poweroff</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -263,8 +265,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="BtnStatusCmdReboot">
-                                        <property name="label" translatable="yes">Reboot</property>
-                                        <property name="use_action_appearance">False</property>
+                                        <property name="label" translatable="yes"> Reboot</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -281,7 +282,6 @@
                                     <child>
                                       <object class="GtkButton" id="BtnStatusCmdLogout">
                                         <property name="label" translatable="yes">Logout</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="image">ImgDisconnect</property>
@@ -311,8 +311,7 @@
                                     <property name="spacing">5</property>
                                     <child>
                                       <object class="GtkButton" id="BtnStatusCmdSuspend">
-                                        <property name="label" translatable="yes">Suspend</property>
-                                        <property name="use_action_appearance">False</property>
+                                        <property name="label" translatable="yes"> Suspend</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -329,7 +328,6 @@
                                     <child>
                                       <object class="GtkButton" id="BtnStatusCmdHibernate">
                                         <property name="label" translatable="yes">Hibernate</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -347,6 +345,7 @@
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
+                                    <property name="padding">4</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -413,6 +412,7 @@
 Idle time is 
 
 </property>
+                            <property name="margin_right">4</property>
                             <property name="margin_bottom">5</property>
                             <child>
                               <object class="GtkSpinButton" id="SbBootDelay">
@@ -552,7 +552,109 @@ Idle time is
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
+                        <property name="padding">4</property>
                         <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame" id="ResourcesFrame">
+                        <property name="width_request">170</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label_xalign">0</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="left_padding">12</property>
+                            <child>
+                              <object class="GtkFixed">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_right">4</property>
+                                <child>
+                                  <object class="GtkFixed" id="fixed1">
+                                    <property name="width_request">150</property>
+                                    <property name="height_request">80</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Set the interval where the computer must absolutely remain up; Autopoweroff would not 
+
+Idle time is 
+
+</property>
+                                    <property name="margin_bottom">5</property>
+                                    <child>
+                                      <object class="GtkSpinButton" id="SbResourcesCpuPercentage">
+                                        <property name="name">CpuPercentage</property>
+                                        <property name="width_request">50</property>
+                                        <property name="height_request">26</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">If CPU usage falls below this threshold, this condition is met to run the action.</property>
+                                        <property name="text" translatable="yes">0</property>
+                                        <property name="adjustment">AdjSpinButtonResourcesCpuPercentage</property>
+                                        <property name="climb_rate">1</property>
+                                        <signal name="value-changed" handler="on_SbResourcesCpuPercentage_change" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="x">104</property>
+                                        <property name="y">8</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label2">
+                                        <property name="width_request">90</property>
+                                        <property name="height_request">16</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">If CPU usage falls below this threshold, this condition is met to run the action.</property>
+                                        <property name="label" translatable="yes">CPU %:</property>
+                                        <property name="justify">right</property>
+                                        <property name="xalign">0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="x">8</property>
+                                        <property name="y">14</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="CbResourcesCpuPercentageDisabled">
+                                    <property name="name">CpuPercentageDisabled</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Enable or disable the CPU percentage condition.</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="toggled" handler="on_CbResourcesCpuPercentageDisable_clicked" swapped="no"/>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="x">74</property>
+                                    <property name="y">15</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Resources</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="padding">4</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -582,12 +684,12 @@ Idle time is
                                     <child>
                                       <object class="GtkButton" id="BtnConfigAddHost">
                                         <property name="label">gtk-add</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="can_default">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="use_stock">True</property>
+                                        <property name="always_show_image">True</property>
                                         <signal name="clicked" handler="on_BtnConfigAddHost_clicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -598,52 +700,14 @@ Idle time is
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="BtnConfigEditHost">
-                                        <property name="use_action_appearance">False</property>
+                                        <property name="label">gtk-edit</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="can_default">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="use_stock">True</property>
+                                        <property name="always_show_image">True</property>
                                         <signal name="clicked" handler="on_BtnConfigEditHost_clicked" swapped="no"/>
-                                        <child>
-                                          <object class="GtkAlignment" id="alignment2">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="xscale">0</property>
-                                            <property name="yscale">0</property>
-                                            <child>
-                                              <object class="GtkBox" id="hbox2">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="spacing">2</property>
-                                                <child>
-                                                  <object class="GtkImage" id="image2">
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">False</property>
-                                                    <property name="stock">gtk-convert</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">False</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="label28">
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">False</property>
-                                                    <property name="label" translatable="yes">Edit</property>
-                                                    <property name="use_underline">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">False</property>
-                                                    <property name="position">1</property>
-                                                  </packing>
-                                                </child>
-                                              </object>
-                                            </child>
-                                          </object>
-                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -654,12 +718,12 @@ Idle time is
                                     <child>
                                       <object class="GtkButton" id="BtnConfigRemoveHost">
                                         <property name="label">gtk-remove</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="can_default">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="use_stock">True</property>
+                                        <property name="always_show_image">True</property>
                                         <signal name="clicked" handler="on_BtnConfigRemoveHost_clicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -733,6 +797,7 @@ Idle time is
                           <packing>
                             <property name="expand">True</property>
                             <property name="fill">True</property>
+                            <property name="padding">4</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -740,7 +805,7 @@ Idle time is
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
@@ -752,6 +817,7 @@ Idle time is
                           <object class="GtkAlignment" id="alignment1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="margin_right">4</property>
                             <property name="left_padding">12</property>
                             <child>
                               <object class="GtkBox" id="box1">
@@ -859,7 +925,8 @@ Idle time is
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="padding">4</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </object>
@@ -873,6 +940,9 @@ Idle time is
                   <object class="GtkBox" id="hbox24">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">4</property>
+                    <property name="margin_right">4</property>
+                    <property name="margin_top">2</property>
                     <child>
                       <object class="GtkButtonBox" id="hbuttonbox11">
                         <property name="visible">True</property>
@@ -951,12 +1021,12 @@ Idle time is
                         <child>
                           <object class="GtkButton" id="button4">
                             <property name="label">gtk-save</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="can_default">True</property>
                             <property name="receives_default">False</property>
                             <property name="use_stock">True</property>
+                            <property name="always_show_image">True</property>
                             <signal name="clicked" handler="on_BtnConfigSave_clicked" swapped="no"/>
                           </object>
                           <packing>
@@ -968,12 +1038,12 @@ Idle time is
                         <child>
                           <object class="GtkButton" id="button5">
                             <property name="label">gtk-revert-to-saved</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="can_default">True</property>
                             <property name="receives_default">False</property>
                             <property name="use_stock">True</property>
+                            <property name="always_show_image">True</property>
                             <signal name="clicked" handler="on_BtnConfigRevert_clicked" swapped="no"/>
                           </object>
                           <packing>
@@ -985,12 +1055,12 @@ Idle time is
                         <child>
                           <object class="GtkButton" id="button6">
                             <property name="label">gtk-quit</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="can_default">True</property>
                             <property name="receives_default">False</property>
                             <property name="use_stock">True</property>
+                            <property name="always_show_image">True</property>
                             <signal name="clicked" handler="on_BtnConfigQuit_clicked" swapped="no"/>
                           </object>
                           <packing>
@@ -1069,6 +1139,9 @@ http://www.deragon.biz
     <signal name="close" handler="gtk_widget_hide_on_delete" swapped="no"/>
     <signal name="delete-event" handler="gtk_widget_hide_on_delete" swapped="no"/>
     <signal name="response" handler="gtk_widget_hide_on_delete" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="aboutdialog">
         <property name="can_focus">False</property>
@@ -1099,6 +1172,9 @@ http://www.deragon.biz
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">Autopoweroff</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -1235,6 +1311,9 @@ which is dependant of this one.</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">Autopoweroff</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="vbox8">
         <property name="visible">True</property>

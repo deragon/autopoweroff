@@ -130,7 +130,6 @@ def on_BtnConfigEditHost_clicked(*args):
   tvDependants=builder.get_object("TVDependants")
   selection = tvDependants.get_selection()
   result = selection.get_selected()
-  print("HANS:  To remove:  result = " + str(result))
   if result: # result could be None
     model, edithostiter = result
     if edithostiter != None:
@@ -254,6 +253,8 @@ def on_RBOther_toggled(*args):
 def on_RBOther_activate(*args):
   print("on_RBOther_activate:  " + str(args))
 
+
+
 ############################################################
 # Enable/Disable Autopoweroff
 ########################################
@@ -283,6 +284,66 @@ def setRadioStatusButtons():
     radio_StatusEnabled.set_active(1)
 
 
+def resourcesReadConfiguration(configuration):
+
+  value = None
+  try:
+    value = int(configuration.resources["CPU"]["Percentage"])
+  except ValueError:
+    # configuration.resources["CPU"]["Percentage"] is a string, probably
+    # containing the text "Disabled".
+    # TODO:  Need a checkbox to set to disable this feature.
+    value = 0
+
+  sbResourcesCpuPercentage=builder.get_object("SbResourcesCpuPercentage")
+  sbResourcesCpuPercentage.set_value(value)
+  sbResourcesCpuPercentage.set_sensitive(value > 0)
+
+  cbResourcesCpuPercentageDisabled=builder.get_object("CbResourcesCpuPercentageDisabled")
+  cbResourcesCpuPercentageDisabled.set_active(value > 0)
+
+
+def resourcesSaveConfiguration():
+    cpuPercentage=str(int(builder.get_object("SbResourcesCpuPercentage").get_value()))
+    if cpuPercentage == "0":
+        cpuPercentage = "Disabled"
+
+    resources = \
+        {
+          "CPU" : {
+              "Percentage":  cpuPercentage
+          }
+        }
+    return resources
+
+
+
+# Resources CPU Percentage
+# Disable spin button if checkbox is not set, enable it otherwise.
+# If disabled, spin button value set to 0, else 10.
+def on_CbResourcesCpuPercentageDisable_clicked(*args):
+  sbResourcesCpuPercentage = builder.get_object("SbResourcesCpuPercentage")
+  cbResourcesCpuPercentageDisabled=args[0]
+  sbResourcesCpuPercentage.set_sensitive(
+    cbResourcesCpuPercentageDisabled.get_active())
+  if cbResourcesCpuPercentageDisabled.get_active():
+    sbResourcesCpuPercentage.set_value(10)
+  else:
+    sbResourcesCpuPercentage.set_value(0)
+
+
+# Resources CPU Percentage Check if the value of SbResourcesCpuPercentage
+# falls to 0.  If so, disable SbResourcesCpuPercentage and deactivate the
+# checkbox CbResourcesCpuPercentageDisabled.
+def on_SbResourcesCpuPercentage_change(*args):
+  sbResourcesCpuPercentage = args[0]
+  if sbResourcesCpuPercentage.get_value() == 0:
+    cbResourcesCpuPercentageDisabled = \
+      builder.get_object("CbResourcesCpuPercentageDisabled")
+    cbResourcesCpuPercentageDisabled.set_active(False)
+    sbResourcesCpuPercentage.set_sensitive(False)
+
+
 ############################################################
 def readConfiguration():
   global LMConfigHosts
@@ -305,6 +366,8 @@ def readConfiguration():
     set_value(configuration.idletime)
   builder.get_object("SbBootDelay"). \
     set_value(configuration.startupdelay)
+
+  resourcesReadConfiguration(configuration)
 
   LMConfigHosts = builder.get_object("LSLMConfigHosts")
   LMConfigHosts.clear()  # Maybe not necessary, but lets not take chances.
@@ -341,6 +404,8 @@ def saveConfiguration():
     startupdelay=builder.get_object("SbBootDelay"). \
       get_value_as_int()
 
+    resources=resourcesSaveConfiguration()
+
     radio_StatusEnabled = builder.get_object("RadioStatusEnabled");
     value = radio_StatusEnabled.get_active()
 
@@ -365,10 +430,17 @@ def saveConfiguration():
               "Please report this bug.")
 
     actioncommand = builder.get_object("TxtActionCommand").get_text()
+    if actioncommand.strip() == "":
+      actioncommand = None
 
-    configuration = ApoConfig.Configuration( \
-                      noactiontimerange, idletime, startupdelay, \
-                      hosts, action, actioncommand)
+    configuration = ApoConfig.Configuration(
+                      noactiontimerange,
+                      idletime,
+                      startupdelay,
+                      hosts,
+                      resources,
+                      action,
+                      actioncommand)
     configuration.save()
   except Exception as exception:
     stacktrace = traceback.format_exc()

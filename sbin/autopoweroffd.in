@@ -159,6 +159,8 @@ import ApoObserverDevice
 apoObserverDeviceManager = \
   ApoObserverDevice.ApoObserverDeviceManager(configuration)
 
+import ApoObserverResources
+apoObserverResources = ApoObserverResources.ApoObserverResources(configuration)
 
 def conditionsArrayToString(conditions):
   keyprint = "[ "
@@ -201,6 +203,7 @@ try:
 
       setConditions(apoObserverNoActionTimeRange.status())
       setConditions(apoObserverDeviceManager.status())
+      setConditions(apoObserverResources.status())
 
       logger.debug("conditionsState:  " + str(conditionsState))
       logger.debug("previousConditionsState:  " + str(previousConditionsState))

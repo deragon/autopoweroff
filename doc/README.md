@@ -1,9 +1,9 @@
 Autopoweroff
-======================================================================
+==================================================
 
 
 Status as of 2020 - Fully supported.
-======================================================================
+==================================================
 
 This program is actively supported, but is simply not being developed much
 anymore because it is now mature and nobody reports any problem with it.
@@ -15,7 +15,7 @@ have any issue, please report it; we will work hard to get things fixed.
 
 
 About Autopoweroff
-======================================================================
+==================================================
 
 Autopoweroff is a daemon that is started at boot time, and which function is
 to run a command at a specific time, but only if some conditions are met.
@@ -23,16 +23,30 @@ Originally, this application would only shutdown the computer, thus its name,
 but now it can suspend, hibernate, or run any custom command provided by the
 user.
 
-This software is meant for the Linux operating system only.  It should work on any modern Linux distribution.  Deb and RPM packages are available.
+This software is meant for the Linux operating system only.  It should work on
+any modern Linux distribution.  Deb and RPM packages are available.
 
 The computer will execute the command (suspend by default) if all the above
 conditions are met:
 
 * Any hosts that the computer is dependent on is not answering ping anymore.
 * No keyboard or mouse activity has been detected on the computer for a while.
+* The CPU usage falls below a threshold for a period of at least 1s.
 * The user has not disabled Autopoweroff.
 
-One good use of Autopoweroff is for home use, on a firewall/router server.
+Cloud use
+--------------------------------------------------
+
+Autopoweroff can be used on a cloud instance which could be shutdown
+automatically as soon as the CPU usage falls below a threshold (after heavy
+processing is over), thus saving cost of keeping the cloud instance up.
+
+
+
+Home use
+--------------------------------------------------
+
+Another good use of Autopoweroff is at home, on a firewall/router server.
 You can setup Autopoweroff to suspend/shutdown the server every evening at
 say, 22:00.  However, your server might serve other computers in your home.
 Autopoweroff will shutdown the server after 22:00 only if no other computer
@@ -59,7 +73,7 @@ Note that one day, it might be possible to replace this piece of software with S
 
 
 Supported Linux distributions
-======================================================================
+==================================================
 
 Autopoweroff will work on most distributions. However, for some
 distribution you might have to manually move files to the right place to
@@ -89,14 +103,14 @@ probably be able to add support for it.
 
 
 Download / Releases
-======================================================================
+==================================================
 
 The latest version of Autopoweroff can be downloaded from
 [GitHub](https://github.com/deragon/autopoweroff/releases)
 
 
 Following the project status
-======================================================================
+==================================================
 
 You may follow the project's status also from the following sites:
 
@@ -104,7 +118,7 @@ You may follow the project's status also from the following sites:
 
 
 Autopoweroff configuration
-======================================================================
+==================================================
 
 There are two ways to configure Autopoweroff.
 
@@ -145,7 +159,7 @@ documented and easy to understand. Following is an example:
 ```
 
 UEFI / BIOS configuration
-======================================================================
+==================================================
 
 It is possible to setup the UEFI / BIOS so that the computer will boot itself
 every day. Each UEFI / BIOS is different, but they are pretty much similar.
@@ -162,7 +176,7 @@ voilà.
 
 
 Installation
-======================================================================
+==================================================
 
 To install the .deb package, simply run:
 
@@ -183,7 +197,7 @@ You will need to setup the init script properly. Two versions exists.
 
 
 Uninstallation
-======================================================================
+==================================================
 
 To uninstall the .deb package, simply run:
 
@@ -199,7 +213,7 @@ If you installed from the tarball, run
 
 
 License
-======================================================================
+==================================================
 
 This software is covered by the [GPL
 2.0](http://www.gnu.org/licenses/gpl.html#TOC1) license. For a local
@@ -207,7 +221,7 @@ copy of the license, see file COPYING.
 
 
 Troubleshooting
-======================================================================
+==================================================
 
 Troubleshooting Glade warnings
 --------------------------------------------------
@@ -238,13 +252,13 @@ See: [Ubuntu Bug
 
 
 For Developers
-======================================================================
+==================================================
 
 Autopoweroff might be of interest to developers because of the
 following reasons:
 
 * This project is a very nice example on how to write a Python daemon that
-  probes input devices and make use of threads>
+  probes input devices and make use of threads.
 
 * It is also a very good example about packaging for .deb and .rpm based
   distributions, and universal tarball.
@@ -262,52 +276,49 @@ following reasons:
 
 
 To do
-======================================================================
+==================================================
 
 The following are features to be added in future releases.
 
-* Move to Python 3.
 * Move to systemd.
-* Ignore accelerator when available.
+* Ignore all type of accelerometers.
 * Detect activity from a remote login, either it be console or an X session.
   Currently, if someone is working remotly on the computer, this will go
   undetected and Autopoweroff will proceed with the action if all other
   conditions are met.
-* Internationalization (i18n). Autopoweroff is currently available only in
-  English.
 * New GUI that follows more closely the Gnome recommendations.
 * Better documentation, including writing a man page.
 * Support for a wider range of Linux distributions.
 
 
 Miscellaneous
-======================================================================
+==================================================
 
-* There is no funding for this project.  There is only one contributor
+* There is no funding for this project.  There is only one volunteer contributor, the original author.
 
 * This document source is a Markdown document.  The following tools are used
   for editing it.
 
   * [Vim text editor](http://www.vim.org/)
-  * [MdCharm](http://www.mdcharm.com/)
+  * [GhostWriter](https://wereturtle.github.io/ghostwriter/), a simple but reliable Markdown editor.
 
-* Autopoweroff was mentioned in the following articles
+* Autopoweroff is mentioned in the following article:
 
-  * https://www.ostechnix.com/auto-shutdown-reboot-suspend-hibernate-linux-system-specific-time/
+  * [Auto Shutdown, Reboot, Suspend, Hibernate Your Linux System At A Specific Time](https://www.ostechnix.com/auto-shutdown-reboot-suspend-hibernate-linux-system-specific-time/)
 
 
 Change log
-======================================================================
+==================================================
 
   Change log is saved in file [CHANGELOG.md](CHANGELOG.md).
 
 
 Contact
-======================================================================
+==================================================
 
 If you have any questions or issues with this software, you can contact
 the following persons:
 
-Author:    Hans Deragon
-Email:     <hans@deragon.biz>
+Author:    Hans Deragon</br>
+Email:     <hans@deragon.biz></br>
 Website:   [www.deragon.biz](http://www.deragon.biz)

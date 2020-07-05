@@ -37,7 +37,16 @@ class Configuration:
 
   # Parameters can be all None.  In that circumstance, the object should
   # be used to call read() to read the content of a configuration file.
-  def __init__(self, noactiontimerange=None, idletime=None, startupdelay=None, hosts=None, action=None, actioncommand=None, tosyslog=True):
+  def __init__(self,
+     noactiontimerange=None,
+     idletime=None,
+     startupdelay=None,
+     hosts=None,
+     resources=None,
+     action=None,
+     actioncommand=None,
+     tosyslog=True):
+
     self.logger = logging.getLogger("apo")
     self.tosyslog = tosyslog
     if noactiontimerange == None:
@@ -59,6 +68,16 @@ class Configuration:
       self.hosts=range(0)
     else:
       self.hosts=hosts
+
+    if resources == None:
+      self.resources = \
+        {
+          "CPU" : {
+              "Percentage":  "Disabled"
+          }
+        }
+    else:
+      self.resources = resources
 
     self.warnings=""
     self.errors=""
@@ -160,6 +179,9 @@ class Configuration:
 
       self.actioncommand=self.optionalConfig( \
           str, None, "ACTION", "ActionCommand|v")
+
+      self.resources["CPU"]["Percentage"]=self.optionalConfig( \
+          str, "Disabled", "RESOURCES", "CpuPercentage|v")
 
       # Legacy keywords support.  Do keep the following lines as long
       # as possible here.  They should not be found in modern configuration
@@ -274,6 +296,17 @@ class Configuration:
         fd.write(", ")
     fd.write("\n")
 
+    fd.write("""
+
+# Hosts parameter (list of hostnames or IPs, separated by commas):
+#
+#   Here you list the list of hosts your machine is dependant, i.e. this
+#   computer should not take action if any of the hosts declared here is
+#   still up (responding to ping).
+
+[RESOURCES]
+""")
+    fd.write("CpuPercentage=" + self.resources["CPU"]["Percentage"])
     fd.write("""
 
 #  [ACTION]
