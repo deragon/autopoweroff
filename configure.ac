@@ -245,11 +245,9 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 # are the same for openSUSE and Fedora (RedHat).
 
 if ((${OPENSUSECOMPATIBLE})); then
-  # This list is up to date with OpenSuse 15.
-  autopoweroff_rpm_requirements="python, python-gobject, gtk3, typelib-1_0-Gtk-3_0, polkit, iputils"
+  autopoweroff_rpm_requirements="python3, python3-gobject, gtk3, typelib-1_0-Gtk-3_0, polkit, iputils"
 else
-  # This list is up to date with Fedora 29.
-  autopoweroff_rpm_requirements="python, python2-gobject-base, gtk3, polkit, iputils"
+  autopoweroff_rpm_requirements="pythonr3, python3-gobject-base, gtk3, polkit, iputils"
 fi
 
 
