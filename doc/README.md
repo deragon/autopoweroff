@@ -1,5 +1,6 @@
-Autopoweroff
+![Python powered](pixmaps/autopoweroff.png) &nbsp; Autopoweroff
 ==================================================
+
 
 
 Status as of 2020 - Fully supported.
@@ -33,6 +34,8 @@ conditions are met:
 * No keyboard or mouse activity has been detected on the computer for a while.
 * The CPU usage falls below a threshold for a period of at least 1s.
 * The user has not disabled Autopoweroff.
+
+![Python powered](doc/images/python-powered-w-100x40.png) &nbsp; &nbsp; ![Linux powered](doc/images/linux-powered-107x40.png)
 
 Cloud use
 --------------------------------------------------
