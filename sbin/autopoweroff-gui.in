@@ -116,9 +116,10 @@ def on_BtnConfigRemoveHost_clicked(*args):
   tvDependants=builder.get_object("TVDependants")
   selection = tvDependants.get_selection()
   result = selection.get_selected()
-  if result: #result could be None
+  if result:
     model, iter = result
-    model.remove(iter)
+    if iter:
+      model.remove(iter)
 
 
 ############################################################
@@ -150,7 +151,7 @@ def on_BtnEditHostOk_clicked(*args):
   DlgEditHost.hide()
 
 def on_DlgEditHost_close(*args):
-  xml.get_widget("DlgEditHost").hide()
+  builder.get_object("DlgEditHost").hide()
   return gTRUE
 
 def on_BtnEditHostCancel_clicked(*args):
@@ -174,7 +175,7 @@ def on_BtnAddHostOk_clicked(*args):
   DlgAddHost.hide()
 
 def on_DlgAddHost_close(*args):
-  xml.get_widget("DlgAddHost").hide()
+  builder.get_object("DlgAddHost").hide()
   return gTRUE
 
 def on_BtnAddHostCancel_clicked(*args):
