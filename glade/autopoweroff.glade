@@ -1,8 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.22.2 
+
+Autopoweroff - Runs an action (poweroff, suspend or custom) after conditions are met.
+Copyright (C) 2006-2020
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+Authors:
+Hans Deragon
+hans@dergon.biz
+
+-->
 <interface>
   <requires lib="gtk+" version="3.6"/>
-  <object class="GtkActionGroup" id="AGActionObsolete"/>
+  <!-- interface-license-type gplv2 -->
+  <!-- interface-name Autopoweroff -->
+  <!-- interface-description Runs an action (poweroff, suspend or custom) after conditions are met. -->
+  <!-- interface-copyright 2006-2020 -->
+  <!-- interface-authors Hans Deragon\nhans@dergon.biz -->
   <object class="GtkAdjustment" id="AdjDependantsHorizontal">
     <property name="upper">100</property>
     <property name="step_increment">1</property>
@@ -114,7 +141,6 @@
                     <child>
                       <object class="GtkButton" id="BtnStatusCmdApply">
                         <property name="label">gtk-apply</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="can_default">True</property>
@@ -131,7 +157,6 @@
                     <child>
                       <object class="GtkButton" id="BtnStatusCmdQuit">
                         <property name="label">gtk-quit</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="can_default">True</property>
@@ -172,14 +197,13 @@
                             <child>
                               <object class="GtkRadioButton" id="RadioStatusEnabled">
                                 <property name="label" translatable="yes">Enabled</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="width_request">92</property>
                                 <property name="height_request">18</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="halign">start</property>
                                 <property name="use_underline">True</property>
-                                <property name="xalign">0.5</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -191,14 +215,13 @@
                             <child>
                               <object class="GtkRadioButton" id="RadioStatusDisabled">
                                 <property name="label" translatable="yes">Disabled</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="width_request">92</property>
                                 <property name="height_request">18</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="halign">start</property>
                                 <property name="use_underline">True</property>
-                                <property name="xalign">0.5</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">RadioStatusEnabled</property>
                               </object>
@@ -831,7 +854,7 @@ Idle time is
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="xalign">0</property>
+                                    <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -844,11 +867,10 @@ Idle time is
                                 <child>
                                   <object class="GtkRadioButton" id="RBSleep">
                                     <property name="label" translatable="yes">Sleep</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="xalign">0</property>
+                                    <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">RBPoweroff</property>
@@ -862,11 +884,10 @@ Idle time is
                                 <child>
                                   <object class="GtkRadioButton" id="RBHibernate">
                                     <property name="label" translatable="yes">Hibernate</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="xalign">0</property>
+                                    <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">RBPoweroff</property>
@@ -880,12 +901,10 @@ Idle time is
                                 <child>
                                   <object class="GtkRadioButton" id="RBOther">
                                     <property name="label" translatable="yes">Other (insert command)</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="xalign">0</property>
-                                    <property name="yalign">0</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">RBPoweroff</property>
                                     <signal name="activate" handler="on_RBOther_activate" swapped="no"/>
@@ -950,7 +969,6 @@ Idle time is
                         <property name="layout_style">start</property>
                         <child>
                           <object class="GtkButton" id="BtnAbout">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="can_default">True</property>
@@ -1189,7 +1207,6 @@ http://www.deragon.biz
             <child>
               <object class="GtkButton" id="BtnAddHostCancel">
                 <property name="label">gtk-cancel</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -1206,7 +1223,6 @@ http://www.deragon.biz
             <child>
               <object class="GtkButton" id="BtnAddHostOk">
                 <property name="label">gtk-ok</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -1239,12 +1255,11 @@ http://www.deragon.biz
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="xpad">4</property>
                 <property name="label" translatable="yes">Enter the hostname or IP address of the computer
 which is dependant of this one.</property>
                 <property name="wrap">True</property>
                 <property name="width_chars">1</property>
-                <property name="xalign">0</property>
+                <property name="xalign">0.079999998211860657</property>
                 <property name="yalign">0.47999998927116394</property>
               </object>
               <packing>
@@ -1327,7 +1342,6 @@ which is dependant of this one.</property>
             <child>
               <object class="GtkButton" id="BtnEditHostCancel">
                 <property name="label">gtk-cancel</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -1344,7 +1358,6 @@ which is dependant of this one.</property>
             <child>
               <object class="GtkButton" id="BtnEditHostOk">
                 <property name="label">gtk-ok</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -1376,10 +1389,9 @@ which is dependant of this one.</property>
               <object class="GtkLabel" id="label44">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xpad">4</property>
                 <property name="label" translatable="yes">Edit the hostname or IP address of the computer which is dependant of this one.</property>
                 <property name="wrap">True</property>
-                <property name="xalign">0</property>
+                <property name="xalign">0.079999998211860657</property>
                 <property name="yalign">0.47999998927116394</property>
               </object>
               <packing>
@@ -1402,6 +1414,7 @@ which is dependant of this one.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
+                    <property name="padding">4</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -1409,6 +1422,7 @@ which is dependant of this one.</property>
                   <object class="GtkEntry" id="EntryEditHost">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="width_chars">32</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
