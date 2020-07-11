@@ -44,6 +44,7 @@ Autopoweroff can be used on a cloud instance which could be shutdown
 automatically as soon as the CPU usage falls below a threshold (after heavy
 processing is over), thus saving cost of keeping the cloud instance up.
 
+![AWS](doc/images/Amazon_Web_Services_Logo-67x40.png) &nbsp; &nbsp; ![Azure](doc/images/Microsoft_Azure_Logo-138x40.png)
 
 
 Home use
