@@ -22,6 +22,8 @@ from ApoLibrary import *
 #conffile = confdir + "/autopoweroff.conf"
 conffile = confdir + "/" + programname.lower() + ".conf"
 
+CANCELFILENAME = "autopoweroff.cancel"
+
 STARTHOUR=0
 ENDHOUR=1
 

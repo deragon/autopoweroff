@@ -59,7 +59,6 @@ if os.getuid() != 0:
   sys.exit(1)
 
 createDirs([piddir, rundir])
-cancelfile = rundir + "/" + scriptname + ".cancel"
 conffile = confdir + "/" + scriptname + ".conf"
 
 if os.path.exists(pidfile):
@@ -108,6 +107,8 @@ signal.signal(signal.SIGTERM, sigtermHandler)
 # ======================================================================
 # Configuration
 import ApoConfig
+cancelfile = rundir + "/" + ApoConfig.CANCELFILENAME
+
 configuration = ApoConfig.Configuration(None, None, None, None)
 try:
   configuration.read()

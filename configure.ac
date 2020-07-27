@@ -306,7 +306,6 @@ autopoweroff_rundir="${autopoweroff_vardir}/run/autopoweroff"
 autopoweroff_piddir="${autopoweroff_rundir}"
 
 autopoweroff_pidfile="${autopoweroff_piddir}/autopoweroff.pid"
-autopoweroff_cancelfile="${autopoweroff_rundir}/autopoweroff.cancel"
 
 if [[ "${prefix}" = "NONE" -a "${GNOMECONFIG}" = "found" ]]; then
   autopoweroff_desktopdir=`gnome-config --datadir`
@@ -389,7 +388,6 @@ AC_SUBST(autopoweroff_logdir)
 AC_SUBST(autopoweroff_rundir)
 AC_SUBST(autopoweroff_piddir)
 AC_SUBST(autopoweroff_pidfile)
-AC_SUBST(autopoweroff_cancelfile)
 AC_SUBST(autopoweroff_bindir)
 AC_SUBST(autopoweroff_sbindir)
 AC_SUBST(autopoweroff_initdir)

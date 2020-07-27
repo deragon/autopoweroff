@@ -56,7 +56,7 @@ installed on this machine.  Following is the specific error
       """ + str(errormsg) + "\n")
   sys.exit(1)
 
-cancelfile = rundir + "/" + scriptname + ".cancel"
+cancelfile = rundir + "/" + ApoConfig.CANCELFILENAME
 
 LMConfigHosts = None
 edithostiter  = None
