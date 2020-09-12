@@ -11,14 +11,18 @@ from ApoObserver import *
 class ApoObserverResources(ApoObserverManager, ApoObserverThread):
 
     def status(self):
-        if self.cpuUsage >= self.cpuUsageConfiguredLimit:
+        if self.cpuUsageConfiguredLimit == "disabled":
+            return ( True,  "resources",
+                    ( "✓ Resources are meeting conditions "
+                      f"(CPU check disabled)." ) )
+        elif self.cpuUsage >= self.cpuUsageConfiguredLimit:
             return ( False, "resources",
-                    ( f"✘ Resources are not meeting condition "
-                      "(CPU = {self.cpuUsage}%)." ) )
+                    ( "✘ Resources are not meeting condition "
+                      f"(CPU = {self.cpuUsage}%)." ) )
         else:
             return ( True,  "resources",
-                    ( f"✓ Resources are meeting conditions "
-                      "(CPU = {self.cpuUsage}%)." ) )
+                    ( "✓ Resources are meeting conditions "
+                      f"(CPU = {self.cpuUsage}%)." ) )
 
 
     def __init__(self, configuration):
@@ -29,9 +33,7 @@ class ApoObserverResources(ApoObserverManager, ApoObserverThread):
         self.resources = configuration.resources
         self.cpuUsageConfiguredLimit = \
             self.resources["CPU"]["Percentage"].lower()
-        if self.cpuUsageConfiguredLimit == "disabled":
-           self.cpuUsageConfiguredLimit = 0  # Equivalent of disabled.
-        else:
+        if self.cpuUsageConfiguredLimit != "disabled":
            self.cpuUsageConfiguredLimit = int(self.cpuUsageConfiguredLimit)
 
         self.setCpuUsage()
