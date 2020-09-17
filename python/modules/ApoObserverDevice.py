@@ -7,6 +7,7 @@ import time
 import re
 import os
 import errno
+from pathlib import Path
 
 from ApoLibrary import *
 from ApoObserver import *
@@ -125,10 +126,13 @@ class ApoObserverDevice(ApoObserverThread):
         fd.read(1)
       except IOError as ioerror:
         if ioerror.errno == errno.ENODEV:
-          self.finish = True
           sendmsg("Device " + self.sDevice + " absent (No such device error)", \
                   priority=syslog.LOG_NOTICE)
           continue
+          fd.close()
+          while not Path('/dev/input/mouse1').exists():
+            time.sleep(60)
+          fd = open(self.sDevice, 'rb')
         else:
           raise
       currentTime = time.time()
