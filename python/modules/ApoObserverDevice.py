@@ -81,7 +81,6 @@ class ApoObserverDeviceManager(ApoObserverManager):
   # Return True if the time elapsed since the lastInputEventTime is bigger
   # that that of the configuration IdleTime.
   def status(self):
-    print("self.configuration = " + str(self.configuration.idletime))
     elapsedTimeSinceLastEvent = time.time() - self.lastInputEventTime
     condition = elapsedTimeSinceLastEvent > self.configuration.idletime * 60
     self.logger.debug(f"elapsedTimeSinceLastEvent = {elapsedTimeSinceLastEvent:0.2f} condition = {condition}")
@@ -128,11 +127,12 @@ class ApoObserverDevice(ApoObserverThread):
         if ioerror.errno == errno.ENODEV:
           sendmsg("Device " + self.sDevice + " absent (No such device error)", \
                   priority=syslog.LOG_NOTICE)
-          continue
           fd.close()
           while not Path('/dev/input/mouse1').exists():
             time.sleep(60)
+          time.sleep(1)
           fd = open(self.sDevice, 'rb')
+          continue
         else:
           raise
       currentTime = time.time()
