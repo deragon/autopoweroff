@@ -128,9 +128,8 @@ class ApoObserverDevice(ApoObserverThread):
           sendmsg("Device " + self.sDevice + " absent (No such device error)", \
                   priority=syslog.LOG_NOTICE)
           fd.close()
-          while not Path('/dev/input/mouse1').exists():
+          while not Path(self.sDevice).exists():
             time.sleep(60)
-          time.sleep(1)
           fd = open(self.sDevice, 'rb')
           continue
         else:
