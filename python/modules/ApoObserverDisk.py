@@ -45,10 +45,6 @@ class ApoObserverDiskManager(threading.Thread):
     else:
       return ( False, "DiskTime", f"✘ Last event time happened over {elapsedTimeSinceLastEvent:0.1} mins, lower than configuration IdleTime parameter set to {self.configuration.idletime:0} mins." )
   def run(self):
-    st = open('/proc/thread-self/stat','r')
-    tid, junk = (st.readline(9)).split()
-    sendmsg("Disk Thread Id = " + str(tid))
-    st.close()
     fd = open(self.DiskFile, 'r')
     sendmsg("ApoObserverDisk.run():  Check on " +
                      str(self.disksToWatch) + " started.")
