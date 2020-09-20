@@ -47,6 +47,7 @@ class Configuration:
      resources=None,
      action=None,
      actioncommand=None,
+     disksToWatch=None,
      tosyslog=True):
 
     self.logger = logging.getLogger("apo")
@@ -80,6 +81,11 @@ class Configuration:
         }
     else:
       self.resources = resources
+
+    if disksToWatch == None:
+      self.disksToWatch=range(0)
+    else:
+      self.disksToWatch=disksToWatch
 
     self.warnings=""
     self.errors=""
@@ -185,6 +191,10 @@ class Configuration:
       self.resources["CPU"]["Percentage"]=self.optionalConfig( \
           str, "Disabled", "RESOURCES", "CpuPercentage|v")
 
+      tmpdisks=self.disksToWatch=self.optionalConfig( \
+          str, None, "DISKS", "Disks|v")
+      sendmsg("Disks = " + str(tmpdisks))
+
       # Legacy keywords support.  Do keep the following lines as long
       # as possible here.  They should not be found in modern configuration
       # file and should be automatically replaced during an upgrade, but
@@ -225,6 +235,12 @@ class Configuration:
         if self.hosts[0] == '':
           # Got an empty host.  Getting ride of it.
           self.hosts = self.hosts[1:]
+      if tmpdisks == None:
+        self.disksToWatch = []
+      else:
+        self.disksToWatch=re.sub("\s*", "", tmpdisks).split(',')
+      sendmsg("disksToWatch= " + str(self.disksToWatch))
+
 
     except IOError:
       self.errors = "Could not open configuration file " + conffile + \
@@ -348,5 +364,19 @@ class Configuration:
     # TODO:
     fd.write("Action="        + str(self.action)        + "\n")
     fd.write("ActionCommand=" + str(self.actioncommand) + "\n")
+    fd.write("""
+# disks parameter (list of disknames , separated by commas):
+#
+#   Here you list the list of disknames your machine is dependant, i.e. this
+#   computer should not shutdown if any of the disks declared here is
+#   still active.
+[DISKS]
+""")
+    fd.write("disks=")
+    for index in range(len(self.disksToWatch)):
+      fd.write(self.disksToWatch[index])
+      if index != len(self.disksToWatch)-1:
+        fd.write(", ")
+    fd.write("\n")
 
     fd.close();

@@ -219,6 +219,15 @@ Hosts=server1, server2, server3
 #   computer should not take action if any of the hosts declared here is
 #   still up (responding to ping).
 
+# disks parameter (list of disknames , separated by commas):
+#
+#   Here you list the list of disknames your machine is dependant, i.e. this
+#   computer should not shutdown if any of the disks declared here is
+#   still active.
+[DISKS]
+disks=
+
+
 [RESOURCES]
 CpuPercentage=Disabled
 

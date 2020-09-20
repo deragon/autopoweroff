@@ -108,6 +108,7 @@ signal.signal(signal.SIGTERM, sigtermHandler)
 # Configuration
 import ApoConfig
 cancelfile = rundir + "/" + ApoConfig.CANCELFILENAME
+sendmsg("cancelfile = " + cancelfile)
 
 configuration = ApoConfig.Configuration(None, None, None, None)
 try:
@@ -133,6 +134,7 @@ else:
   commandtext = APOCommand.commands[configuration.action]
 
 sendmsg("Command to execute when all conditions are met:  " + command)
+sendmsg("disksToWatch= " + str(configuration.disksToWatch))
 
 ######################################################################
 # Starting thread that checks if any host is still alive.
@@ -159,6 +161,11 @@ apoObserverNoActionTimeRange.start()
 import ApoObserverDevice
 apoObserverDeviceManager = \
   ApoObserverDevice.ApoObserverDeviceManager(configuration)
+
+import ApoObserverDisk
+apoObserverDisks = \
+  ApoObserverDisk.ApoObserverDiskManager(configuration)
+apoObserverDisks.start()
 
 import ApoObserverResources
 apoObserverResources = ApoObserverResources.ApoObserverResources(configuration)
@@ -205,6 +212,7 @@ try:
       setConditions(apoObserverNoActionTimeRange.status())
       setConditions(apoObserverDeviceManager.status())
       setConditions(apoObserverResources.status())
+      setConditions(apoObserverDisks.status())
 
       logger.debug("conditionsState:  " + str(conditionsState))
       logger.debug("previousConditionsState:  " + str(previousConditionsState))

@@ -349,7 +349,7 @@ def on_SbResourcesCpuPercentage_change(*args):
 def readConfiguration():
   global LMConfigHosts
 
-  configuration = ApoConfig.Configuration(None, None, None, None, None, None, False)
+  configuration = ApoConfig.Configuration(None, None, None, None, None, None, None, False)
   try:
     configuration.read()
   except ApoConfig.APOWarning:
