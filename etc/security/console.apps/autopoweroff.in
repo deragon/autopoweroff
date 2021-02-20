@@ -1,3 +1,0 @@
-USER=root
-PROGRAM=@autopoweroff_sbindir@/autopoweroff
-SESSION=true

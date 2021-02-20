@@ -1,9 +1,0 @@
-Package: @PACKAGE@
-Version: @VERSION@-1
-Section: admin
-Priority: optional
-Architecture: all
-Depends: python3,python3-gi,policykit-1
-Maintainer: Hans Deragon <hans@deragon.biz>
-Description: @DESCRIPTION_SHORT@
-@DESCRIPTION_LONG_DEB@

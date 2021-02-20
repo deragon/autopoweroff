@@ -1,0 +1,286 @@
+#!/bin/bash
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+LOGFILE="${SCRIPT_NAME}.log"
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Build packages (.deb and .rpm files) for the daemon and client.
+
+Usage:  ${SCRIPT_NAME}
+
+  -d  Dry-run.
+  -h  Display this help text.
+"
+}
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+  else
+    $@
+  fi
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=0
+while getopts "dh" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+
+fpm-installIfAbsent()
+{
+  if ! which fpm ; then
+    cat <<EOM
+FPM, the universal package manager is not installed.  Packaging cannot continue without this fabulous tool.
+
+For more information about FPM, check it out at:  https://github.com/jordansissel/fpm
+
+EOM
+
+    read ANSWER -n 1 -p "Do you agree to install FPM (y/n)?"
+
+    if [ "${ANSWER}" == "y" ]; then
+      sudo apt-get install ruby ruby-dev rubygems build-essential
+      sudo gem install --no-document fpm
+    else
+      echo "Command aborted."
+      exit 1
+    fi
+  fi
+}
+
+
+buildpackage()
+{
+
+  #FPM_DEBUG_OPTIONS="--debug-workspace"
+  STDOUT=$(set +e; fpm ${FPM_DEBUG_OPTIONS} \
+    --force \
+    --input-type dir \
+    --exclude DEBIAN \
+    --version       "${PACKAGE_VERSION}" \
+    --architecture  "${ARCHITECTURE}" \
+    --maintainer    "${MAINTAINER}" \
+    --description   "${DESCRIPTION_LONG}" \
+    --license       "${LICENCE}" \
+    --url           "${URL}" \
+    $@; set -e)
+  FILENAME=$(echo -e "${STDOUT}" | perl -ne 'print if s/.*\:path=>"(.*?\.(deb|rpm))".*/\1/g')
+  #echo "\${FILENAME} ${FILENAME}"
+}
+
+
+build_daemon_dir() {
+
+  local BUILD_DAEMON_DIR="${GENERATED_DIR}/build-daemon"
+
+  rm -rf "${BUILD_DAEMON_DIR}"
+  mkdir -p "${BUILD_DAEMON_DIR}"
+  rsync -ar "${BUILD_GENERIC_DIR}/"* "${BUILD_DAEMON_DIR}/." \
+    --delete \
+    --exclude '**/glade/'                 \
+    --exclude '**/polkit-1/'              \
+    --exclude '**/pixmaps/'               \
+    --exclude '**/autopoweroff.desktop'   \
+    --exclude '**/autopoweroff-gui'       \
+    --exclude 'autopoweroff.rc-status'    \
+    --exclude '**/pam.d/'                 \
+    --exclude '**/etc/security/'          \
+    --exclude '*-uninstall'
+
+  mv "${BUILD_DAEMON_DIR}/usr/share/doc/autopoweroff" "${BUILD_DAEMON_DIR}/usr/share/doc/autopoweroff-daemon"
+  mv "${BUILD_DAEMON_DIR}/etc/init.d/autopoweroff.lsb" "${BUILD_DAEMON_DIR}/etc/init.d/autopoweroff"
+}
+
+build_gui_dir() {
+
+  local BUILD_GUI_DIR="${GENERATED_DIR}/build-gui"
+
+  rm -rf "${BUILD_GUI_DIR}"
+  mkdir -p "${BUILD_GUI_DIR}"
+
+  # Removing /etc/autopoweroff because configuration files are provided
+  # by the daemon package.
+  rsync -ar "${BUILD_GENERIC_DIR}/"* "${BUILD_GUI_DIR}/." \
+    --delete \
+    --exclude '**/init.d/'        \
+    --exclude '**/autopoweroffd'  \
+    --exclude '**/etc/autopoweroff'  \
+    --exclude '**/python/modules'  \
+    --exclude '**/*-upgrade'  \
+    --exclude '*-uninstall'
+
+  mv "${BUILD_GUI_DIR}/usr/share/doc/autopoweroff" "${BUILD_GUI_DIR}/usr/share/doc/autopoweroff-gui"
+}
+
+
+build_daemon_deb()
+{
+  rm -rf "${GENERATED_DIR}/build-daemon-deb"
+  mkdir -p "${GENERATED_DIR}/build-daemon-deb"
+
+  rsync -ar \
+    --delete \
+    --exclude "*.redhat" \
+    "${GENERATED_DIR}/build-daemon/"* "${GENERATED_DIR}/build-daemon-deb"
+
+  eval buildpackage --chdir "${GENERATED_DIR}/build-daemon-deb" \
+    --name \"${PACKAGE_NAME}\" \
+    --depends python3 \
+    --output-type deb
+
+  echo -e "\n\nContent of '${FILENAME}':\n"
+  dpkg-deb --contents "${FILENAME}"
+
+  echo -e "\n\nInformation of '${FILENAME}':\n"
+  dpkg-deb --info "${FILENAME}"
+}
+
+
+build_gui_deb()
+{
+  eval buildpackage --chdir "${GENERATED_DIR}/build-gui" \
+    --name \"${PACKAGE_NAME}-gui\" \
+    --depends autopoweroff \
+    --depends python3 \
+    --depends python-gi \
+    --depends policykit-1 \
+    --output-type deb
+
+  echo -e "\n\nContent of '${FILENAME}':\n"
+  dpkg-deb --contents "${FILENAME}"
+
+  echo -e "\n\nInformation of '${FILENAME}':\n"
+  dpkg-deb --info "${FILENAME}"
+}
+
+
+build_daemon_rpm()
+{
+  rm -rf "${GENERATED_DIR}/build-daemon-rpm"
+  mkdir -p "${GENERATED_DIR}/build-daemon-rpm"
+
+  rsync -ar \
+    --delete \
+    "${GENERATED_DIR}/build-daemon/"* "${GENERATED_DIR}/build-daemon-rpm"
+
+  cd "${GENERATED_DIR}/build-daemon-rpm/etc/init.d"
+  mv autopoweroff.redhat autopoweroff
+  cd -
+
+  eval buildpackage --chdir "${GENERATED_DIR}/build-daemon-rpm" \
+    --name \"${PACKAGE_NAME}\" \
+    --depends python3 \
+    --output-type rpm
+
+  echo -e "\n\nContent of '${FILENAME}':\n"
+  rpm --query --list --package "${FILENAME}"
+
+  set +e  # The RPM command bellow, even successful, exit with code '1'.
+          # Thus, need to disable the check.  2021-01-25 on Ubuntu 20.04 LTS.
+  echo -e "\n\nInformation of '${FILENAME}':\n"
+  rpm --query --info "${FILENAME}"
+  rpm --query --requires --package "${FILENAME}"
+  set -e
+}
+
+
+build_gui_rpm()
+{
+  eval buildpackage --chdir "${GENERATED_DIR}/build-gui" \
+    --name \"${PACKAGE_NAME}-gui\" \
+    --depends python3 \
+    --depends python3-gobject-base \
+    --depends gtk3 \
+    --depends polkit \
+    --depends iputils \
+    --output-type rpm
+
+  echo -e "\n\nContent of '${FILENAME}':\n"
+  rpm --query --list --package "${FILENAME}"
+
+  set +e  # The RPM command bellow, even successful, exit with code '1'.
+          # Thus, need to disable the check.  2021-01-25 on Ubuntu 20.04 LTS.
+  echo -e "\n\nInformation of '${FILENAME}':\n"
+  rpm --query --info "${FILENAME}"
+  rpm --query --requires --package "${FILENAME}"
+  set -e
+}
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+{
+
+  SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+  cd "${SCRIPT_PATH_ABS}"
+
+  # Sourcing metadata configuration file generated by the above
+  # './configure' command.  If sourcing fails, check for the
+  # character " (double quote) in the DESCRIPTION_* variables and remove
+  # it.
+  run source <(egrep -Ev '^\[' ../etc/autopoweroff/autopoweroff-metadata)
+
+  DESCRIPTION=$(echo -e "${DESCRIPTION_LONG}" | sed ':a;N;$!ba;s/\n/\\n/g;s/"/\\"/g')
+  #echo -e "DESCRIPTION=${DESCRIPTION}\n<<<<<"
+  MAINTAINER="${COPYRIGHT}"
+  VENDOR="${MAINTAINER}"
+  LICENCE="${LICENCE}"
+  URL="${PROJECT_WEBSITE}"
+  ARCHITECTURE="all"
+
+  fpm-installIfAbsent
+
+  set -e
+  umask 022
+  # Calling configure with --enable-install-for-deb so that the spec file
+  # is properly generated.
+  echo "======================================================================"
+  echo "== builddeb:  ./configure called for setting everything properly"
+  #env
+
+  export GENERATED_DIR="${SCRIPT_PATH_ABS}/generated"
+  run rm -rf "${GENERATED_DIR}"
+  export BUILD_GENERIC_DIR="${GENERATED_DIR}/build-generic"
+  run rm -rf "${BUILD_GENERIC_DIR}"
+  run rm -f autopoweroff*.deb
+
+  cd ..
+
+  run aclocal
+  run automake
+  run autoconf
+
+  run ./configure --enable-install-for-packaging \
+                  --prefix="${BUILD_GENERIC_DIR}" \
+                  --docdir="${BUILD_GENERIC_DIR}/usr/share/doc/autopoweroff" \
+                  --datarootdir="${BUILD_GENERIC_DIR}/usr/share"
+
+  run make install
+  cd -
+
+  build_daemon_dir
+  build_gui_dir
+
+  # RPM building
+  build_daemon_rpm
+  build_gui_rpm
+
+  # Deb building
+  build_daemon_deb
+  build_gui_deb
+
+} 2>&1 | tee "${LOGFILE}"

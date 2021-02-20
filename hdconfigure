@@ -1,9 +1,20 @@
+#!/bin/bash -e
+
+DST="/tmp/autopoweroff"
+sudo rm -r -f "${DST}"
+mkdir -p "${DST}"
+
 aclocal
 automake
 autoconf
-configure --prefix=/tmp/autopoweroff
 
-# export tmpdir=/tmp/autopoweroff
-# rm -r -f ${tmpdir}
-# mkdir -p ${tmpdir}
-# configure --prefix ${tmpdir} $*
+#automake Makefile-client
+
+configure --prefix="${DST}" \
+          --docdir="${DST}/usr/share/doc/autopoweroff" \
+          --datadir="${DST}/usr/share/autopoweroff" \
+          $@
+
+make install
+
+echo -e "\nInstallation available at:  cd '${DST}'"

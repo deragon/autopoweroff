@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "${INSTALLTYPE}" != "RPM" ]; then 
-  echo -e "\n$0:  Proceeding with the installation.\n"; 
+if [ "${INSTALLTYPE}" != "rpm" ]; then
+  echo -e "\n$0:  Proceeding with the installation.\n";
   if [ ! -e ${gladedir}/autopoweroff.png ]; then
     cd ${gladedir}
     ln -s ../pixmaps/autopoweroff.png .

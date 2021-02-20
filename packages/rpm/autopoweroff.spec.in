@@ -20,7 +20,6 @@ BuildRoot : /var/tmp/%{name}-buildroot
 Requires  : @autopoweroff_rpm_requirements@
 BuildArch : %{arch}
 URL       : https://github.com/deragon/autopoweroff
-#Source    : https://github.com/deragon/autopoweroff
 
 %description
 @DESCRIPTION_LONG@
@@ -40,7 +39,7 @@ configure --prefix=${RPM_BUILD_ROOT} \
           --docdir=${RPM_BUILD_ROOT}/usr/share \
           --datadir=${RPM_BUILD_ROOT}/usr/share/@PACKAGE@ \
           --enable-install-for-rpm
-make install
+#make install
 
 # Removing unnecessary executables for an RPM.
 rm ${RPM_BUILD_ROOT}/%{_sbindir}/autopoweroff-uninstall
@@ -181,7 +180,7 @@ rm -rf %{_bindir}/autopoweroff >dev/null 2>&1
 @autopoweroff_confdir@/autopoweroff-logging.conf
 %{_sysconfdir}/pam.d/autopoweroff
 # %{_sysconfdir}/init.d/autopoweroff.lsb
-# %{_sysconfdir}/init.d/autopoweroff.redhat
+%{_sysconfdir}/init.d/autopoweroff.redhat
 %{_sysconfdir}/security/console.apps/autopoweroff
 #%{_bindir}/*
 %{_sbindir}/*

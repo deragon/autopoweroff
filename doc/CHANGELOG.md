@@ -5,6 +5,49 @@ The following changes have been incorporated in the below mentioned
 versions:
 
 
+
+Version 4.0.0 - 2020-05-31
+--------------------------------------------------
+
+* Separate daemon and GUI packages (deb and rpm).  Finally, one
+  can install Autopoweroff's daemon on a server without having
+  to install the GUI with all its dependencies.
+
+* Implemented Resources CPU percentage condition.  If the CPU percentage
+  usage falls below the given threshold for a duration of 1s, the condition is
+  met.  Resolves issue
+  [GH004](https://github.com/deragon/autopoweroff/issues/4).
+
+* Minor improvements brought to the GUI such as removing use of deprecated
+  features, enable icons on certain buttons and realigning widgets.
+
+* Fixed [GH012](https://github.com/deragon/autopoweroff/issues/12):
+  'Autopoweroff cancelfile filename mismatch'.
+
+* Anywhere where is is relevant, the term 'shutdown time range' has been
+  replaced with 'action time range' including in the configuration file.  No
+  logic has changed.
+
+* README.md:  Small aesthetic improvement such as adding the Autopoweroff,
+  AWS and Azure logos and 'Python powered', 'Linux powered' banners with
+  the accompanying explanation.
+
+* All threads are now daemon type.  This way, when the main thread dies, all
+  of its children die too and the whole programs stops.
+
+* Removed ARP reverse check since a host that is powered off will remain
+  registered on the DNS, thus making this test falsely believe that the
+  host is still available when it is not.
+
+* autopoweroffd.in performSleepForNoActionTimeRange() function content is
+  reformulated to be more concise and duplicate code no longer exists.
+
+* Python psutil dependency added to package desc.
+
+* Fixed minor logging issue.
+
+
+
 Version 3.2.1 - 2020-05-31
 --------------------------------------------------
 

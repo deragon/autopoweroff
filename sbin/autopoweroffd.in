@@ -216,7 +216,7 @@ try:
           if(value == False):
             isThereAnyConditionsNotMet = True
           sendmsg("  " + conditionsDescription[key])
-        sendmsg( \
+        logger.debug( \
           "Conditions array:  " + conditionsArrayToString(conditionsState))
 
       if isThereAnyConditionsNotMet:

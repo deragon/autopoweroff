@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Using Polkit to authorize the user to run Autopoweroff GUI as root.
+pkexec @autopoweroff_sbindir@/autopoweroff-gui

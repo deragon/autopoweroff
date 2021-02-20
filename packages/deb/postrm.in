@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# For nice examples on how to write this scripts, see scripts available
-# under:  /var/lib/dpkg/info
-
-#echo "args:  $*"
-#echo "$0 called."
-update-rc.d -f autopoweroff remove >/dev/null
-exit 0
