@@ -7,6 +7,10 @@
 *.sar
 *.pid
 *.html
+HD*
+hd*
+todel/
+generated/
 .idea/
 Makefile
 Makefile.in
@@ -21,6 +25,7 @@ sbin/autopoweroff-uninstall
 sbin/autopoweroff-upgrade
 sbin/autopoweroffd
 sbin/python-autopoweroffd.sh
+etc/autopoweroff/autopoweroff-metadata
 etc/init.d/autopoweroff.lsb
 etc/init.d/autopoweroff.rc-status
 etc/init.d/autopoweroff.redhat
