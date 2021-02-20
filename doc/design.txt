@@ -55,3 +55,21 @@ MISCELLANEOUS
     Strictly speaking, the content of CHANGELOG.md is not following
     specifically any standard, but is inspired by many and follows the spirit
     of what the community would expect.
+
+
+PACKAGING
+══════════════════════════════════════════════════════════════════════════════
+
+  Debian Python packaging policy
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://askubuntu.com/questions/327543/how-can-a-debian-package-install-python-modules-from-pypi
+
+    "The One True Right Way™. You create debian packages for your
+     dependencies, list them as requirements in your package, and ship all the
+     .debs or source packages"
+
+    Autopoweroff therefore uses already packaged Python modules in .deb
+    format for Debian and derivative distributions.
+
+    See also:  https://wiki.debian.org/Python
