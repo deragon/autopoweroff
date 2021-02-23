@@ -7,6 +7,13 @@ import logging
 import pathlib
 from __main__ import scriptname,gTestMode,programname
 
+# Because of Python bug https://bugs.python.org/issue27875, we need to call
+# syslog.openlog("Autopoweroff") once to setup properly the name of the
+# identity to 'autopoweroffd'.  Failing to do so will default to
+# '/autopoweroffd' with the leading '/'.
+syslog.openlog("autopoweroffd")  # Lowercase, since this is the convention in syslog.
+
+
 def createDirs(aDirs):
   for directory in aDirs:
     pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
