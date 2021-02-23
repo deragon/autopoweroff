@@ -88,9 +88,9 @@ class ApoObserverDeviceManager(ApoObserverManager):
     # Converting to minutes to make it eaiser 
     elapsedTimeSinceLastEvent = elapsedTimeSinceLastEvent / 60.0
     if condition :
-      return ( True,  "idleTime", f"✓ Last even time happened over {elapsedTimeSinceLastEvent:0.1} mins, greater than configuration IdleTime parameter set to {self.configuration.idletime:0} mins." )
+      return ( True,  "idleTime", f"✓ Last event time happened over {elapsedTimeSinceLastEvent:0.1f} mins, greater than configuration IdleTime parameter set to {self.configuration.idletime:0} mins." )
     else:
-      return ( False, "idleTime", f"✘ Last even time happened over {elapsedTimeSinceLastEvent:0.1} mins, lower than configuration IdleTime parameter set to {self.configuration.idletime:0} mins." )
+      return ( False, "idleTime", f"✘ Last event time happened over {elapsedTimeSinceLastEvent:0.1f} mins, lower than configuration IdleTime parameter set to {self.configuration.idletime:0} mins." )
 
   def setLastInputEventTime(self, lastInputEventTime):
     self.lastInputEventTime = lastInputEventTime
