@@ -44,7 +44,7 @@ etc_DATA = etc/autopoweroff/autopoweroff.conf \
            etc/autopoweroff/autopoweroff-logging.conf \
            etc/autopoweroff/autopoweroff-logging-debug.conf
 
-polkitdir = $(datadir)/polkit-1/actions
+polkitdir = $(datarootdir)/polkit-1/actions
 polkit_DATA = usr/share/polkit-1/actions/com.github.deragon.autopoweroff.policy
 
 pamdir = $(sysconfdir)/pam.d
