@@ -105,6 +105,7 @@ build_daemon_dir() {
   mv "${BUILD_DAEMON_DIR}/etc/init.d/autopoweroff.lsb" "${BUILD_DAEMON_DIR}/etc/init.d/autopoweroff"
 }
 
+
 build_gui_dir() {
 
   local BUILD_GUI_DIR="${GENERATED_DIR}/build-gui"
@@ -127,6 +128,18 @@ build_gui_dir() {
 }
 
 
+list_deb_info()
+{
+  FILENAME="${1}"
+
+  echo -e "\n\nContent of '${FILENAME}':\n"
+  dpkg-deb --contents "${FILENAME}"
+
+  echo -e "\n\nInformation of '${FILENAME}':\n"
+  dpkg-deb --info "${FILENAME}"
+}
+
+
 build_daemon_deb()
 {
   rm -rf "${GENERATED_DIR}/build-daemon-deb"
@@ -142,11 +155,7 @@ build_daemon_deb()
     --depends python3 \
     --output-type deb
 
-  echo -e "\n\nContent of '${FILENAME}':\n"
-  dpkg-deb --contents "${FILENAME}"
-
-  echo -e "\n\nInformation of '${FILENAME}':\n"
-  dpkg-deb --info "${FILENAME}"
+  list_deb_info "${FILENAME}"
 }
 
 
@@ -160,11 +169,25 @@ build_gui_deb()
     --depends policykit-1 \
     --output-type deb
 
-  echo -e "\n\nContent of '${FILENAME}':\n"
-  dpkg-deb --contents "${FILENAME}"
+  list_deb_info "${FILENAME}"
+}
 
+
+list_rpm_info()
+{
+  FILENAME="${1}"
+  echo -e "\n\nContent of '${FILENAME}':\n"
+  rpm --query --list --package "${FILENAME}"
+
+  set +e  # The RPM command bellow, even successful, exit with code '1'.
+          # Thus, need to disable the check.  2021-01-25 on Ubuntu 20.04 LTS.
   echo -e "\n\nInformation of '${FILENAME}':\n"
-  dpkg-deb --info "${FILENAME}"
+  rpm --query --info "${FILENAME}"
+
+  echo -e "\nDependencies of '${FILENAME}':\n"
+  rpm --query --requires --package "${FILENAME}" | \
+    sed 's/^/  /g'  # Indentation added.
+  set -e
 }
 
 
@@ -186,15 +209,7 @@ build_daemon_rpm()
     --depends python3 \
     --output-type rpm
 
-  echo -e "\n\nContent of '${FILENAME}':\n"
-  rpm --query --list --package "${FILENAME}"
-
-  set +e  # The RPM command bellow, even successful, exit with code '1'.
-          # Thus, need to disable the check.  2021-01-25 on Ubuntu 20.04 LTS.
-  echo -e "\n\nInformation of '${FILENAME}':\n"
-  rpm --query --info "${FILENAME}"
-  rpm --query --requires --package "${FILENAME}"
-  set -e
+  list_rpm_info "${FILENAME}"
 }
 
 
@@ -208,16 +223,7 @@ build_gui_rpm()
     --depends polkit \
     --depends iputils \
     --output-type rpm
-
-  echo -e "\n\nContent of '${FILENAME}':\n"
-  rpm --query --list --package "${FILENAME}"
-
-  set +e  # The RPM command bellow, even successful, exit with code '1'.
-          # Thus, need to disable the check.  2021-01-25 on Ubuntu 20.04 LTS.
-  echo -e "\n\nInformation of '${FILENAME}':\n"
-  rpm --query --info "${FILENAME}"
-  rpm --query --requires --package "${FILENAME}"
-  set -e
+  list_rpm_info "${FILENAME}"
 }
 
 
