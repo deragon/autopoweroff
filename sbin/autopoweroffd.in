@@ -21,6 +21,7 @@ if not gTestMode and os.fork() != 0:
 scriptname = os.path.basename(sys.argv[0])
 
 if not gTestMode:
+  startMsgExtra = ""
   programname = "@program_name@"
   sharedir    = "@autopoweroff_sharedir@"
   confdir     = "@autopoweroff_confdir@"
@@ -30,6 +31,7 @@ if not gTestMode:
   loggingFile = "autopoweroff-logging.conf"
 else:
   # We are in test mode.  Using relative values.
+  startMsgExtra = " - Test mode enabled"
   scriptPath=os.path.dirname(sys.argv[0])
   basePathAbs=os.path.realpath(scriptPath + "/..")
   programname = "Autopoweroff"
@@ -41,7 +43,6 @@ else:
   loggingFile = "autopoweroff-logging-debug.conf"
 
 logConfigFile = confdir + "/" + loggingFile
-print(f"logConfigFile = {logConfigFile }")
 logConfigFile
 
 logging.config.fileConfig(logConfigFile)
@@ -51,7 +52,7 @@ logger.info("══════════════════════�
 sys.path.append(sharedir + '/python/modules')
 from ApoLibrary import *
 
-sendmsg(programname + " started with PID '" + pid + "'.")
+sendmsg(programname + " started with PID '" + pid + "'" + startMsgExtra + ".")
 logger.info("Logging configuration file used:  " + logConfigFile)
 
 if os.getuid() != 0:
