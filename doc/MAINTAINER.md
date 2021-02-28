@@ -31,20 +31,7 @@ Preliminary steps
 Creating the binaries
 -------------------------------------------------------------------------
 
-1. Run:
-
-  ```
-aclocal
-automake
-autoconf
-configure --prefix=/tmp/autopoweroff
-```
-
-1. Generate binaries with
-
-  ```
-make build
-```
+ Run:  `./packages/package-create`.  Binaries will be found under:  _./packages_
 
 Creating the release
 -------------------------------------------------------------------------
@@ -56,7 +43,7 @@ Creating the release
 
 1. Fill the form.
 
-1. Add the binaries.
+1. Add the binaries found under: _./packages_
 
 1. Click on the \<Save draft\> to save for later or \<Publish release if you are ready\>.
 

@@ -154,7 +154,7 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 # As of 2019-04-08, without testing, we assume that the RPM requirements
 # are the same for openSUSE and Fedora (RedHat).
-autopoweroff_rpm_requirements="python3, python3-gobject-base, gtk3, polkit, iputils"
+autopoweroff_rpm_requirements="python3, python3-inotify, python3-gobject-base, gtk3, polkit, iputils"
 
 if [[ "${INSTALLTYPE}" == "rpm|deb" ]]; then
 

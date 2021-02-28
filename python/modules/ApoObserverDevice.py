@@ -7,85 +7,128 @@ import time
 import re
 import os
 import errno
+import pyinotify
 
 from ApoLibrary import *
 from ApoObserver import *
 
-class ApoObserverDeviceManager(ApoObserverManager):
+
+class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
 
   def __init__(self, configuration):
     self.configuration      = configuration
     self.lastInputEventTime = time.time()
-    self.devicesArray       = []
-    self.apoDevObsArray     = []
+    self.devicesDict        = {}
     self.logger             = logging.getLogger("apo.observer.device.manager")
 
+    self.scanDevices()
+
+    # From:  https://github.com/seb-m/pyinotify/wiki/Tutorial
+    # The watch manager stores the watches and provides operations on watches
+    wm = pyinotify.WatchManager()
+    notifier = pyinotify.ThreadedNotifier(wm, self)
+    # Start the notifier from a new thread, without doing anything as no directory or file are currently monitored yet.
+    notifier.start()
+
+    # Start watching the first path available in the list.
+    for devicePath in ["/dev/input/by-path", "/dev/input"]:
+      if os.path.exists(devicePath):
+        wdd = wm.add_watch(devicePath, pyinotify.IN_DELETE | pyinotify.IN_CREATE, rec=True)
+        break
+
+  def process_IN_CREATE(self, event):
+      self.logger.debug("process_IN_CREATE() - Input device added:  %s", event.pathname)
+      self.manageDevice(event.pathname, "add")
+
+  def process_IN_DELETE(self, event):
+      self.logger.debug("process_IN_DELETE() - Input device removed:  %s", event.pathname)
+      self.manageDevice(event.pathname, "remove")
+
+  def manageDevice(self, devicePath, operation):
+    if "spkr" in devicePath:
+      # Ignoring speaker devices.  I do not understand how a device
+      # related to a speaker can be considered an input device.  The
+      # state of some volume buttons can be read from it?  Maybe
+      # microphones show up as "spkr" devices?  Even if it is a
+      # microphone, if a user simply leaves it on, it will always
+      # receive some ambient sound even if the machine is not use.  We
+      # cannot make use of this.
+      #
+      # This device was shown in Ubuntu 07.04 and 08.10
+      # (2.6.24-17-generic).  However, it was not seen showing under
+      # 18.04 and 19.10.
+      self.logger.warn("devicePath = " + devicePath + " REJECTED because it is a speaker.")
+      return
+
+    # TODO:  Improve catching.  Currently, only one model of an
+    #        accelerometer is hardcoded here.  This code should made
+    #        generic and catch all accelerometers.
+    if "lis3lv02d" in devicePath:
+      # lis3lv02d:  https://www.kernel.org/doc/Documentation/misc-devices/lis3lv02d
+      #
+      # Accelerometers are devices that are way to sensitive for
+      # Autopoweroff.  A laptop laying on a stable table with nobody
+      # touching it will still have its accelerometer reporting
+      # movement.  Thus, it is not reasonable nor necessary to take this
+      # devices into account when attempting to figure out if the device
+      # is being used or not by a person.
+      self.logger.warn("devicePath = " + devicePath + " REJECTED because it is an accelerometer.")
+      return
+
+    if operation == "add":
+      if devicePath not in self.devicesDict:
+          apoDevObs = ApoObserverDevice(self, devicePath)
+          apoDevObs.start()
+          self.devicesDict[devicePath] = apoDevObs
+      else:
+        sendmsg(msg=f"Asked to add {devicePath} while it is already setup.  Doing nothing, but this is a small bug from which we recovered.",
+                logger=self.logger, priority=syslog.LOG_WARNING)
+
+    elif operation == "remove":
+      try:
+        apoDevObs = self.devicesDict.pop(devicePath)
+        apoDevObs.terminate()
+        sendmsg(msg=f"Remove {devicePath} since it disappeared.", logger=self.logger)
+      except KeyError as keyerror:
+        sendmsg(msg=f"Asked to remove {devicePath} when it was not managed at all.  Doing nothing, but this is a small bug from which we recovered.",
+                logger=self.logger, priority=syslog.LOG_WARNING)
+
+    else:
+        sendmsg(msg=f"BUG:  Asked to remove {devicePath} when it was not managed at all.  Doing nothing, but this is a small bug from which we recovered.",
+                logger=self.logger, priority=syslog.LOG_ERROR)
+
+  def scanDevices(self):
+
     try:
-      devicePath = None
+      devicesPath = None
       # Ubuntu 06.06 does not have any /dev/input/by-path,
       # only /dev/input.
-      for devicePath in ["/dev/input/by-path", "/dev/input"]:
-        if os.path.exists(devicePath):
+      for devicesPath in ["/dev/input/by-path", "/dev/input"]:
+        if os.path.exists(devicesPath):
           break
 
-      if devicePath is None:
-        sendmsg("WARNING:  No input device detected.  " + \
-                "Will not be able to detect user activity.")
+      if devicesPath is None:
+        sendmsg(msg="WARNING:  No input device detected.  " + \
+                "Will not be able to detect user activity.",
+                logger=self.logger, priority=syslog.LOG_WARNING)
       else:
-        for path in os.listdir(devicePath):
-          if "spkr" in path:
-            # Ignoring speaker devices.  I do not understand how a device
-            # related to a speaker can be considered an input device.  The
-            # state of some volume buttons can be read from it?  Maybe
-            # microphones show up as "spkr" devices?  Even if it is a
-            # microphone, if a user simply leaves it on, it will always
-            # receive some ambient sound even if the machine is not use.  We
-            # cannot make use of this.
-            #
-            # This device was shown in Ubuntu 07.04 and 08.10
-            # (2.6.24-17-generic).  However, it was not seen showing under
-            # 18.04 and 19.10.
-            self.logger.warn("path = " + path + " REJECTED because it is a speaker.")
-            continue
-
-          # TODO:  Improve catching.  Currently, only one model of an
-          #        accelerometer is hardcoded here.  This code should made
-          #        generic and catch all accelerometers.
-          if "lis3lv02d" in path:
-            # lis3lv02d:  https://www.kernel.org/doc/Documentation/misc-devices/lis3lv02d
-            #
-            # Accelerometers are devices that are way to sensitive for
-            # Autopoweroff.  A laptop laying on a stable table with nobody
-            # touching it will still have its accelerometer reporting
-            # movement.  Thus, it is not reasonable nor necessary to take this
-            # devices into account when attempting to figure out if the device
-            # is being used or not by a person.
-            self.logger.warn("path = " + path + " REJECTED because it is an accelerometer.")
-            continue
-
-          path = devicePath + "/" + path
-          self.logger.debug("path = " + path)
-          self.devicesArray.append(path)
+        paths=os.listdir(devicesPath)
+        paths.sort()
+        for path in paths:
+          self.manageDevice(devicesPath + "/" + path, "add")
 
     except OSError as oserror:
       if oserror.errno != errno.ENOENT:  # No such file or directory
         raise
 
-    for device in self.devicesArray:
-      self.logger.debug("Device = " + device)
-      apoDevObs = ApoObserverDevice(self, device)
-      apoDevObs.start()
-      self.apoDevObsArray.append(apoDevObs)
-
   # Return True if the time elapsed since the lastInputEventTime is bigger
   # that that of the configuration IdleTime.
   def status(self):
-    print("self.configuration = " + str(self.configuration.idletime))
     elapsedTimeSinceLastEvent = time.time() - self.lastInputEventTime
     condition = elapsedTimeSinceLastEvent > self.configuration.idletime * 60
     self.logger.debug(f"elapsedTimeSinceLastEvent = {elapsedTimeSinceLastEvent:0.2f} condition = {condition}")
 
-    # Converting to minutes to make it eaiser 
+    # Converting to minutes to make it eaiser
     elapsedTimeSinceLastEvent = elapsedTimeSinceLastEvent / 60.0
     if condition :
       return ( True,  "idleTime", f"✓ Last event time happened over {elapsedTimeSinceLastEvent:0.1f} mins, greater than configuration IdleTime parameter set to {self.configuration.idletime:0} mins." )
@@ -96,8 +139,8 @@ class ApoObserverDeviceManager(ApoObserverManager):
     self.lastInputEventTime = lastInputEventTime
 
   def terminate(self):
-    for thread in self.apoDevObsArray:
-      thread.terminate()
+    for path, apoDevObs in self.devicesDict.items():
+      apoDevObs.terminate()
 
 
 class ApoObserverDevice(ApoObserverThread):
@@ -106,7 +149,6 @@ class ApoObserverDevice(ApoObserverThread):
     ApoObserverThread.__init__(self)
     self.apoObserverDeviceManager = apoObserverDeviceManager
     self.sDevice                  = sDevice
-    self.sleep                    = 0
 
     self.logger = logging.getLogger("apo.observer.device.thread")
 
@@ -117,17 +159,19 @@ class ApoObserverDevice(ApoObserverThread):
     self.finish = False
     lastEventTime = 0.0
     while not self.finish:
-      if self.sleep > 0:
-        time.sleep(self.sleep)
-        self.sleep = 0
-
       try:
+        # Blocks until there is something to read.  This is why we
+        # do not need to setup a time.sleep(5) in this loop.
         fd.read(1)
       except IOError as ioerror:
         if ioerror.errno == errno.ENODEV:
+          # At this point, this means that the device was removed, but
+          # ApoObserverDeviceManager.process_IN_DELETE() has not been called
+          # yet.  This is caused by a harmless race condition.  We terminate
+          # this thread anyway.  ApoObserverDeviceManager.process_IN_DELETE() will
+          # eventually be called and will again call terminate() of this thread,
+          # but this will be harmless.  All is good.
           self.finish = True
-          sendmsg("Device " + self.sDevice + " absent (No such device error)", \
-                  priority=syslog.LOG_NOTICE)
           continue
         else:
           raise
@@ -147,6 +191,3 @@ class ApoObserverDevice(ApoObserverThread):
 
   def terminate(self):
     self.finish = True
-
-  def sleep(self, timeout):
-    self.sleep = timeout

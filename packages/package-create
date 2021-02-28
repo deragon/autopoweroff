@@ -153,6 +153,7 @@ build_daemon_deb()
   eval buildpackage --chdir "${GENERATED_DIR}/build-daemon-deb" \
     --name \"${PACKAGE_NAME}\" \
     --depends python3 \
+    --depends python3-pyinotify \
     --output-type deb
 
   list_deb_info "${FILENAME}"
