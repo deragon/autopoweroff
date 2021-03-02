@@ -6,7 +6,7 @@ versions:
 
 
 
-Version 4.0.0 - 2020-05-31
+Version 4.0.0 - 2021-03-02
 --------------------------------------------------
 
 * Separate daemon and GUI packages (deb and rpm).  Finally, one
@@ -17,6 +17,12 @@ Version 4.0.0 - 2020-05-31
   usage falls below the given threshold for a duration of 1s, the condition is
   met.  Resolves issue
   [GH004](https://github.com/deragon/autopoweroff/issues/4).
+
+* Fixed [GH005](https://github.com/deragon/autopoweroff/issues/5)
+  'Systems with a KVM switch'.  Autopoweroff loaded all the
+  devices once at startup and the list remained static.  Now using
+  pyinotify, the list is dynamically adjusted as devices are added or
+  removed.
 
 * Minor improvements brought to the GUI such as removing use of deprecated
   features, enable icons on certain buttons and realigning widgets.
