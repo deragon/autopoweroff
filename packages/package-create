@@ -263,7 +263,7 @@ build_gui_rpm()
   run rm -rf "${GENERATED_DIR}"
   export BUILD_GENERIC_DIR="${GENERATED_DIR}/build-generic"
   run rm -rf "${BUILD_GENERIC_DIR}"
-  run rm -f autopoweroff*.deb
+  run rm -f autopoweroff*.deb autopoweroff*.rpm autopoweroff*.tar*
 
   cd ..
 
@@ -276,8 +276,10 @@ build_gui_rpm()
                   --docdir="${BUILD_GENERIC_DIR}/usr/share/doc/autopoweroff" \
                   --datarootdir="${BUILD_GENERIC_DIR}/usr/share"
 
+  run make dist # Create tarball autopoweroff-<version>.tar.gz
   run make install
   cd -
+  mv ../autopoweroff-*.tar.gz .
 
   build_daemon_dir
   build_gui_dir
