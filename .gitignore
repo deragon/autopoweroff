@@ -20,11 +20,11 @@ apoinstall
 autom4te.cache/
 configure
 doc/index.html
-sbin/autopoweroff-gui
-sbin/autopoweroff-uninstall
-sbin/autopoweroff-upgrade
-sbin/autopoweroffd
-sbin/python-autopoweroffd.sh
+**/autopoweroff-uninstall
+**/autopoweroff-upgrade
+**/autopoweroffd
+**/autopoweroff-gui
+**/autopoweroff.desktop
 etc/autopoweroff/autopoweroff-metadata
 etc/init.d/autopoweroff.lsb
 etc/init.d/autopoweroff.rc-status
@@ -34,7 +34,6 @@ packages/deb/control
 packages/deb/postinst
 packages/deb/postrm
 packages/rpm/autopoweroff.spec
-desktop/autopoweroff.desktop
 packages/deb/build/
 packages/deb/*.tar.gz
 packages/rpm/*.tar.gz
