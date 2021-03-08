@@ -12,6 +12,8 @@ class ApoObserverManager(ABC):
     def status(self):
         pass
 
+    def terminate(self):
+        pass
 
 class ApoObserverThread(ABC, threading.Thread):
 
