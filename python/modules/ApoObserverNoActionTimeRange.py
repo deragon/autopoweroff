@@ -28,13 +28,14 @@ class ApoObserverNoActionTimeRange(ApoObserverManager, ApoObserverThread):
     self.isInTimeRange = None
     self.logger = logging.getLogger("apo.observer.noaction.timerange")
     self.configuration = configuration
+    self.running = True
 
 
   def run(self):
 
     self.logger.info(__name__ + ".run():  started.")
 
-    while True:
+    while self.running:
 
       # Checking if the current hour is within the "no action range".
       # Now contains the current hour.
@@ -72,3 +73,9 @@ class ApoObserverNoActionTimeRange(ApoObserverManager, ApoObserverThread):
       # This thread has a 1s resolution.  It needs to sleep or else it will
       # loop continuously and consume 100% CPU.
       time.sleep(1)
+
+    self.logger.debug("ApoObserverNoActionTimeRange thread ended.")
+
+
+  def terminate(self):
+      self.running = False

@@ -84,14 +84,29 @@ lockFile.close()
 # ======================================================================
 # SIGTERM Handler
 def sigtermHandler(_signo, _stack_frame):
-  logger.debug("sigtermHandler() called.")
+  sendmsg("Graceful shutdown initiated.  Please wait around 30s.")
 
   global apoObserverDeviceManager
   apoObserverDeviceManager.terminate()
 
+  global apoObserverResources
+  apoObserverResources.terminate()
+  apoObserverResources.join()
+
+  global aoha
+  aoha.terminate()
+  aoha.join()
+
+  global apoObserverNoActionTimeRange
+  apoObserverNoActionTimeRange.terminate()
+  apoObserverNoActionTimeRange.join()
+
   global pidfile
   os.remove(pidfile)
-  sendmsg("Ending.")
+
+  global pid
+  sendmsg(f"Shutdown completed.  Process PID #{pid} is no more.")
+  logging.shutdown()  # Graceful shutdown of loggers with flushing accomplished.
   sys.exit(0)
 
 
@@ -226,8 +241,11 @@ try:
         # Arbitrary 5s sleep.  If this sleep is removed, Autopoweroff will
         # run at 100% CPU since it will endlessly loop until the condition
         # changes.
-        time.sleep(5)
-        continue
+        try:
+          time.sleep(5)
+          continue
+        except KeyboardInterrupt as ki:
+          break
 
       # Taking a snapshot because if aoha.hostsStillAlive is used everywhere,
       # its value might change during it's utilization, as
@@ -288,6 +306,7 @@ try:
      #
      # The while loop can end when finish == True or if autopoweroff
      # receives a SIGTERM signal.
+    sigtermHandler(None, None)
 
 except Exception as exception:
   logger.error(str(exception))

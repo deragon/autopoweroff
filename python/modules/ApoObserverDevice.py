@@ -26,9 +26,9 @@ class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
     # From:  https://github.com/seb-m/pyinotify/wiki/Tutorial
     # The watch manager stores the watches and provides operations on watches
     wm = pyinotify.WatchManager()
-    notifier = pyinotify.ThreadedNotifier(wm, self)
+    self.notifier = pyinotify.ThreadedNotifier(wm, self)
     # Start the notifier from a new thread, without doing anything as no directory or file are currently monitored yet.
-    notifier.start()
+    self.notifier.start()
 
     # Start watching the first path available in the list.
     for devicePath in ["/dev/input/by-path", "/dev/input"]:
@@ -139,8 +139,19 @@ class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
     self.lastInputEventTime = lastInputEventTime
 
   def terminate(self):
+    # Sending 'terminate()' signal to all threads quickly so they can,
+    # in parallel, end gracefully.  DO NOT CALL join() here or else
+    # shutdown of threads will be done sequentially, taking a lot more
+    # time.
     for path, apoDevObs in self.devicesDict.items():
       apoDevObs.terminate()
+
+    # Joining with all the threads, waiting for them to end gracefully.
+    for path, apoDevObs in self.devicesDict.items():
+      apoDevObs.join()
+
+    self.notifier.stop()  # Stoping the pyinotifier thread.
+    self.logger.debug("ApoObserverDeviceManager thread ended.")
 
 
 class ApoObserverDevice(ApoObserverThread):
@@ -154,15 +165,19 @@ class ApoObserverDevice(ApoObserverThread):
 
   def run(self):
     fd = open(self.sDevice, 'rb')
+    os.set_blocking(fd.fileno(), False)  # Set no blocking
     self.logger.info("ApoObserverDevice.run():  Check on " +
                      self.sDevice + " started.")
-    self.finish = False
+    self.running = True
     lastEventTime = 0.0
-    while not self.finish:
+    while self.running:
+      time.sleep(5)
       try:
         # Blocks until there is something to read.  This is why we
         # do not need to setup a time.sleep(5) in this loop.
-        fd.read(1)
+        data = fd.read()
+        if data == None:
+          continue  # No activity, relooping.
       except IOError as ioerror:
         if ioerror.errno == errno.ENODEV:
           # At this point, this means that the device was removed, but
@@ -171,7 +186,7 @@ class ApoObserverDevice(ApoObserverThread):
           # this thread anyway.  ApoObserverDeviceManager.process_IN_DELETE() will
           # eventually be called and will again call terminate() of this thread,
           # but this will be harmless.  All is good.
-          self.finish = True
+          self.running = False
           continue
         else:
           raise
@@ -188,6 +203,9 @@ class ApoObserverDevice(ApoObserverThread):
             self.sDevice + " at " + str(currentTime))
       lastEventTime = currentTime
     fd.close()
+    self.logger.debug("ApoObserverDevice.run():  Ended for " +
+                      self.sDevice + " started.")
+
 
   def terminate(self):
-    self.finish = True
+    self.running = False

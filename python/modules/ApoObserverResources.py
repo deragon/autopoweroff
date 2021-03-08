@@ -37,6 +37,7 @@ class ApoObserverResources(ApoObserverManager, ApoObserverThread):
            self.cpuUsageConfiguredLimit = int(self.cpuUsageConfiguredLimit)
 
         self.setCpuUsage()
+        self.running = True
         self.start()
 
 
@@ -49,7 +50,7 @@ class ApoObserverResources(ApoObserverManager, ApoObserverThread):
 
         self.logger.info(__name__ + ".run():  started.")
 
-        while True:
+        while self.running:
 
             # Checking if the current hour is within the "no action range".
             # Now contains the current hour.
@@ -59,3 +60,9 @@ class ApoObserverResources(ApoObserverManager, ApoObserverThread):
             # This thread has a 1s resolution.  It needs to sleep or else it
             # will loop continuously and consume 100% CPU.
             time.sleep(1)
+
+        self.logger.debug("ApoObserverResources thread ended.")
+
+
+    def terminate(self):
+        self.running = False

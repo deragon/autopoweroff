@@ -16,12 +16,12 @@ class ApoObserverHostsAlive(threading.Thread):
     self.setDaemon(True)
     self.hostsToPing = hostsToPing
     self.hostsStillAlive = hostsToPing
+    self.running = True
 
   def run(self):
     self.logger.info(__name__ + ".run():  Check on " +
         str(self.hostsToPing) + " started.")
-    while True:
-
+    while self.running:
       # While testing for hosts, we do not want to initialize to false the
       # global variable until all tests are completed.  Thus this is why we
       # use a local variable and only set the global variable once all
@@ -61,3 +61,8 @@ class ApoObserverHostsAlive(threading.Thread):
 
       # Poll hosts again in 10s.
       time.sleep(10)
+    self.logger.debug("ApoObserverHostsAlive thread ended.")
+
+
+  def terminate(self):
+    self.running = False
