@@ -105,7 +105,8 @@ build_daemon_dir() {
     --exclude 'autopoweroff.rc-status'    \
     --exclude '**/pam.d/'                 \
     --exclude '**/etc/security/'          \
-    --exclude '*-uninstall'
+    --exclude '*-uninstall'               \
+    --prune-empty-dirs
 
   mv "${BUILD_DAEMON_DIR}/usr/share/doc/autopoweroff" "${BUILD_DAEMON_DIR}/usr/share/doc/autopoweroff-daemon"
   mv "${BUILD_DAEMON_DIR}/etc/init.d/autopoweroff.lsb" "${BUILD_DAEMON_DIR}/etc/init.d/autopoweroff"
@@ -122,13 +123,14 @@ build_gui_dir() {
   # Removing /etc/autopoweroff because configuration files are provided
   # by the daemon package.
   rsync -ar "${BUILD_GENERIC_DIR}/"* "${BUILD_GUI_DIR}/." \
-    --delete \
-    --exclude '**/init.d/'        \
-    --exclude '**/autopoweroffd'  \
-    --exclude '**/etc/autopoweroff'  \
-    --exclude '**/python/modules'  \
-    --exclude '**/*-upgrade'  \
-    --exclude '*-uninstall'
+    --delete                                              \
+    --exclude '**/init.d/'                                \
+    --exclude '**/autopoweroffd'                          \
+    --exclude '**/etc/autopoweroff'                       \
+    --exclude '**/python/modules'                         \
+    --exclude '**/*-upgrade'                              \
+    --exclude '*-uninstall'                               \
+    --prune-empty-dirs
 
   mv "${BUILD_GUI_DIR}/usr/share/doc/autopoweroff" "${BUILD_GUI_DIR}/usr/share/doc/autopoweroff-gui"
 }
@@ -151,9 +153,10 @@ build_daemon_deb()
   rm -rf "${GENERATED_DIR}/build-daemon-deb"
   mkdir -p "${GENERATED_DIR}/build-daemon-deb"
 
-  rsync -ar \
-    --delete \
+  rsync -ar              \
+    --delete             \
     --exclude "*.redhat" \
+    --prune-empty-dirs   \
     "${GENERATED_DIR}/build-daemon/"* "${GENERATED_DIR}/build-daemon-deb"
 
   eval buildpackage --chdir "${GENERATED_DIR}/build-daemon-deb" \
@@ -203,8 +206,9 @@ build_daemon_rpm()
   rm -rf "${GENERATED_DIR}/build-daemon-rpm"
   mkdir -p "${GENERATED_DIR}/build-daemon-rpm"
 
-  rsync -ar \
-    --delete \
+  rsync -ar            \
+    --delete           \
+    --prune-empty-dirs \
     "${GENERATED_DIR}/build-daemon/"* "${GENERATED_DIR}/build-daemon-rpm"
 
   cd "${GENERATED_DIR}/build-daemon-rpm/etc/init.d"
