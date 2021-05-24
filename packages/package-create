@@ -68,21 +68,24 @@ EOM
 
 buildpackage()
 {
-
   #FPM_DEBUG_OPTIONS="--debug-workspace"
   STDOUT=$(set +e; fpm ${FPM_DEBUG_OPTIONS} \
     --force \
     --input-type dir \
     --exclude DEBIAN \
-    --version       "${PACKAGE_VERSION}" \
-    --architecture  "${ARCHITECTURE}" \
-    --maintainer    "${MAINTAINER}" \
-    --description   "${DESCRIPTION_LONG}" \
-    --license       "${LICENCE}" \
-    --url           "${URL}" \
+    --version         "${PACKAGE_VERSION}" \
+    --architecture    "${ARCHITECTURE}" \
+    --maintainer      "${MAINTAINER}" \
+    --description     "${DESCRIPTION_LONG}" \
+    --license         "${LICENCE}" \
+    --url             "${URL}" \
     $@; set -e)
   FILENAME=$(echo -e "${STDOUT}" | perl -ne 'print if s/.*\:path=>"(.*?\.(deb|rpm))".*/\1/g')
   #echo "\${FILENAME} ${FILENAME}"
+  if [ -z "${FILENAME}" ]; then
+    echo "BUG:  \${FILENAME} is empty.  Aborting."
+    exit 1
+  fi
 }
 
 
