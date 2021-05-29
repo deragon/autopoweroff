@@ -166,17 +166,9 @@ UEFI / BIOS configuration
 ==================================================
 
 It is possible to setup the UEFI / BIOS so that the computer will boot itself
-every day. Each UEFI / BIOS is different, but they are pretty much similar.
-Following are the instructions on how to setup on various systems.
-
-Award BIOS
---------------------------------------------------
-
-On the main page, select the menu *POWER*, then the *POWER UP CONTROL*
-item. Once the new screen shows up, move the cursor to the *Automatic
-Power Up* line and select *Everyday*. On the following line, set the
-time at which the computer should start everyday. Save the settings and
-voilà.
+every day.  Each UEFI / BIOS is different, thus the instructions how to set
+them up cannot be found here.  Please refer to your UEFI / BIOS manual or
+online instructions.
 
 
 Installation
