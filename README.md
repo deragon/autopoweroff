@@ -273,11 +273,11 @@ Installation
 
 To install the .deb package, simply run:
 
-    sudo dpkg -i autopoweroff*.deb     `
+    sudo apt install ./*autopoweroff*.deb
 
 To install the .rpm package, simply run:
 
-    rpm -Uhv autopoweroff*.rpm   `
+    rpm -Uhv autopoweroff*.rpm
 
 For the tarball, extract it and run `configure` followed by `make install`.
 
