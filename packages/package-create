@@ -50,13 +50,15 @@ For more information about FPM, check it out at:  https://github.com/jordansisse
 
 EOM
 
-    read ANSWER -n 1 -p "Do you agree to install FPM (y/n)?"
+    read -n 1 -p "Do you agree to install FPM (y/n)? " ANSWER
 
     if [ "${ANSWER}" == "y" ]; then
+      echo -e "\nInstalling FPM.\n"
+
       # BUG:  The solution here assumes that the OS on which this
       #       script is executed is DEB package based.  It should also
       #       support RPM based OSs.
-      sudo apt-get install ruby ruby-dev rubygems build-essential
+      sudo apt-get --yes install ruby ruby-dev rubygems build-essential
       sudo gem install --no-document fpm
     else
       echo "Command aborted."
