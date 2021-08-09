@@ -24,6 +24,7 @@ if not gTestMode:
   startMsgExtra = ""
   programname = "@program_name@"
   sharedir    = "@autopoweroff_sharedir@"
+  modulesdir  = sharedir + '/autopoweroff/python/modules'
   confdir     = "@autopoweroff_confdir@"
   rundir      = "@autopoweroff_rundir@"
   piddir      = "@autopoweroff_piddir@"
@@ -36,6 +37,7 @@ else:
   basePathAbs=os.path.realpath(scriptPath + "/..")
   programname = "Autopoweroff"
   sharedir    = basePathAbs
+  modulesdir  = basePathAbs + '/python/modules'
   confdir     = basePathAbs + "/etc/" + programname.lower()
   rundir      = "/tmp/" + programname.lower() + "-test/var"
   piddir      = rundir
@@ -49,7 +51,7 @@ logging.config.fileConfig(logConfigFile)
 logger = logging.getLogger(programname)
 pid = str(os.getpid())
 logger.info("══════════════════════════════════════════════════════════")
-sys.path.append(sharedir + '/python/modules')
+sys.path.append(modulesdir)
 from ApoLibrary import *
 
 sendmsg(programname + " started with PID '" + pid + "'" + startMsgExtra + ".")

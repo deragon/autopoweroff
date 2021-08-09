@@ -19,7 +19,7 @@ sbin_SCRIPTS = \
 	sbin/autopoweroff-uninstall \
 	sbin/autopoweroff-upgrade
 
-pythondir=${datadir}/python/modules
+pythondir=${datadir}/autopoweroff/python/modules
 python_DATA = \
 	python/modules/*.py
 
