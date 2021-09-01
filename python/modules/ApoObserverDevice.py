@@ -60,6 +60,17 @@ class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
       self.logger.warn("devicePath = " + devicePath + " REJECTED because it is a speaker.")
       return
 
+    if "smc" in devicePath:
+      # On Macbook 5.5 (maybe others) the SMC is constantly sending events,
+      # probably from the light sensor or something so we want to ignore this.
+      #
+      # The SMC is the system management controller. It's responsible for a
+      # number of processes, including the cooling fans, keyboard, and LED
+      # lights.
+
+      self.logger.warn("devicePath = " + devicePath + " REJECTED because it is a SMC")
+      return
+
     # TODO:  Improve catching.  Currently, only one model of an
     #        accelerometer is hardcoded here.  This code should made
     #        generic and catch all accelerometers.
