@@ -3,7 +3,7 @@
 
 
 
-Status as of 2021 - Fully supported.
+Status as of 2022 - Fully supported.
 ==================================================
 
 This program is actively supported, but is simply not being developed much
@@ -213,14 +213,14 @@ IdleTime=15
 Hosts=server1, server2, server3
 
 
-# Hosts parameter (list of hostnames or IPs, separated by commas):
+# CpuPercentage parameter (integer or 'Disabled'):
 #
-#   Here you list the list of hosts your machine is dependant, i.e. this
-#   computer should not take action if any of the hosts declared here is
-#   still up (responding to ping).
+#   If the CPU usage falls below the provided value (say, '5' for 5%) for a
+#   full second, the condition is then considered met.
 
 [RESOURCES]
 CpuPercentage=Disabled
+
 
 #  [ACTION]
 #
