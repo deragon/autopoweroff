@@ -22,17 +22,18 @@ def createDirs(aDirs):
                                   # Up to know, no problems founds without it.
 
 
-def sendmsg(msg, logger=None, priority=syslog.LOG_INFO, tosyslog=True):
+def sendmsg(msg, logger=None, level=logging.INFO, tosyslog=True):
   # Ill attempt to use the stacktrace to determine the name of the logger.
   # But it is not viable.  For the moment, the code remains, commented,
   # in case one would like to retry again.
   #stacktrace=traceback.extract_stack()
   #print stacktrace
+  msg = str(msg)
   if logger is None:
     logger = logging.getLogger(programname)
-  logger.info(str(msg))
+  logger.log(level, msg)
   if tosyslog:
-    syslog.syslog(str(msg))
+    syslog.syslog(msg.replace('\n', ''))
 
 
 def commentString(text):
