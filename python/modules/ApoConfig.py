@@ -230,7 +230,7 @@ class Configuration:
       warningMessage = "The following warnings are emitted regaring the configuration file:\n" + \
                   "\n".join(set(self.warnings.split('\n'))) + "\n"
 
-      sendmsg(warningMessage, logger=logger, level=logging.WARNING, tosyslog=self.tosyslog)
+      sendmsg(warningMessage, logger=self.logger, level=logging.WARNING, tosyslog=self.tosyslog)
     except IOError:
       self.errors = "Could not open configuration file " + conffile + \
                     "\nUsing default values."
