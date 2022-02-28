@@ -142,6 +142,7 @@ class Configuration:
                        section + "\"."
 
       except configparser.NoSectionError:
+        value = defaultValue
         self.warn("No \"" + section + "\" section defined.")
 
     if validWarn:
