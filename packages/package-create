@@ -221,6 +221,7 @@ build_daemon_rpm()
   eval buildpackage --chdir "${GENERATED_DIR}/build-daemon-rpm" \
     --name \"${PACKAGE_NAME}\" \
     --depends python3 \
+    --depends python-inotify \
     --depends python3-psutil \
     --output-type rpm
 
