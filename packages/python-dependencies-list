@@ -1,0 +1,28 @@
+#!/bin/bash
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+List all Python packages this project depends on.
+
+Usage:  ${SCRIPT_NAME}
+
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+while getopts "dh" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+pipreqs --ignore packages/generated --force --print .. 2>/dev/null
