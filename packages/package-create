@@ -165,6 +165,7 @@ build_daemon_deb()
     --name \"${PACKAGE_NAME}\" \
     --depends python3 \
     --depends python3-pyinotify \
+    --depends python3-psutil \
     --output-type deb
 
   list_deb_info "${FILENAME}"
@@ -220,6 +221,7 @@ build_daemon_rpm()
   eval buildpackage --chdir "${GENERATED_DIR}/build-daemon-rpm" \
     --name \"${PACKAGE_NAME}\" \
     --depends python3 \
+    --depends python3-psutil \
     --output-type rpm
 
   list_rpm_info "${FILENAME}"
