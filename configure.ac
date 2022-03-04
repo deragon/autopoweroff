@@ -11,7 +11,8 @@ umask 022
 # PATH by default, causing binaries such as "shutdown" not to be found.
 PATH=/sbin:/usr/sbin:${PATH}
 
-AC_INIT([autopoweroff], [4.0.0])
+#Macro: AC_INIT (PACKAGE, VERSION, [BUG-REPORT], [TARNAME], [URL])
+AC_INIT([autopoweroff], [4.0.0], [https://github.com/deragon/autopoweroff/issues], [autopoweroff], [https://github.com/deragon/autopoweroff])
 #AC_REVISION not used.
 #AC_REVISION($Revision: 1.4 $)
 AC_COPYRIGHT([Hans Deragon, Copyright 2003-2021, GPL 2.0])

@@ -12,11 +12,11 @@ Preliminary steps
 
 1. Update the version of the release in `configure.ac`:
 
-  `AC_INIT([autopoweroff], [_._._])`
+  `AC_INIT([autopoweroff], [�.�.�], [https://github.com/deragon/autopoweroff/issues], [autopoweroff], [https://github.com/deragon/autopoweroff])`
 
 1. Ensure that the copyright year is properly setup in `configure.ac`:
 
-  `AC_COPYRIGHT([Hans Deragon, Copyright 2003-20__, GPL 2.0])`
+  `AC_COPYRIGHT([Hans Deragon, Copyright 2003-20��, GPL 2.0])`
 
 1. Add a new entry in `doc/CHANGELOG.md`
 
