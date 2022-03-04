@@ -28,6 +28,11 @@ Preliminary steps
 
 1. Assuming that these are the last changes for the release, merge to branch *master* and tag the release with its version number.
 
+  ```
+git tag �.�.�          # Create a tag locally.
+git push origin �.�.�  # Need to push the tag to origin.  A simple 'git push' does not do it.
+```
+
 Creating the binaries
 -------------------------------------------------------------------------
 
