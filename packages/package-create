@@ -1,7 +1,8 @@
 #!/bin/bash
 
 SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
-LOGFILE="${SCRIPT_NAME}.log"
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+LOGFILE="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}.log"
 
 usage()
 {
