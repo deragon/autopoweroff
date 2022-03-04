@@ -27,9 +27,9 @@ production="@production@"
 program_name="@program_name@"
 sysconfdir_expanded="@sysconfdir_expanded@"
 
-PACKAGE_BUGREPORT=''
-PACKAGE_NAME='autopoweroff'
-PACKAGE_STRING='autopoweroff 4.0.0'
-PACKAGE_TARNAME='autopoweroff'
-PACKAGE_URL=''
-PACKAGE_VERSION='4.0.0'
+PACKAGE_BUGREPORT='@PACKAGE_BUGREPORT@'
+PACKAGE_NAME='@PACKAGE_NAME@'
+PACKAGE_STRING='@PACKAGE_STRING@'
+PACKAGE_TARNAME='@PACKAGE_TARNAME@'
+PACKAGE_URL='@PACKAGE_URL@'
+PACKAGE_VERSION='@PACKAGE_VERSION@'
