@@ -5,6 +5,64 @@ The following changes have been incorporated in the below mentioned
 versions:
 
 
+Version 4.1.0 - 2022-03-03
+--------------------------------------------------
+
+
+### New Feature
+
+* CpuPercentage parameter.
+
+  If the CPU usage falls below the provided value (say, '5' for 5%) for a full second, the condition is then considered met and may trigger Autopoweroff to run its configured command if no other condition blocks it.
+
+### Fixes
+
+* Fix [GH25](https://github.com/deragon/autopoweroff/issues/25) 'How to disable no action time range?'.
+
+  Default value is now set when the section is not present.
+
+* Fix [GH23](https://github.com/deragon/autopoweroff/issues/23) 'Not working on Macbook 5,5 because of SMC event'.
+
+  On Macbook 5.5 (maybe others) the SMC is constantly sending events,
+probably from the light sensor or something so we want to ignore this.
+
+  The SMC is the system management controller. It's responsible for a
+number of processes, including the cooling fans, keyboard, and LED
+lights.
+
+  Thanks to 'robinmayol' for providing the solution.
+
+* Fix [GH20](https://github.com/deragon/autopoweroff/issues/20) 'Installing .deb fails'.
+
+  Replaces in README.md the installation instructions:
+
+	    sudo dpkg -i autopoweroff*.deb
+
+  with
+
+	    sudo apt install ./*autopoweroff*.deb
+
+  This way, the order of the packages and their dependencies is being
+managed properly.
+
+* Fix [GH22](https://github.com/deragon/autopoweroff/issues/22) 'seems not making server sleep on Ubuntu Server 18.04 #22'.
+
+  Fix consist of adding python[3]-psutils as a dependency to the daemon.
+
+* Add python-inotify as a dependency for daemon rpm.
+
+* Fix threads termination when Autopoweroff gets shutdown.
+
+* Python modules are now installed under /usr/share/autopoweroff.
+
+* Avoids empty directories to be part of the .deb and .rpm packages.
+
+* New UEFI / BIOS setup instructions for wakeup.
+
+* Make use of FPM to generate .deb and .rpm packages.
+
+* Multiple technical fixes.
+
 
 Version 4.0.0 - 2021-03-02
 --------------------------------------------------
@@ -51,7 +109,6 @@ Version 4.0.0 - 2021-03-02
 * Python psutil dependency added to package desc.
 
 * Fixed minor logging issue.
-
 
 
 Version 3.2.1 - 2020-05-31

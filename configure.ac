@@ -12,13 +12,13 @@ umask 022
 PATH=/sbin:/usr/sbin:${PATH}
 
 #Macro: AC_INIT (PACKAGE, VERSION, [BUG-REPORT], [TARNAME], [URL])
-AC_INIT([autopoweroff], [4.0.0], [https://github.com/deragon/autopoweroff/issues], [autopoweroff], [https://github.com/deragon/autopoweroff])
+AC_INIT([autopoweroff], [4.1.0], [https://github.com/deragon/autopoweroff/issues], [autopoweroff], [https://github.com/deragon/autopoweroff])
 #AC_REVISION not used.
 #AC_REVISION($Revision: 1.4 $)
-AC_COPYRIGHT([Hans Deragon, Copyright 2003-2021, GPL 2.0])
+AC_COPYRIGHT([Hans Deragon, Copyright 2003-2022, GPL 2.0])
 
 LICENCE="GPL 2.0"
-COPYRIGHT="(C) 2003-2021 Hans Deragon <hans@deragon.biz>"
+COPYRIGHT="(C) 2003-2022 Hans Deragon <hans@deragon.biz>"
 PROJECT_MAINTAINER="Hans Deragon <hans@deragon.biz>"
 PROJECT_WEBSITE="https://github.com/deragon/autopoweroff"
 
