@@ -126,7 +126,7 @@ clean-generic:
 # all files) are installed.
 install-data-hook:
 	echo "install-data-hook called."
-	postinstall
+	./postinstall
 #   if [ ${INSTALLTYPE} != "RPM" ]; then \
 #     if [ `id -u` != "0" ]; then \
 #       echo -e "\nThe installation can only proceed under the root user.\n"; \
