@@ -143,11 +143,6 @@ testprg "${PERL}" "perl"
 # non existant.
 AC_CHECK_PROG([GNOMECONFIG],   [gnome-config],   [found], [not found])
 
-# Following lines are for testing purposes and thus are put into
-# comment.
-#AC_CHECK_PROG([JUNK],   [ajunk],   [found], [notfound])
-#testprg "${JUNK}" "ajunk"
-
 #echo prefix=$prefix
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
