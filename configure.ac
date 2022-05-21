@@ -137,8 +137,6 @@ AC_CHECK_PROG([POWEROFF], [poweroff], [found], [not found])
 testprg "${POWEROFF}" "shutdown"
 AC_CHECK_PROG([PING],     [ping],     [found], [not found])
 testprg "${PING}" "ping"
-AC_CHECK_PROG([PERL],   [perl],   [found], [not found])
-testprg "${PERL}" "perl"
 # gnome-config is not required.  If not found, we assume that gnome is
 # non existant.
 AC_CHECK_PROG([GNOMECONFIG],   [gnome-config],   [found], [not found])
