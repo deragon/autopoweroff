@@ -179,7 +179,7 @@ build_gui_deb()
     --name \"${PACKAGE_NAME}-gui\" \
     --depends autopoweroff \
     --depends python3 \
-    --depends python-gi \
+    --depends python3-gi \
     --depends policykit-1 \
     --output-type deb
 
