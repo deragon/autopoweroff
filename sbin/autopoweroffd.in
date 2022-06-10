@@ -59,6 +59,8 @@ logger.info("Logging configuration file used:  " + logConfigFile)
 
 if os.getuid() != 0:
   sendmsg("Must be executed as root.")
+  sendmsg
+
   sys.exit(1)
 
 createDirs([piddir, rundir])
@@ -70,7 +72,7 @@ if os.path.exists(pidfile):
   fdPidFile.close()
   try:
     os.kill(int(pid), signal.SIGTERM)
-    sendmsg("Currently running instance killed.", priority=syslog.LOG_ALERT)
+    sendmsg("Currently running instance killed.", level=syslog.LOG_ALERT)
   except OSError as oserror:
     if oserror.errno != errno.ESRCH:  # No such process
       # errno ESRCH (#3) means that the process does not exist.
@@ -282,7 +284,7 @@ try:
         isToBePutOnHold = False
 
         sendmsg("All the conditions are met for running the action.",
-                priority=syslog.LOG_ALERT)
+                level=syslog.LOG_ALERT)
 
         if gTestMode:
           sendmsg( \
