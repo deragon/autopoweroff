@@ -56,9 +56,9 @@ EOM
     if [ "${ANSWER}" == "y" ]; then
       echo -e "\nInstalling FPM.\n"
 
-      # BUG:  The solution here assumes that the OS on which this
-      #       script is executed is DEB package based.  It should also
-      #       support RPM based OSs.
+      # TODO:  The solution here assumes that the OS on which this
+      #        script is executed is DEB package based.  It should also
+      #        support RPM based OSs.
       sudo apt-get --yes install ruby ruby-dev rubygems build-essential
       sudo gem install --no-document fpm
     else
@@ -312,7 +312,7 @@ build_gui_rpm()
   run make dist # Create tarball autopoweroff-<version>.tar.gz
   run make install
   cd -
-  mv ../autopoweroff-*.tar.gz .
+  run mv ../autopoweroff-*.tar.gz .
 
   build_daemon_dir
   build_gui_dir
