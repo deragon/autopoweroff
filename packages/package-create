@@ -173,6 +173,7 @@ build_daemon_deb()
 }
 
 
+# Build generic deb, works on Ubuntu 20.04.
 build_gui_deb()
 {
   eval buildpackage --chdir "${GENERATED_DIR}/build-gui" \
@@ -180,6 +181,22 @@ build_gui_deb()
     --depends autopoweroff \
     --depends python3 \
     --depends python-gi \
+    --depends policykit-1 \
+    --output-type deb
+
+  list_deb_info "${FILENAME}"
+}
+
+
+# Build specific deb for Linux Mint 20.3.
+# See:  https://github.com/deragon/autopoweroff/issues/32
+build_gui_linuxmint()
+{
+  eval buildpackage --chdir "${GENERATED_DIR}/build-gui" \
+    --name \"${PACKAGE_NAME}-gui-linuxmint\" \
+    --depends autopoweroff \
+    --depends python3 \
+    --depends python3-gi \
     --depends policykit-1 \
     --output-type deb
 
@@ -306,6 +323,7 @@ build_gui_rpm()
 
   # Deb building
   build_daemon_deb
-  build_gui_deb
+  build_gui_deb        # Generic deb, works on Ubuntu 20.04.
+  build_gui_linuxmint  # Specific for Linux Mint.
 
 } 2>&1 | tee "${LOGFILE}"
