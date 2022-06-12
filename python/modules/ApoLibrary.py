@@ -49,10 +49,11 @@ class APOCommand:
   #
   # See:  http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
 
-  SHUTDOWN="shutdown"
-  SLEEP="sleep"
-  HIBERNATE="hibernate"
-  OTHER="other"
+  # Need to be capitalized.
+  SHUTDOWN  = "Shutdown"
+  SLEEP     = "Sleep"
+  HIBERNATE = "Hibernate"
+  OTHER     = "Other"
 
   commands={}
   commands[SHUTDOWN]  = "/sbin/shutdown -h now"
@@ -63,14 +64,16 @@ class APOCommand:
     if string == None:
        return None
 
-    string = string.lower().strip()
+    string = string.strip().capitalize()
     if string == APOCommand.SHUTDOWN    or \
        string == APOCommand.SLEEP       or \
-       string == APOCommand.HIBERNATE:
+       string == APOCommand.HIBERNATE   or \
+       string == APOCommand.OTHER:
       return string
     else:
       return None
 
+  # Declare parse() as a static method of the class.
   parse = staticmethod(parse)
 
 
