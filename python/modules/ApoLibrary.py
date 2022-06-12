@@ -41,7 +41,7 @@ def commentString(text):
   return regexp.sub("# ", text.rstrip().lstrip())
 
 
-class APOCommand:
+class APOAction:
 
   # No enum used here as, of this writing, this code must remain
   # compatible with 2.x Python and we do not want to add a dependency
@@ -60,16 +60,20 @@ class APOCommand:
   commands[SLEEP]     = "echo -n mem >/sys/power/state"
   commands[HIBERNATE] = "echo -n disk >/sys/power/state"
 
-  def parse(string):
-    if string == None:
+  # Returns a tuple with the action and associated action command, the latter
+  # being either the one hardcoded above or the one provided by the
+  # configuration file.
+  def parse(action, actioncommand):
+    if action == None:
        return None
 
-    string = string.strip().capitalize()
-    if string == APOCommand.SHUTDOWN    or \
-       string == APOCommand.SLEEP       or \
-       string == APOCommand.HIBERNATE   or \
-       string == APOCommand.OTHER:
-      return string
+    action = action.strip().capitalize()
+    if action == APOAction.SHUTDOWN    or \
+       action == APOAction.SLEEP       or \
+       action == APOAction.HIBERNATE:
+      return ( action, APOAction.commands[action] )
+    elif action == APOAction.OTHER:
+      return ( action, actioncommand )
     else:
       return None
 

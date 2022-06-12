@@ -135,22 +135,7 @@ except ApoConfig.APOWarning as message:
 except ApoConfig.APOError as message:
   sendmsg(message)
 
-command = ""
-if configuration.action is None:
-  # Default command is SLEEP.  It is safer as no actual data can be lost going
-  # to sleep where a shutdown might cause data lost because saving operations
-  # could not be performed.
-  command = APOCommand.commands[APOCommand.SLEEP]
-  commandtext = APOCommand.SLEEP
-if configuration.action == APOCommand.OTHER:
-
-  command = configuration.actioncommand
-  commandtext = "executing '" + command + "'"
-else:
-  command = APOCommand.commands[configuration.action]
-  commandtext = APOCommand.commands[configuration.action]
-
-sendmsg("Command to execute when all conditions are met:  " + command)
+sendmsg("Command to execute when all conditions are met:  " + configuration.actioncommand)
 
 ######################################################################
 # Starting thread that checks if any host is still alive.
@@ -286,19 +271,19 @@ try:
 
         if gTestMode:
           sendmsg( \
-              "Test mode:  would have run action '" + command + "' at " + \
+              "Test mode:  would have run action '" + configuration.actioncommand + "' at " + \
               time.strftime("%H:%M:%S", (time.localtime(time.time()))))
 
         else:
           import subprocess
-          subprocess.getstatusoutput(command)
+          subprocess.getstatusoutput(configuration.actioncommand)
 
         # Arbitrary 5s sleep.  If this sleep is removed, Autopoweroff will run
         # at 100% CPU since it will endlessly loop until the condition
         # changes.
         time.sleep(5)
 
-        # If the command is executed and we return, we get out of the inner
+        # If the actioncommand is executed and we return, we get out of the inner
         # loop and fall into the outer loop, reinitializing some crucial
         # variables as if the program was restarted.
         break

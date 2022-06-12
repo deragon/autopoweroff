@@ -377,11 +377,11 @@ def readConfiguration():
   for host in configuration.hosts:
     LMConfigHosts.set(LMConfigHosts.append(), 0, host)
 
-  if configuration.action == APOCommand.SHUTDOWN:
+  if configuration.action == APOAction.SHUTDOWN:
     builder.get_object("RBPoweroff").set_active(True)
-  elif configuration.action == APOCommand.SLEEP:
+  elif configuration.action == APOAction.SLEEP:
     builder.get_object("RBSleep").set_active(True)
-  elif configuration.action == APOCommand.HIBERNATE:
+  elif configuration.action == APOAction.HIBERNATE:
     builder.get_object("RBHibernate").set_active(True)
   else:
     builder.get_object("RBOther").set_active(True)
@@ -420,13 +420,13 @@ def saveConfiguration():
       index = index+1
 
     if builder.get_object("RBPoweroff").get_active():
-      action=APOCommand.SHUTDOWN
+      action=APOAction.SHUTDOWN
     elif builder.get_object("RBSleep").get_active():
-      action=APOCommand.SLEEP
+      action=APOAction.SLEEP
     elif builder.get_object("RBHibernate").get_active():
-      action=APOCommand.HIBERNATE
+      action=APOAction.HIBERNATE
     elif builder.get_object("RBOther").get_active():
-      action=APOCommand.OTHER
+      action=APOAction.OTHER
     else:
       raise APOError("BUG", \
               " - Could not detect action from radio buttons. ", \

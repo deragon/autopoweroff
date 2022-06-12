@@ -82,6 +82,8 @@ class Configuration:
       self.resources = resources
 
     self.warnings=""
+    # TODO:  self.errors is not evaluated anywhere.  Need to
+    #        raise an exception and abort Autopoweroff.
     self.errors=""
     self.configParser = configparser.ConfigParser()
     self.action=action
@@ -198,21 +200,21 @@ class Configuration:
         self.noactiontimerange[ENDHOUR]=self.optionalConfig( \
             int, 0, "NO_SHUTDOWN_TIME_RANGE", "EndHour|v", "end|d")
 
+      if self.actioncommand=="":
+        self.actioncommand=None
+
       if self.action == None:
         self.errors = "No action command command provided."
       else:
         # Not assigning to self.action because parse() could return None
         # if self.action is invalid.  But we still want to print out in
         # the error message the faulty section.
-        action = APOCommand.parse(self.action)
+        action = APOAction.parse(self.action, self.actioncommand)
         if action == None:
           self.errors = "Invalid action command:  \"" + \
                         str(self.action) + "\""
         else:
-          self.action = action
-
-      if self.actioncommand=="":
-        self.actioncommand=None
+          (self.action, self.actioncommand) = action
 
       # Removing whitespaces in list before performing the split.
       if tmphosts == None:
