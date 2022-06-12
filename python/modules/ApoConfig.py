@@ -227,10 +227,11 @@ class Configuration:
           # Got an empty host.  Getting ride of it.
           self.hosts = self.hosts[1:]
 
-      warningMessage = "The following warnings are emitted regaring the configuration file:\n" + \
-                  "\n".join(set(self.warnings.split('\n'))) + "\n"
+      if len(self.warnings) > 0:
+          warningMessage = "The following warnings are emitted regaring the configuration file:\n" + \
+                      "\n".join(set(self.warnings.split('\n'))) + "\n"
 
-      sendmsg(warningMessage, logger=self.logger, level=logging.WARNING, tosyslog=self.tosyslog)
+          sendmsg(warningMessage, logger=self.logger, level=logging.WARNING, tosyslog=self.tosyslog)
     except IOError:
       self.errors = "Could not open configuration file " + conffile + \
                     "\nUsing default values."
