@@ -86,7 +86,8 @@ lockFile.close()
 # ======================================================================
 # SIGTERM Handler
 def sigtermHandler(_signo, _stack_frame):
-  sendmsg("Graceful shutdown initiated.  Please wait around 30s.")
+  global pid
+  sendmsg("Graceful shutdown of process PID #{pid} initiated.  Please wait around 30s.")
 
   global apoObserverDeviceManager
   apoObserverDeviceManager.terminate()
@@ -106,7 +107,6 @@ def sigtermHandler(_signo, _stack_frame):
   global pidfile
   os.remove(pidfile)
 
-  global pid
   sendmsg(f"Shutdown completed.  Process PID #{pid} is no more.")
   logging.shutdown()  # Graceful shutdown of loggers with flushing accomplished.
   sys.exit(0)
