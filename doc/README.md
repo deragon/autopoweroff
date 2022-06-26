@@ -195,6 +195,39 @@ For the tarball, extract it and run `configure` followed by `make install`.
 
 You will need to setup the init script properly. Two versions exists.
 
+### Startup
+
+Once installed, Autopoweroff's daemon is not started automatically nor is your system configured to start it upon reboot.  Since Autopoweroff has a disruptive behaviour, i.e. can suspend the system, as a safety feature, one must consciously start it and set Autopoweroff to start upon each reboot.
+
+To start the Autopoweroff's daemon, call either:
+
+    systemctl start autopoweroff.service  # For systemd based systems.
+
+or
+
+    service autopoweroff start            # For System-V init.d based systems.
+
+
+### Startup at boot
+
+As stated above, Autopoweroff is not configured to run automatically upon boot.  To enable Autopoweroff on boot on a systemd based system, run:
+
+    systemctl enable autopoweroff.service  # For systemd based systems.
+
+or
+
+    update-rc.d autopoweroff enable        # For System-V init.d based systems.
+
+Remember that Autopoweroff has an StartupDelay parameter of 5 minutes (configurable).  Thus upon bootup, there is always a 5 minutes window before Autopoweroff can run its action, giving the administrator the time to deactivate Autopoweroff it needs to be.
+
+Autopoweroff daemon can be manually controlled with the following commands:
+
+    systemctl [start|stop|restart] autopoweroff.service  # For systemd based systems.
+
+or
+
+    service autopoweroff [start|stop|restart]            # For System-V init.d based systems.
+
 
 Uninstallation
 ==================================================
