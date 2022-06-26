@@ -266,8 +266,6 @@ try:
 
         isToBePutOnHold = False
 
-        sendmsg("All the conditions are met for running the action.",
-                level=syslog.LOG_ALERT)
 
         if gTestMode:
           sendmsg( \
@@ -275,6 +273,7 @@ try:
               time.strftime("%H:%M:%S", (time.localtime(time.time()))))
 
         else:
+          sendmsg("All the conditions are met.  Running action '" + configuration.actioncommand + "'.")
           import subprocess
           subprocess.getstatusoutput(configuration.actioncommand)
 
