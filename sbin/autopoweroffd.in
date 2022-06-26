@@ -282,18 +282,6 @@ try:
         # changes.
         time.sleep(5)
 
-        # If the actioncommand is executed and we return, we get out of the inner
-        # loop and fall into the outer loop, reinitializing some crucial
-        # variables as if the program was restarted.
-        break
-
-     # Only poweroff if it has been determined that this is the action to do.
-     # Remember, autopoweroff could have received a SIGTERM (CTRL-C).
-     #
-     # The while loop can end when finish == True or if autopoweroff
-     # receives a SIGTERM signal.
-    sigtermHandler(None, None)
-
 except Exception as exception:
   logger.error(str(exception))
   logger.error(traceback.format_exc())
