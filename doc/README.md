@@ -170,6 +170,10 @@ every day.  Each UEFI / BIOS is different, thus the instructions how to set
 them up cannot be found here.  Please refer to your UEFI / BIOS manual or
 online instructions.
 
+Note that on some systems, the computer will wakeup only if it as been
+shutdown completely, but not if it has been suspended.  Thus is this scenario,
+better set the Action to "shutdown".
+
 
 Installation
 ==================================================
