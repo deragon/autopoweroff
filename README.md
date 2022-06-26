@@ -199,8 +199,8 @@ EndHour=7
 #   activity on the server will be ignored.
 
 [TIMEOUTS]
-StartupDelay=5
-IdleTime=15
+StartupDelay=0
+IdleTime=0
 
 
 # Hosts parameter (list of hostnames or IPs, separated by commas):
@@ -228,12 +228,15 @@ CpuPercentage=Disabled
 #
 #   Action to be taken when all conditions are met.
 #
-#   Choices are:
+#   Choices are (case insensitive):
 #
-#     - Shutdown
-#     - Sleep     (suspend to ram)
-#     - Hibernate (suspend to disk)
-#     - Other     (ActionCommand must be supplied)
+#     - Shutdown   (S0✲ poweroff)
+#     - Sleep      (S3✲ suspend to ram)
+#     - Hibernate  (S4✲ suspend to disk)
+#     - Other      (ActionCommand must be supplied)
+#
+#     ✲ ACPI states.
+#       See: https://en.wikipedia.org/wiki/Advanced_Configuration_and_Power_Interface#Global_states
 #
 # ActionCommand
 #
@@ -254,8 +257,8 @@ CpuPercentage=Disabled
 #
 #   Since this option is an advance one, it is not available from the GUI.
 [ACTION]
-Action=sleep
-ActionCommand=None
+Action=Sleep
+ActionCommand=echo "hans"
 
 ```
 
@@ -266,6 +269,10 @@ It is possible to setup the UEFI / BIOS so that the computer will boot itself
 every day.  Each UEFI / BIOS is different, thus the instructions how to set
 them up cannot be found here.  Please refer to your UEFI / BIOS manual or
 online instructions.
+
+Note that on some systems, the computer will wakeup only if it as been
+shutdown completely, but not if it has been suspended.  Thus is this scenario,
+better set the Action to "shutdown".
 
 
 Installation
@@ -287,6 +294,39 @@ For the tarball, extract it and run `configure` followed by `make install`.
     make install    `
 
 You will need to setup the init script properly. Two versions exists.
+
+### Startup
+
+Once installed, Autopoweroff's daemon is not started automatically nor is your system configured to start it upon reboot.  Since Autopoweroff has a disruptive behaviour, i.e. can suspend the system, as a safety feature, one must consciously start it and set Autopoweroff to start upon each reboot.
+
+To start the Autopoweroff's daemon, call either:
+
+    systemctl start autopoweroff.service  # For systemd based systems.
+
+or
+
+    service autopoweroff start            # For System-V init.d based systems.
+
+
+### Startup at boot
+
+As stated above, Autopoweroff is not configured to run automatically upon boot.  To enable Autopoweroff on boot on a systemd based system, run:
+
+    systemctl enable autopoweroff.service  # For systemd based systems.
+
+or
+
+    update-rc.d autopoweroff enable        # For System-V init.d based systems.
+
+Remember that Autopoweroff has an StartupDelay parameter of 5 minutes (configurable).  Thus upon bootup, there is always a 5 minutes window before Autopoweroff can run its action, giving the administrator the time to deactivate Autopoweroff it needs to be.
+
+Autopoweroff daemon can be manually controlled with the following commands:
+
+    systemctl [start|stop|restart] autopoweroff.service  # For systemd based systems.
+
+or
+
+    service autopoweroff [start|stop|restart]            # For System-V init.d based systems.
 
 
 Uninstallation

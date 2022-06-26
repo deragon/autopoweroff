@@ -5,6 +5,36 @@ The following changes have been incorporated in the below mentioned
 versions:
 
 
+Version 4.1.1 - 2022-06-26
+--------------------------------------------------
+
+### Fixes
+
+* Fix bug where Autopoweroff would end after action was executed.  Autopoweroff must never end.
+
+* Fix [GH32] "missing dependency python-gi on autopoweroff-gui #32"
+
+     Add build for 'autopoweroff-gui-linuxmint_*_all.deb'.
+
+* Fix bug in autopoweroffd where sendmsg()'s was called with 'priority'
+  instead of expected 'level' arg.
+
+* Fix [GH28] "Can't install it on Ubuntu 20.04"
+
+    './postinstall' being called now.  Previously, './' was missing and
+    therefore the Makefile could not find the script that resides in the
+    same path.
+
+* Dependency on perl removed, as it is not used.
+
+* Miscellaneous minor improvements.
+
+#### Thanks
+
+Jonas Wiegert reported many bugs, provided fixes and suggested using rtcwake in combination with Autopoweroff, which will be documented in a later release.  Thank you Jonas for your contribution; it is well appreciated.
+
+
+
 Version 4.1.0 - 2022-03-03
 --------------------------------------------------
 
@@ -36,11 +66,11 @@ lights.
 
   Replaces in README.md the installation instructions:
 
-	    sudo dpkg -i autopoweroff*.deb
+      sudo dpkg -i autopoweroff*.deb
 
   with
 
-	    sudo apt install ./*autopoweroff*.deb
+      sudo apt install ./*autopoweroff*.deb
 
   This way, the order of the packages and their dependencies is being
 managed properly.
