@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="51.200000pt"
    height="51.200000pt"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
-   sodipodi:docbase="/sp/home/hans/pers/devel/projects/autopoweroff/pixmaps/build"
+   inkscape:version="1.2 (1:1.2+202206011327+fc4e4096c5)"
    sodipodi:docname="autopoweroff.svg"
    inkscape:export-filename="/sp/home/hans/pers/devel/projects/autopoweroff/trunk/pixmaps/autopoweroff-new.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   sodipodi:modified="true">
+   sodipodi:modified="true"
+   version="1.1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 32 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="64 : 32 : 1"
-       inkscape:persp3d-origin="32 : 21.333333 : 1"
+       inkscape:vp_x="0 : 36.408889 : 1"
+       inkscape:vp_y="0 : 1137.7778 : 0"
+       inkscape:vp_z="72.817778 : 36.408889 : 1"
+       inkscape:persp3d-origin="36.408889 : 24.272592 : 1"
        id="perspective7652" />
     <linearGradient
        gradientTransform="matrix(38.25840,-22.45844,-22.45844,-38.25840,19924.73,12469.64)"
@@ -477,22 +478,27 @@
         </rdf:RDF>
       </metadata>
       <sodipodi:namedview
-         inkscape:window-y="25"
-         inkscape:window-x="0"
+         inkscape:window-y="27"
+         inkscape:window-x="56"
          inkscape:window-height="916"
          inkscape:window-width="1280"
          inkscape:grid-bbox="true"
          showgrid="true"
-         inkscape:current-layer="g1113"
-         inkscape:cy="9.1162095"
-         inkscape:cx="99.265341"
+         inkscape:current-layer="layer1"
+         inkscape:cy="9.2951868"
+         inkscape:cx="99.362342"
          inkscape:zoom="4.6798414"
          inkscape:pageshadow="2"
          inkscape:pageopacity="0.0"
          borderopacity="1.0"
          bordercolor="#666666"
          pagecolor="#ffffff"
-         id="namedview6543">
+         id="namedview6543"
+         inkscape:showpageshadow="2"
+         inkscape:pagecheckerboard="0"
+         inkscape:deskcolor="#d1d1d1"
+         inkscape:document-units="pt"
+         inkscape:window-maximized="0">
         <inkscape:grid
            id="GridFromPre046Settings"
            type="xygrid"
@@ -1308,7 +1314,7 @@
            pagecolor="#ffffff"
            id="namedview2542">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid223"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -3184,7 +3190,7 @@
            pagecolor="#ffffff"
            id="namedview1379">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid408"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -3691,7 +3697,7 @@
          pagecolor="#ffffff"
          id="namedview2926">
         <inkscape:grid
-           id="GridFromPre046Settings"
+           id="grid474"
            type="xygrid"
            originx="0px"
            originy="0.0000000pt"
@@ -3743,7 +3749,7 @@
          pagecolor="#000000"
          id="namedview25196">
         <inkscape:grid
-           id="GridFromPre046Settings"
+           id="grid479"
            type="xygrid"
            originx="0px"
            originy="0.0000000pt"
@@ -4856,7 +4862,7 @@
              pagecolor="#ffffff"
              id="namedview14404">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid664"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -6355,7 +6361,7 @@
                pagecolor="#ffffff"
                id="namedview7623">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid830"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -7024,7 +7030,7 @@
                  pagecolor="#ffffff"
                  id="namedview7775">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid923"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -7076,7 +7082,7 @@
                pagecolor="#ffffff"
                id="namedview7783">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid929"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -7755,7 +7761,7 @@
                pagecolor="#ffffff"
                id="namedview7915">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid1016"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -7887,7 +7893,7 @@
              pagecolor="#ffffff"
              id="namedview7931">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid1030"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -8246,7 +8252,7 @@
                  pagecolor="#ffffff"
                  id="namedview8002">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid1091"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -8298,7 +8304,7 @@
                pagecolor="#ffffff"
                id="namedview8010">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid1097"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -8340,7 +8346,7 @@
              pagecolor="#ffffff"
              id="namedview8017">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid1102"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -8829,7 +8835,7 @@
                pagecolor="#ffffff"
                id="namedview8094">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid1170"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -9191,7 +9197,7 @@
                  pagecolor="#ffffff"
                  id="namedview8155">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid1222"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -9243,7 +9249,7 @@
                pagecolor="#ffffff"
                id="namedview8163">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid1228"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -10146,7 +10152,7 @@
              pagecolor="#ffffff"
              id="namedview8324">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid1341"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -10741,7 +10747,7 @@
                pagecolor="#ffffff"
                id="namedview8412">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid1420"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -11209,7 +11215,7 @@
              pagecolor="#ffffff"
              id="namedview8518">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid1482"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -12101,7 +12107,7 @@
              pagecolor="#ffffff"
              id="namedview8671">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid1595"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -12393,7 +12399,7 @@
                pagecolor="#ffffff"
                id="namedview8725">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid1640"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -12445,7 +12451,7 @@
              pagecolor="#ffffff"
              id="namedview8733">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid1646"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -13191,7 +13197,7 @@
                  pagecolor="#ffffff"
                  id="namedview8853">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid1756"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -13554,7 +13560,7 @@
                pagecolor="#ffffff"
                id="namedview8928">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid1789"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -14052,7 +14058,7 @@
                  pagecolor="#ffffff"
                  id="namedview9015">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid1867"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -15023,7 +15029,7 @@
                    pagecolor="#ffffff"
                    id="namedview9271">
                   <inkscape:grid
-                     id="GridFromPre046Settings"
+                     id="grid1999"
                      type="xygrid"
                      originx="0px"
                      originy="0.0000000pt"
@@ -15134,7 +15140,7 @@
                pagecolor="#ffffff"
                id="namedview9317">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid2007"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -15836,7 +15842,7 @@
                    pagecolor="#ffffff"
                    id="namedview9440">
                   <inkscape:grid
-                     id="GridFromPre046Settings"
+                     id="grid2120"
                      type="xygrid"
                      originx="0px"
                      originy="0.0000000pt"
@@ -16199,7 +16205,7 @@
                  pagecolor="#ffffff"
                  id="namedview9515">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid2153"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -16632,7 +16638,7 @@
                    pagecolor="#ffffff"
                    id="namedview9593">
                   <inkscape:grid
-                     id="GridFromPre046Settings"
+                     id="grid2222"
                      type="xygrid"
                      originx="0px"
                      originy="0.0000000pt"
@@ -17601,7 +17607,7 @@
                      pagecolor="#ffffff"
                      id="namedview9847">
                     <inkscape:grid
-                       id="GridFromPre046Settings"
+                       id="grid2352"
                        type="xygrid"
                        originx="0px"
                        originy="0.0000000pt"
@@ -17712,7 +17718,7 @@
                  pagecolor="#ffffff"
                  id="namedview9893">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid2360"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -18449,7 +18455,7 @@
                    pagecolor="#ffffff"
                    id="namedview10042">
                   <inkscape:grid
-                     id="GridFromPre046Settings"
+                     id="grid2460"
                      type="xygrid"
                      originx="0px"
                      originy="0.0000000pt"
@@ -18571,7 +18577,7 @@
                  pagecolor="#ffffff"
                  id="namedview10066">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid2477"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -18934,7 +18940,7 @@
              pagecolor="#ffffff"
              id="namedview10142">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid2537"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -19644,7 +19650,7 @@
                pagecolor="#ffffff"
                id="namedview10328">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid2672"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -21333,7 +21339,7 @@
                  pagecolor="#ffffff"
                  id="namedview10652">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid2857"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -22004,7 +22010,7 @@
                    pagecolor="#ffffff"
                    id="namedview10802">
                   <inkscape:grid
-                     id="GridFromPre046Settings"
+                     id="grid2952"
                      type="xygrid"
                      originx="0px"
                      originy="0.0000000pt"
@@ -22056,7 +22062,7 @@
                  pagecolor="#ffffff"
                  id="namedview10810">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid2958"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -22923,7 +22929,7 @@
                  pagecolor="#ffffff"
                  id="namedview10959">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid3062"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -23055,7 +23061,7 @@
                pagecolor="#ffffff"
                id="namedview10975">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid3076"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -23097,7 +23103,7 @@
              pagecolor="#ffffff"
              id="namedview10982">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid3081"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -24150,7 +24156,7 @@
                pagecolor="#ffffff"
                id="namedview11236">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid3215"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -27223,7 +27229,7 @@
            pagecolor="#ffffff"
            id="namedview1752">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid3702"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -28722,7 +28728,7 @@
              pagecolor="#ffffff"
              id="namedview2527">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid3868"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -29391,7 +29397,7 @@
                pagecolor="#ffffff"
                id="namedview3659">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid3961"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -29443,7 +29449,7 @@
              pagecolor="#ffffff"
              id="namedview1480">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid3967"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -30122,7 +30128,7 @@
              pagecolor="#ffffff"
              id="namedview1929">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid4054"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -30244,7 +30250,7 @@
            pagecolor="#ffffff"
            id="namedview3841">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid4067"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -30603,7 +30609,7 @@
                pagecolor="#ffffff"
                id="namedview5677">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid4128"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -30655,7 +30661,7 @@
              pagecolor="#ffffff"
              id="namedview1205">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid4134"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -30697,7 +30703,7 @@
            pagecolor="#ffffff"
            id="namedview5706">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid4139"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -31186,7 +31192,7 @@
              pagecolor="#ffffff"
              id="namedview6260">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid4207"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -31528,7 +31534,7 @@
                pagecolor="#ffffff"
                id="namedview6321">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid4257"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -31580,7 +31586,7 @@
              pagecolor="#ffffff"
              id="namedview1311">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid4263"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -32533,7 +32539,7 @@
            pagecolor="#ffffff"
            id="namedview6508">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid4381"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -33128,7 +33134,7 @@
              pagecolor="#ffffff"
              id="namedview7004">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid4460"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -33596,7 +33602,7 @@
            pagecolor="#ffffff"
            id="namedview7137">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid4522"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -34488,7 +34494,7 @@
            pagecolor="#ffffff"
            id="namedview3016">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid4635"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -34780,7 +34786,7 @@
              pagecolor="#ffffff"
              id="namedview4741">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid4680"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -34832,7 +34838,7 @@
            pagecolor="#ffffff"
            id="namedview4762">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid4686"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -35558,7 +35564,7 @@
                pagecolor="#ffffff"
                id="namedview3008">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid4794"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -35921,7 +35927,7 @@
              pagecolor="#ffffff"
              id="namedview3663">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid4827"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -36419,7 +36425,7 @@
                pagecolor="#ffffff"
                id="namedview2440">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid4905"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -37390,7 +37396,7 @@
                  pagecolor="#ffffff"
                  id="namedview1871">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid5037"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -37501,7 +37507,7 @@
              pagecolor="#ffffff"
              id="namedview2750">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid5045"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -38203,7 +38209,7 @@
                  pagecolor="#ffffff"
                  id="namedview1930">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid5158"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -38566,7 +38572,7 @@
                pagecolor="#ffffff"
                id="namedview2008">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid5191"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -39005,7 +39011,7 @@
                  pagecolor="#ffffff"
                  id="namedview2091">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid5263"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -39974,7 +39980,7 @@
                    pagecolor="#ffffff"
                    id="namedview2349">
                   <inkscape:grid
-                     id="GridFromPre046Settings"
+                     id="grid5393"
                      type="xygrid"
                      originx="0px"
                      originy="0.0000000pt"
@@ -40085,7 +40091,7 @@
                pagecolor="#ffffff"
                id="namedview2395">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid5401"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -40822,7 +40828,7 @@
                  pagecolor="#ffffff"
                  id="namedview2989">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid5501"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -40944,7 +40950,7 @@
                pagecolor="#ffffff"
                id="namedview3019">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid5518"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -41060,7 +41066,7 @@
          pagecolor="#ffffff"
          id="namedview4171">
         <inkscape:grid
-           id="GridFromPre046Settings"
+           id="grid5531"
            type="xygrid"
            originx="0px"
            originy="0.0000000pt"
@@ -41358,7 +41364,7 @@
            pagecolor="#ffffff"
            id="namedview4348">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid5583"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -42068,7 +42074,7 @@
              pagecolor="#ffffff"
              id="namedview2094">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid5718"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -43757,7 +43763,7 @@
                pagecolor="#ffffff"
                id="namedview4891">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid5903"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -44428,7 +44434,7 @@
                  pagecolor="#ffffff"
                  id="namedview5040">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid5998"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -44480,7 +44486,7 @@
                pagecolor="#ffffff"
                id="namedview5048">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid6004"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -45349,7 +45355,7 @@
                pagecolor="#ffffff"
                id="namedview5202">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid6110"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -45481,7 +45487,7 @@
              pagecolor="#ffffff"
              id="namedview5218">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid6124"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -45523,7 +45529,7 @@
            pagecolor="#ffffff"
            id="namedview2783">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid6129"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -46572,7 +46578,7 @@
              pagecolor="#ffffff"
              id="namedview5485">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid6262"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -47065,7 +47071,7 @@
          pagecolor="#ffffff"
          id="namedview5600">
         <inkscape:grid
-           id="GridFromPre046Settings"
+           id="grid6315"
            type="xygrid"
            originx="0px"
            originy="0.0000000pt"
@@ -48859,7 +48865,7 @@
              inkscape:window-x="0"
              inkscape:window-y="25">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid6622"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -49212,7 +49218,7 @@
            inkscape:window-x="0"
            inkscape:window-y="25">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid6654"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -50096,7 +50102,7 @@
            inkscape:window-x="0"
            inkscape:window-y="25">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid6782"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -50943,7 +50949,7 @@
              inkscape:window-x="0"
              inkscape:window-y="25">
             <inkscape:grid
-               id="GridFromPre046Settings"
+               id="grid6897"
                type="xygrid"
                originx="0px"
                originy="0.0000000pt"
@@ -50995,7 +51001,7 @@
            inkscape:window-x="0"
            inkscape:window-y="25">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid6903"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -51870,7 +51876,7 @@
            inkscape:window-x="0"
            inkscape:window-y="25">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid7012"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -53034,7 +53040,7 @@
                inkscape:window-x="0"
                inkscape:window-y="25">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid7198"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -53885,7 +53891,7 @@
                  inkscape:window-x="0"
                  inkscape:window-y="25">
                 <inkscape:grid
-                   id="GridFromPre046Settings"
+                   id="grid7311"
                    type="xygrid"
                    originx="0px"
                    originy="0.0000000pt"
@@ -53937,7 +53943,7 @@
                inkscape:window-x="0"
                inkscape:window-y="25">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid7317"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -54812,7 +54818,7 @@
                inkscape:window-x="0"
                inkscape:window-y="25">
               <inkscape:grid
-                 id="GridFromPre046Settings"
+                 id="grid7426"
                  type="xygrid"
                  originx="0px"
                  originy="0.0000000pt"
@@ -55626,7 +55632,8 @@
           <sodipodi:guide
              orientation="horizontal"
              position="231.90045"
-             id="guide9808" />
+             id="guide9808"
+             inkscape:locked="false" />
         </sodipodi:namedview>
         <metadata
            id="metadata2416">
@@ -55668,7 +55675,7 @@
          inkscape:window-x="17"
          inkscape:window-y="57">
         <inkscape:grid
-           id="GridFromPre046Settings"
+           id="grid7556"
            type="xygrid"
            originx="0px"
            originy="0.0000000pt"
@@ -56010,7 +56017,7 @@
            inkscape:window-x="0"
            inkscape:window-y="25">
           <inkscape:grid
-             id="GridFromPre046Settings"
+             id="grid7606"
              type="xygrid"
              originx="0px"
              originy="0.0000000pt"
@@ -56257,7 +56264,7 @@
          inkscape:window-x="0"
          inkscape:window-y="25">
         <inkscape:grid
-           id="GridFromPre046Settings"
+           id="grid7640"
            type="xygrid"
            originx="0px"
            originy="0.0000000pt"
