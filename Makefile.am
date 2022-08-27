@@ -35,7 +35,9 @@ desktop_DATA = \
 
 pixmapsdir=${datadir}/pixmaps
 pixmaps_DATA = \
-	pixmaps/autopoweroff.png \
+	pixmaps/autopoweroff-14x14.png \
+	pixmaps/autopoweroff-192x192.png \
+	pixmaps/autopoweroff-64x64.png \
 	pixmaps/autopoweroff.svg
 
 etcdir = $(sysconfdir)/autopoweroff
