@@ -26,7 +26,6 @@ python_DATA = \
 gladedir=${datadir}/glade
 glade_DATA = \
 	glade/autopoweroff.glade \
-	glade/autopoweroff.gladep \
 	glade/autopoweroff.trans
 
 desktopdir=${datarootdir}/applications
