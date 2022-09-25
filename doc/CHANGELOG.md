@@ -5,6 +5,19 @@ The following changes have been incorporated in the below mentioned
 versions:
 
 
+Version 4.1.2 - 2022-09-25
+--------------------------------------------------
+
+### Fixes
+
+* Fix [GH32](https://github.com/deragon/autopoweroff/issues/32) "missing dependency python-gi on autopoweroff-gui"
+
+    Revisit this bug to generate packages for many more distributions with
+    versions.
+
+* Minor fix in GUI to show Autopoweroff's logo instead of generic image.
+
+
 Version 4.1.1 - 2022-06-26
 --------------------------------------------------
 
@@ -12,14 +25,14 @@ Version 4.1.1 - 2022-06-26
 
 * Fix bug where Autopoweroff would end after action was executed.  Autopoweroff must never end.
 
-* Fix [GH32] "missing dependency python-gi on autopoweroff-gui #32"
+* Fix [GH32](https://github.com/deragon/autopoweroff/issues/32) "missing dependency python-gi on autopoweroff-gui"
 
      Add build for 'autopoweroff-gui-linuxmint_*_all.deb'.
 
 * Fix bug in autopoweroffd where sendmsg()'s was called with 'priority'
   instead of expected 'level' arg.
 
-* Fix [GH28] "Can't install it on Ubuntu 20.04"
+* Fix [GH28](https://github.com/deragon/autopoweroff/issues/28) "Can't install it on Ubuntu 20.04"
 
     './postinstall' being called now.  Previously, './' was missing and
     therefore the Makefile could not find the script that resides in the
