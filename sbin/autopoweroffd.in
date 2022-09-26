@@ -87,21 +87,24 @@ lockFile.close()
 # SIGTERM Handler
 def sigtermHandler(_signo, _stack_frame):
   global pid
-  sendmsg("Graceful shutdown of process PID #{pid} initiated.  Please wait around 30s.")
+  sendmsg(f"Graceful shutdown of process PID #{pid} initiated.  Please wait around 30s.")
 
   global apoObserverDeviceManager
   apoObserverDeviceManager.terminate()
 
   global apoObserverResources
   apoObserverResources.terminate()
-  apoObserverResources.join()
 
   global aoha
   aoha.terminate()
-  aoha.join()
 
   global apoObserverNoActionTimeRange
   apoObserverNoActionTimeRange.terminate()
+
+
+  # Waiting on all thread by joining them all here.
+  apoObserverResources.join()
+  aoha.join()
   apoObserverNoActionTimeRange.join()
 
   global pidfile
