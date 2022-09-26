@@ -119,9 +119,8 @@ def sigtermHandler(_signo, _stack_frame):
 # The system must remain on for at least the 'startupdelay' first minutes
 # it was started.
 def startupDelay():
-  if not gTestMode:
-    sendmsg("Startup sleep of " + str(configuration.startupdelay) + " minutes.")
-    time.sleep(configuration.startupdelay * 60)
+  sendmsg("Startup sleep of " + str(configuration.startupdelay) + " minutes.")
+  time.sleep(configuration.startupdelay * 60)
 
 signal.signal(signal.SIGTERM, sigtermHandler)
 
