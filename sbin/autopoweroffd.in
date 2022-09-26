@@ -188,10 +188,18 @@ def setConditions(status):
 ######################################################################
 try:
 
+  firstTime = True
   while True:  # Outer loop.
 
-    isToBePutOnHold = False
-    alivePrint      = False
+    startupDelay()
+
+    if firstTime:
+      firstTime = False
+    else:
+      logger.info("Reintializing state after action command execution.")
+
+    isToBePutOnHold            = False
+    alivePrint                 = False
     isThereAnyConditionsNotMet = False
 
     # Conditions descriptions are String that can change with time.
@@ -200,8 +208,6 @@ try:
     # even though only the description changed, not the actual state.
     conditionsDescription = {}
     conditionsState       = {}
-
-    startupDelay()
 
     while True:  # Inner loop
 
@@ -269,19 +275,15 @@ try:
 
 
         if gTestMode:
-          sendmsg( \
-              "Test mode:  would have run action '" + configuration.actioncommand + "' at " + \
-              time.strftime("%H:%M:%S", (time.localtime(time.time()))))
+          sendmsg(f"Test mode.  Would have run action:  '{configuration.actioncommand}'")
 
         else:
-          sendmsg("All the conditions are met.  Running action '" + configuration.actioncommand + "'.")
+          sendmsg(f"All the conditions are met.  Running action '{configuration.actioncommand}'.")
           import subprocess
           subprocess.getstatusoutput(configuration.actioncommand)
 
-        # Arbitrary 5s sleep.  If this sleep is removed, Autopoweroff will run
-        # at 100% CPU since it will endlessly loop until the condition
-        # changes.
-        time.sleep(5)
+        break  # Get back to the outer loop with full reset.
+
 
 except Exception as exception:
   logger.error(str(exception))
