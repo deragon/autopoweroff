@@ -195,6 +195,9 @@ try:
 
     if firstTime:
       firstTime = False
+      if configuration.startupdelay < 1:
+        configuration.startupdelay = 2
+        logger.warning("Startup delay is smaller than 1.  Resetting to 2 minutes for next time after the action command is executed.")
     else:
       logger.info("Reintializing state after action command execution.")
 
