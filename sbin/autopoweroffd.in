@@ -211,8 +211,8 @@ try:
       setConditions(apoObserverDeviceManager.status())
       setConditions(apoObserverResources.status())
 
-      logger.debug("conditionsState:  " + str(conditionsState))
-      logger.debug("previousConditionsState:  " + str(previousConditionsState))
+      logger.debug("conditionsState:  %s",         str(conditionsState))
+      logger.debug("previousConditionsState:  %s", str(previousConditionsState))
 
       if conditionsState != previousConditionsState:
         isThereAnyConditionsNotMet = False
@@ -222,11 +222,10 @@ try:
             isThereAnyConditionsNotMet = True
           sendmsg("  " + conditionsDescription[key])
         logger.debug( \
-          "Conditions array:  " + conditionsArrayToString(conditionsState))
+          "Conditions array:  %s", conditionsArrayToString(conditionsState))
 
       if isThereAnyConditionsNotMet:
-        logger.debug("At least one condition is not met.  Looping." + \
-                     str(conditionsState))
+        logger.debug("At least one condition is not met.  Looping.")
         # Arbitrary 5s sleep.  If this sleep is removed, Autopoweroff will
         # run at 100% CPU since it will endlessly loop until the condition
         # changes.
@@ -244,7 +243,7 @@ try:
       # new one.
       hostsStillAlive = aoha.hostsStillAlive
 
-      logger.debug("aoha.hostsStillAlive = " + str(hostsStillAlive))
+      logger.debug("aoha.hostsStillAlive = %s", str(hostsStillAlive))
 
       if len(hostsStillAlive) > 0:
         if not alivePrint:
