@@ -34,6 +34,7 @@ stop()
 {
   log_begin_msg "Stopping Autopoweroff..."
   killproc -p @autopoweroff_pidfile@ autopoweroffd
+  for psid in $(ps -aux | grep [a]utopoweroff | awk '{print $2}'); do kill -9 $psid; done
   log_end_msg $?
 }
 
