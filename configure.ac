@@ -165,6 +165,9 @@ if [[ "${INSTALLTYPE}" == "rpm|deb" ]]; then
   autopoweroff_sbindir="/usr/sbin"
   autopoweroff_vardir="/var"
   autopoweroff_logdir="${autopoweroff_vardir}/log"
+  # /var/run is deprecated starting with FHS 3.0.  /run is to be used instead.
+  # See: https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch05s13.html
+  autopoweroff_rundir="/run/autopoweroff"
   set +x
 
 else
@@ -192,6 +195,7 @@ else
   autopoweroff_etcdir="${sysconfdir}"
   autopoweroff_confdir="${autopoweroff_etcdir}/autopoweroff"
   autopoweroff_vardir="${autopoweroff_sharedir}/var"
+  autopoweroff_rundir="${autopoweroff_sharedir}/run/autopoweroff"
   autopoweroff_logdir="${autopoweroff_sharedir}/log"
   autopoweroff_bindir="${bindir}"
   autopoweroff_sbindir="${sbindir}"
@@ -199,9 +203,7 @@ else
   set +x
 fi
 
-autopoweroff_rundir="${autopoweroff_vardir}/run/autopoweroff"
 autopoweroff_piddir="${autopoweroff_rundir}"
-
 autopoweroff_pidfile="${autopoweroff_piddir}/autopoweroff.pid"
 
 # Expanding used variables that can be interpreted by a Python script.
