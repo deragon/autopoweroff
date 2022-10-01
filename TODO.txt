@@ -1,24 +1,10 @@
 ======================================================================
-Convert to Python3
-======================================================================
 
-# Comment by Hans Deragon (hans@deragon.biz), 2016-07-15 07:11:25 EDT
-Are those files obsolete?  They do not find their way under the deb package.
-
-./etc/security
-./etc/security/console.apps
-./etc/security/console.apps/autopoweroff
-./etc/security/console.apps/autopoweroff.in
-./etc/pam.d
-./etc/pam.d/autopoweroff
-
-======================================================================
-Move from init.d to systemd
-(waiting to actually get a distro (Ubuntu 16.04 LTS) with systemd to do this).
-======================================================================
 Handle suspdend; when comming back, time difference is very high
 regarding usage.  Old time should be discarded.
+
 ======================================================================
+
 Touchpad not getting detected.
 
 http://wiki.archlinux.org/index.php/Touchpad_Synaptics
