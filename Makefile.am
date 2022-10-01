@@ -51,6 +51,10 @@ polkit_DATA = usr/share/polkit-1/actions/com.github.deragon.autopoweroff.policy
 pamdir = $(sysconfdir)/pam.d
 pam_DATA = etc/pam.d/autopoweroff
 
+autosystemddir = $(sysconfdir)/systemd/system
+autosystemd_SCRIPTS = \
+  etc/systemd/system/autopoweroff.service
+
 autoinitdir = $(sysconfdir)/init.d
 autoinit_SCRIPTS = \
   etc/init.d/autopoweroff.lsb \
@@ -69,6 +73,7 @@ EXTRA_DIST =                            \
 	${bin_SCRIPTS}                        \
 	${sbin_SCRIPTS}                       \
 	${python_DATA}                        \
+	${autosystemd_SCRIPTS}                \
 	${autoinit_SCRIPTS}                   \
 	${glade_DATA}                         \
 	${desktop_DATA}                       \

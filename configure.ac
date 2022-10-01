@@ -12,7 +12,7 @@ umask 022
 PATH=/sbin:/usr/sbin:${PATH}
 
 #Macro: AC_INIT (PACKAGE, VERSION, [BUG-REPORT], [TARNAME], [URL])
-AC_INIT([autopoweroff], [4.1.2], [https://github.com/deragon/autopoweroff/issues], [autopoweroff], [https://github.com/deragon/autopoweroff])
+AC_INIT([autopoweroff], [4.2.0], [https://github.com/deragon/autopoweroff/issues], [autopoweroff], [https://github.com/deragon/autopoweroff])
 #AC_REVISION not used.
 #AC_REVISION($Revision: 1.4 $)
 AC_COPYRIGHT([Hans Deragon, Copyright 2003-2022, GPL 2.0])
@@ -203,6 +203,7 @@ else
   set +x
 fi
 
+autopoweroffd_exec="${autopoweroff_sbindir}/autopoweroffd"
 autopoweroff_piddir="${autopoweroff_rundir}"
 autopoweroff_pidfile="${autopoweroff_piddir}/autopoweroff.pid"
 
@@ -222,20 +223,21 @@ program_name="Autopoweroff"
 
 ARCH=noarch
 
-AC_CONFIG_FILES([ \
-  Makefile \
-  packages/rpm/autopoweroff.spec \
-  usr/bin/autopoweroff-gui \
-  sbin/autopoweroffd \
-  sbin/autopoweroff-gui \
-  sbin/autopoweroff-upgrade \
-  sbin/autopoweroff-uninstall \
-  etc/autopoweroff/autopoweroff-metadata \
-  etc/init.d/autopoweroff.lsb \
-  etc/init.d/autopoweroff.rc-status \
-  etc/init.d/autopoweroff.redhat \
+AC_CONFIG_FILES([                             \
+  Makefile                                    \
+  packages/rpm/autopoweroff.spec              \
+  usr/bin/autopoweroff-gui                    \
+  sbin/autopoweroffd                          \
+  sbin/autopoweroff-gui                       \
+  sbin/autopoweroff-upgrade                   \
+  sbin/autopoweroff-uninstall                 \
+  etc/autopoweroff/autopoweroff-metadata      \
+  etc/systemd/system/autopoweroff.service     \
+  etc/init.d/autopoweroff.lsb                 \
+  etc/init.d/autopoweroff.rc-status           \
+  etc/init.d/autopoweroff.redhat              \
   usr/share/applications/autopoweroff.desktop \
-  apoinstall \
+  apoinstall                                  \
   ])
 
 AC_SUBST(ARCH)
@@ -248,6 +250,7 @@ AC_SUBST(COPYRIGHT)
 AC_SUBST(LICENCE)
 AC_SUBST(production)
 AC_SUBST(program_name)
+AC_SUBST(autopoweroffd_exec)
 AC_SUBST(autopoweroff_applicationsdir)
 AC_SUBST(autopoweroff_sharedir)
 AC_SUBST(autopoweroff_etcdir)
@@ -266,14 +269,14 @@ AC_SUBST(apoinstall)
 
 AC_OUTPUT
 
-chmod a+x \
-  sbin/autopoweroffd \
-  sbin/autopoweroff-gui \
-  sbin/autopoweroff-uninstall \
-  sbin/autopoweroff-upgrade \
-  etc/init.d/autopoweroff.lsb \
+chmod a+x                           \
+  sbin/autopoweroffd                \
+  sbin/autopoweroff-gui             \
+  sbin/autopoweroff-uninstall       \
+  sbin/autopoweroff-upgrade         \
+  etcd/init.d/autopoweroff.lsb      \
   etc/init.d/autopoweroff.rc-status \
-  etc/init.d/autopoweroff.redhat \
+  etc/init.d/autopoweroff.redhat    \
   apoinstall
 
 # Generating final version of README.md from template doc/README.md

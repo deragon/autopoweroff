@@ -133,6 +133,7 @@ build_daemon_dir() {
   mkdir -p "${BUILD_DAEMON_DIR}"
   rsync -ar "${BUILD_GENERIC_DIR}/"* "${BUILD_DAEMON_DIR}/." \
     --delete                                                 \
+    --exclude '**/init.d/'                                   \
     --exclude '**/glade/'                                    \
     --exclude '**/polkit-1/'                                 \
     --exclude '**/pixmaps/'                                  \
@@ -145,7 +146,6 @@ build_daemon_dir() {
     --prune-empty-dirs
 
   mv "${BUILD_DAEMON_DIR}/usr/share/doc/autopoweroff"  "${BUILD_DAEMON_DIR}/usr/share/doc/autopoweroff-daemon"
-  mv "${BUILD_DAEMON_DIR}/etc/init.d/autopoweroff.lsb" "${BUILD_DAEMON_DIR}/etc/init.d/autopoweroff"
 }
 
 
@@ -158,8 +158,10 @@ build_gui_dir() {
 
   # Removing /etc/autopoweroff because configuration files are provided
   # by the daemon package.
+  set -x
   rsync -ar "${BUILD_GENERIC_DIR}/"* "${BUILD_GUI_DIR}/." \
     --delete                                              \
+    --exclude '**/systemd/'                               \
     --exclude '**/init.d/'                                \
     --exclude '**/autopoweroffd'                          \
     --exclude '**/etc/autopoweroff'                       \
@@ -186,8 +188,8 @@ list_deb_info()
 
 build_daemon_deb_dir()
 {
-  rm -rf "${GENERATED_DIR}/build-daemon-deb"
-  mkdir -p "${GENERATED_DIR}/build-daemon-deb"
+  rm    -rf "${GENERATED_DIR}/build-daemon-deb"
+  mkdir  -p "${GENERATED_DIR}/build-daemon-deb"
 
   rsync -ar              \
     --delete             \
@@ -200,13 +202,15 @@ build_daemon_deb_dir()
 build_ubuntu_20.04()
 {
   # Daemon Build
-  eval buildpackage                              \
-    "ubuntu/20.04"                               \
-    --chdir  "${GENERATED_DIR}/build-daemon-deb" \
-    --name    \"${PACKAGE_NAME}-daemon\"         \
-    --depends python3                            \
-    --depends python3-pyinotify                  \
-    --depends python3-psutil                     \
+  eval buildpackage                                                                              \
+    "ubuntu/20.04"                                                                               \
+    --chdir  "${GENERATED_DIR}/build-daemon-deb"                                                 \
+    --name    \"${PACKAGE_NAME}-daemon\"                                                         \
+    --depends python3                                                                            \
+    --depends python3-pyinotify                                                                  \
+    --depends python3-psutil                                                                     \
+    --deb-systemd  \"${GENERATED_DIR}/build-daemon-deb/etc/systemd/system/autopoweroff.service\" \
+    --deb-systemd-enable                                                                         \
     --output-type deb
 
   list_deb_info "${FILENAME}"
@@ -228,13 +232,15 @@ build_ubuntu_20.04()
 build_ubuntu_22.04()
 {
   # Daemon Build
-  eval buildpackage                                 \
-    "ubuntu/22.04"                                  \
-    --chdir   \"${GENERATED_DIR}/build-daemon-deb\" \
-    --name    \"${PACKAGE_NAME}-daemon\"            \
-    --depends python3                               \
-    --depends python3-pyinotify                     \
-    --depends python3-psutil                        \
+  eval buildpackage                                                                              \
+    "ubuntu/22.04"                                                                               \
+    --chdir   \"${GENERATED_DIR}/build-daemon-deb\"                                              \
+    --name    \"${PACKAGE_NAME}-daemon\"                                                         \
+    --depends python3                                                                            \
+    --depends python3-pyinotify                                                                  \
+    --depends python3-psutil                                                                     \
+    --deb-systemd  \"${GENERATED_DIR}/build-daemon-deb/etc/systemd/system/autopoweroff.service\" \
+    --deb-systemd-enable                                                                         \
     --output-type deb
 
   list_deb_info "${FILENAME}"
@@ -256,13 +262,15 @@ build_ubuntu_22.04()
 build_popos_22.04()
 {
   # Daemon Build
-  eval buildpackage                                 \
-    "popos/22.04"                                   \
-    --chdir   \"${GENERATED_DIR}/build-daemon-deb\" \
-    --name    \"${PACKAGE_NAME}-daemon\"            \
-    --depends python3                               \
-    --depends python3-pyinotify                     \
-    --depends python3-psutil                        \
+  eval buildpackage                                                                              \
+    "popos/22.04"                                                                                \
+    --chdir   \"${GENERATED_DIR}/build-daemon-deb\"                                              \
+    --name    \"${PACKAGE_NAME}-daemon\"                                                         \
+    --depends python3                                                                            \
+    --depends python3-pyinotify                                                                  \
+    --depends python3-psutil                                                                     \
+    --deb-systemd  \"${GENERATED_DIR}/build-daemon-deb/etc/systemd/system/autopoweroff.service\" \
+    --deb-systemd-enable                                                                         \
     --output-type deb
 
   list_deb_info "${FILENAME}"
@@ -288,13 +296,15 @@ build_popos_22.04()
 build_gui_linuxmint_20.3()
 {
   # Daemon Build
-  eval buildpackage                                 \
-    "mint/22.3"                                     \
-    --chdir   \"${GENERATED_DIR}/build-daemon-deb\" \
-    --name    \"${PACKAGE_NAME}-daemon\"            \
-    --depends python3                               \
-    --depends python3-pyinotify                     \
-    --depends python3-psutil                        \
+  eval buildpackage                                                                              \
+    "mint/22.3"                                                                                  \
+    --chdir   \"${GENERATED_DIR}/build-daemon-deb\"                                              \
+    --name    \"${PACKAGE_NAME}-daemon\"                                                         \
+    --depends python3                                                                            \
+    --depends python3-pyinotify                                                                  \
+    --depends python3-psutil                                                                     \
+    --deb-systemd  \"${GENERATED_DIR}/build-daemon-deb/etc/systemd/system/autopoweroff.service\" \
+    --deb-systemd-enable                                                                         \
     --output-type deb
 
   list_deb_info "${FILENAME}"
@@ -334,17 +344,18 @@ list_rpm_info()
 
 build_daemon_rpm()
 {
-  rm -rf "${GENERATED_DIR}/build-daemon-rpm"
-  mkdir -p "${GENERATED_DIR}/build-daemon-rpm"
+  rm    -rf "${GENERATED_DIR}/build-daemon-rpm"
+  mkdir  -p "${GENERATED_DIR}/build-daemon-rpm"
 
   rsync -ar            \
     --delete           \
     --prune-empty-dirs \
     "${GENERATED_DIR}/build-daemon/"* "${GENERATED_DIR}/build-daemon-rpm"
 
-  cd "${GENERATED_DIR}/build-daemon-rpm/etc/init.d"
-  mv autopoweroff.redhat autopoweroff
-  cd -
+# init.d SysV obsolete for RPM.
+#  cd "${GENERATED_DIR}/build-daemon-rpm/etc/init.d"
+#  mv autopoweroff.redhat autopoweroff
+#  cd -
 
   set -x
   eval buildpackage \

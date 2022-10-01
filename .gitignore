@@ -26,6 +26,7 @@ doc/index.html
 **/autopoweroff-gui
 **/autopoweroff.desktop
 etc/autopoweroff/autopoweroff-metadata
+etc/systemd/system/autopoweroff.service
 etc/init.d/autopoweroff.lsb
 etc/init.d/autopoweroff.rc-status
 etc/init.d/autopoweroff.redhat

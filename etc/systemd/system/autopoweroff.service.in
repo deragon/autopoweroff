@@ -1,0 +1,11 @@
+[Unit]
+Description=@program_name@ systemd service unit file.
+Documentation=@PROJECT_WEBSITE@
+
+[Service]
+ExecStart="@autopoweroffd_exec@"
+PIDFile=@autopoweroff_rundir@/autopoweroff.pid
+Type=forking
+
+[Install]
+WantedBy=multi-user.target
