@@ -456,4 +456,7 @@ build_gui_rpm()
   build_popos_22.04
   build_gui_linuxmint_20.3
 
+  cd "${SCRIPT_PATH_ABS}"
+  run mv autopoweroff-*.tar.gz packages/.
+
 } 2>&1 | tee "${LOGFILE}"
