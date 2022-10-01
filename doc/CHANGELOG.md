@@ -5,6 +5,46 @@ The following changes have been incorporated in the below mentioned
 versions:
 
 
+Version 4.2.0 - 2022-10-01
+--------------------------------------------------
+
+### New Features
+
+* True systemd support.  Autopoweroff Deb and RPM packages are now built
+  for systemd.  SysV Init files remain available with the tarball.
+
+  This new feature fixes [GH19](https://github.com/deragon/autopoweroff/issues/19) "Bug in SysV Init Script - Does NOT kill autopoweroffd"
+
+  On a systemd file, it turns out that systemd is buggy supporting old SysV
+  Init files.  Mostly, /etc/init.d/autopoweroff stop does not kill
+  Autopoweroff daemon's.  The solution is simply to move to true systemd
+  support, which this release does.
+
+
+* If the startup delay is below 1 minute (0 or negative), then it is set
+  to 2 minutes after the action command is executed once.
+
+  This is to prevent the action command to be repeatedly executed very
+  quickly.  If the command is for instance, 'Sleep', without this fix /
+  safeguard the computer would always go to sleep immediately after waking
+  up, giving no chance to the user to take control of it.
+
+### Fixes
+
+* Inner loop breakout when command executed.
+
+  Now after the action command is executed, the execution thread leaves
+  the inner loop to restart at the outer loop, causing variables to be
+  reset properly as if Autopoweroff restarted completely.
+
+* Upon termination of Autopoweroff daemon, all thread joining are done after
+  all terminate() calls are done, accelerating the termination.
+
+* Fix bug about pid not showing up when logging graceful shutdown.
+
+* Miscellaneous minor improvements.
+
+
 Version 4.1.2 - 2022-09-25
 --------------------------------------------------
 
