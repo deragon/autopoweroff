@@ -1,4 +1,4 @@
-![Python powered](pixmaps/autopoweroff.png) &nbsp; Autopoweroff
+![Logo](pixmaps/autopoweroff-192x192.png) &nbsp; Autopoweroff
 ==================================================
 
 

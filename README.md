@@ -1,4 +1,4 @@
-![Python powered](pixmaps/autopoweroff.png) &nbsp; Autopoweroff
+![Logo](pixmaps/autopoweroff-192x192.png) &nbsp; Autopoweroff
 ==================================================
 
 
@@ -199,8 +199,8 @@ EndHour=7
 #   activity on the server will be ignored.
 
 [TIMEOUTS]
-StartupDelay=0
-IdleTime=0
+StartupDelay=5
+IdleTime=15
 
 
 # Hosts parameter (list of hostnames or IPs, separated by commas):
@@ -258,7 +258,7 @@ CpuPercentage=Disabled
 #   Since this option is an advance one, it is not available from the GUI.
 [ACTION]
 Action=Sleep
-ActionCommand=echo "hans"
+ActionCommand=None
 
 ```
 
