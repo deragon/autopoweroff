@@ -297,7 +297,7 @@ build_gui_linuxmint_20.3()
 {
   # Daemon Build
   eval buildpackage                                                                              \
-    "mint/22.3"                                                                                  \
+    "mint/20.3"                                                                                  \
     --chdir   \"${GENERATED_DIR}/build-daemon-deb\"                                              \
     --name    \"${PACKAGE_NAME}-daemon\"                                                         \
     --depends python3                                                                            \
