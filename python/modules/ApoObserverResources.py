@@ -28,17 +28,17 @@ class ApoObserverResources(ApoObserverManager, ApoObserverThread):
     def __init__(self, configuration):
 
         ApoObserverThread.__init__(self)
-        self.isInTimeRange = None
         self.logger = logging.getLogger("apo.observer.resources")
         self.resources = configuration.resources
         self.cpuUsageConfiguredLimit = \
             self.resources["CPU"]["Percentage"].lower()
-        if self.cpuUsageConfiguredLimit != "disabled":
-           self.cpuUsageConfiguredLimit = int(self.cpuUsageConfiguredLimit)
 
-        self.setCpuUsage()
-        self.running = True
-        self.start()
+        if self.cpuUsageConfiguredLimit != "disabled":
+            self.cpuUsageConfiguredLimit = int(self.cpuUsageConfiguredLimit)
+
+            self.setCpuUsage()
+            self.running = True
+            self.start()
 
 
     def setCpuUsage(self):
