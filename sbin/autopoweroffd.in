@@ -101,6 +101,9 @@ def sigtermHandler(_signo, _stack_frame):
   global apoObserverNoActionTimeRange
   apoObserverNoActionTimeRange.terminate()
 
+  global apoObserverDisableFile
+  apoObserverDisableFile.terminate()
+
 
   # Waiting on all thread by joining them all here.
   apoObserverResources.join()
@@ -127,7 +130,7 @@ signal.signal(signal.SIGTERM, sigtermHandler)
 # ======================================================================
 # Configuration
 import ApoConfig
-cancelfile = rundir + "/" + ApoConfig.CANCELFILENAME
+disablefile = rundir + "/" + ApoConfig.DISABLEFILENAME
 
 configuration = ApoConfig.Configuration(None, None, None, None)
 try:
@@ -138,6 +141,7 @@ except ApoConfig.APOError as message:
   sendmsg(message)
 
 sendmsg("Command to execute when all conditions are met:  " + configuration.actioncommand)
+
 
 ######################################################################
 # Starting thread that checks if any host is still alive.
@@ -185,6 +189,12 @@ def setConditions(status):
   conditionsDescription[name] = description
 
 
+
+######################################################################
+import ApoObserverDisableFile
+apoObserverDisableFile = ApoObserverDisableFile.ApoObserverDisableFile(disablefile)
+
+
 ######################################################################
 try:
 
@@ -201,7 +211,6 @@ try:
     else:
       logger.info("Reintializing state after action command execution.")
 
-    isToBePutOnHold            = False
     alivePrint                 = False
     isThereAnyConditionsNotMet = False
 
@@ -219,6 +228,7 @@ try:
       setConditions(apoObserverNoActionTimeRange.status())
       setConditions(apoObserverDeviceManager.status())
       setConditions(apoObserverResources.status())
+      setConditions(apoObserverDisableFile.status())
 
       logger.debug("conditionsState:  %s",         str(conditionsState))
       logger.debug("previousConditionsState:  %s", str(previousConditionsState))
@@ -264,18 +274,6 @@ try:
         # changes.
         time.sleep(5)
         continue
-      else:
-        while os.path.exists(cancelfile):
-          if not isToBePutOnHold:
-            isToBePutOnHold = True
-            sendmsg(programname +
-                    " disabled as requested (detected presence of '" +
-                    cancelfile + "').")
-          time.sleep(1 * 60)
-          continue
-
-        isToBePutOnHold = False
-
 
         if gTestMode:
           sendmsg(f"Test mode.  Would have run action:  '{configuration.actioncommand}'")

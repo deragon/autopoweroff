@@ -65,7 +65,7 @@ installed on this machine.  Following is the specific error
       """ + str(errormsg) + "\n")
   sys.exit(1)
 
-cancelfile = rundir + "/" + ApoConfig.CANCELFILENAME
+disablefile = rundir + "/" + ApoConfig.DISABLEFILENAME
 
 LMConfigHosts = None
 edithostiter  = None
@@ -273,12 +273,12 @@ def on_BtnStatusCmdApply_clicked(*args):
   value = radio_StatusEnabled.get_active()
   dialog=builder.get_object("DlgInform")
   if value == 0:
-    file = os.open(cancelfile, os.O_CREAT, 0o444)
+    file = os.open(disablefile, os.O_CREAT, 0o444)
     os.close(file)
     dialog.set_markup("Autopoweroff is now disabled.");
   else:
     try:
-      os.remove(cancelfile)
+      os.remove(disablefile)
       dialog.set_markup("Autopoweroff is now enabled.");
     except OSError:
       dialog.set_markup("Autopoweroff was already enabled.");
@@ -287,7 +287,7 @@ def on_BtnStatusCmdApply_clicked(*args):
 def setRadioStatusButtons():
   radio_StatusEnabled  = builder.get_object("RadioStatusEnabled");
   radio_StatusDisabled = builder.get_object("RadioStatusDisabled");
-  if os.path.exists(cancelfile):
+  if os.path.exists(disablefile):
     radio_StatusDisabled.set_active(1)
   else:
     radio_StatusEnabled.set_active(1)

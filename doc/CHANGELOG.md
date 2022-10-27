@@ -4,6 +4,19 @@ Autopoweroff - Change history
 The following changes have been incorporated in the below mentioned
 versions:
 
+Version 4.2.1 - ????
+--------------------------------------------------
+
+### Under the hood improvements
+
+* Disable feature now implemented as another ApoObserverManager child,
+  following the recent standard to detect events affecting Autopoweroff's
+  behavior.
+
+  The disable file used to be called '/run/autopoweroff/autopoweroff.cancel'
+  but now is renamed as '/run/autopoweroff/autopoweroff.disable'.
+
+
 
 Version 4.2.0 - 2022-10-01
 --------------------------------------------------
