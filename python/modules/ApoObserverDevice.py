@@ -33,12 +33,25 @@ class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
     # Start watching the first path available in the list.
     for devicePath in ["/dev/input/by-path", "/dev/input"]:
       if os.path.exists(devicePath):
-        wdd = wm.add_watch(devicePath, pyinotify.IN_DELETE | pyinotify.IN_CREATE, rec=True)
+        wdd = wm.add_watch(devicePath, pyinotify.IN_DELETE | pyinotify.IN_CREATE | pyinotify.IN_MOVED_TO | pyinotify.IN_DONT_FOLLOW, rec=True)
         break
 
   def process_IN_CREATE(self, event):
-      self.logger.debug("process_IN_CREATE() - Input device added:  %s", event.pathname)
-      self.manageDevice(event.pathname, "add")
+      if "tmp-c" not in event.pathname:
+        self.logger.debug("process_IN_CREATE() - Input device added:  %s", event.pathname)
+        self.manageDevice(event.pathname, "add")
+
+  def process_IN_MOVED_TO(self, event):
+      if "tmp-c" not in event.pathname:
+        # Turns out that sometimes, when USB devices are added, they first
+        # appear as *.tmp-c* file as IN_CREATE events, but then are rapidly
+        # renamed and register as IN_MOVED_TO events.
+        #
+        # Those *.tmp-c* must be ignored, but the IN_MOVED_TO events must be
+        # caught as these events show the final, stable device names of the
+        # devices.
+        self.logger.debug("process_IN_MOVED_TO() - Input device added:  %s", event.pathname)
+        self.manageDevice(event.pathname, "add")
 
   def process_IN_DELETE(self, event):
       self.logger.debug("process_IN_DELETE() - Input device removed:  %s", event.pathname)

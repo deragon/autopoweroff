@@ -4,6 +4,7 @@ Autopoweroff - Change history
 The following changes have been incorporated in the below mentioned
 versions:
 
+
 Version 4.2.1 - ????
 --------------------------------------------------
 
@@ -16,6 +17,17 @@ Version 4.2.1 - ????
   The disable file used to be called '/run/autopoweroff/autopoweroff.cancel'
   but now is renamed as '/run/autopoweroff/autopoweroff.disable'.
 
+### Fixes
+
+* Fix bug regarding input device showing up.
+
+  Turns out that sometimes, when USB devices are added, they first appear
+  as *.tmp-c* file as IN_CREATE events, but then are rapidly renamed and
+  register as IN_MOVED_TO events.
+
+  Those *.tmp-c* must be ignored, but the IN_MOVED_TO events must be
+  caught as these events show the final, stable device names of the
+  devices.
 
 
 Version 4.2.0 - 2022-10-01
