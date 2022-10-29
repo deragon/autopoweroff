@@ -93,7 +93,7 @@ class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
           self.devicesDict[devicePath] = apoDevObs
       else:
         sendmsg(msg=f"Asked to add {devicePath} while it is already setup.  Doing nothing, but this is a small bug from which we recovered.",
-                logger=self.logger, priority=syslog.LOG_WARNING)
+                logger=self.logger, level=syslog.LOG_WARNING)
 
     elif operation == "remove":
       try:
@@ -102,11 +102,11 @@ class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
         sendmsg(msg=f"Remove {devicePath} since it disappeared.", logger=self.logger)
       except KeyError as keyerror:
         sendmsg(msg=f"Asked to remove {devicePath} when it was not managed at all.  Doing nothing, but this is a small bug from which we recovered.",
-                logger=self.logger, priority=syslog.LOG_WARNING)
+                logger=self.logger, level=syslog.LOG_WARNING)
 
     else:
         sendmsg(msg=f"BUG:  Asked to remove {devicePath} when it was not managed at all.  Doing nothing, but this is a small bug from which we recovered.",
-                logger=self.logger, priority=syslog.LOG_ERROR)
+                logger=self.logger, level=syslog.LOG_ERROR)
 
   def scanDevices(self):
 
@@ -121,7 +121,7 @@ class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
       if devicesPath is None:
         sendmsg(msg="WARNING:  No input device detected.  " + \
                 "Will not be able to detect user activity.",
-                logger=self.logger, priority=syslog.LOG_WARNING)
+                logger=self.logger, level=syslog.LOG_WARNING)
       else:
         paths=os.listdir(devicesPath)
         paths.sort()
