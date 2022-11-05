@@ -45,7 +45,6 @@ else:
   loggingFile = "autopoweroff-logging-debug.conf"
 
 logConfigFile = confdir + "/" + loggingFile
-logConfigFile
 
 logging.config.fileConfig(logConfigFile)
 logger = logging.getLogger(programname)
