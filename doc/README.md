@@ -73,8 +73,6 @@ such a setting offers are:
 A nice GUI is provided to configure Autopoweroff's parameters.  See
   <section-link href="#config_autopoweroff_gui">Autopoweroff configurator</section-link>.
 
-Note that one day, it might be possible to replace this piece of software with SystemD.  Currently I have no OS with SystemD installed to test.
-
 
 Supported Linux distributions
 ==================================================
@@ -313,7 +311,6 @@ To do
 
 The following are features to be added in future releases.
 
-* Move to systemd.
 * Ignore all type of accelerometers.
 * Detect activity from a remote login, either it be console or an X session.
   Currently, if someone is working remotly on the computer, this will go
