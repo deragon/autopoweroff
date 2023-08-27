@@ -1,4 +1,4 @@
-![Logo](pixmaps/autopoweroff-192x192.png) &nbsp; Autopoweroff
+![Logo](pixmaps/autopoweroff-64x64.png) &nbsp; Autopoweroff
 ==================================================
 
 
