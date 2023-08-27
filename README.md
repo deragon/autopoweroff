@@ -295,7 +295,7 @@ You will need to setup the init script properly. Two versions exists.
 
 ### Startup
 
-Once installed, Autopoweroff's daemon is not started automatically nor is your system configured to start it upon reboot.  Since Autopoweroff has a disruptive behaviour, i.e. can suspend the system, as a safety feature, one must consciously start it and set Autopoweroff to start upon each reboot.
+Once installed, Autopoweroff's daemon is not started automatically nor is your system configured to start it upon reboot.  Since Autopoweroff has a disruptive behavior, i.e. can suspend the system, as a safety feature, one must consciously start it and set Autopoweroff to start upon each reboot.
 
 To start the Autopoweroff's daemon, call either:
 
@@ -413,7 +413,7 @@ The following are features to be added in future releases.
 
 * Ignore all type of accelerometers.
 * Detect activity from a remote login, either it be console or an X session.
-  Currently, if someone is working remotly on the computer, this will go
+  Currently, if someone is working remotely on the computer, this will go
   undetected and Autopoweroff will proceed with the action if all other
   conditions are met.
 * New GUI that follows more closely the Gnome recommendations.
