@@ -395,10 +395,17 @@ following reasons:
   distributions, and universal tarball.
 
 * However, as it makes heavy use of `autoconf` and `automake`, it is NOT a
-  good example on how to package a Python project.  Autopoweroff started way
-  before there was better packaging systems and thus why it makes use of
-  `autoconf` and `automake`, but if you start a new project from scratch,
-  choose something more modern.
+  good example on how to package a pure Python project, but it is an
+  example on how to create a Linux application based on Python.
+
+  Python's virtual environment and py setup are not meant for building Linux
+  applications that depends on resources outside Python.
+
+  Autopoweroff makes limited use of `autotool` to build its packages.  Mostly,
+  it uses it as a template engine to generate the binaries for the current
+  platform.  Slowly, Autopoweroff is making less use of `autoconf` and
+  `automake`, which are complex.  As time goes by, custom scripts that are
+  easier to understand and debug are making ways into the project.
 
 * Finally, this project is an example on how to provide a mean to uninstall a
   tarball.  If you distribute your software as a tarball, please provide an
