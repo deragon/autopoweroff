@@ -274,15 +274,15 @@ try:
         time.sleep(5)
         continue
 
-        if gTestMode:
-          sendmsg(f"Test mode.  Would have run action:  '{configuration.actioncommand}'")
+      if gTestMode:
+        sendmsg(f"Test mode.  Would have run action:  '{configuration.actioncommand}'")
 
-        else:
-          sendmsg(f"All the conditions are met.  Running action '{configuration.actioncommand}'.")
-          import subprocess
-          subprocess.getstatusoutput(configuration.actioncommand)
+      else:
+        sendmsg(f"All the conditions are met.  Running action '{configuration.actioncommand}'.")
+        import subprocess
+        subprocess.getstatusoutput(configuration.actioncommand)
 
-        break  # Get back to the outer loop with full reset.
+      break  # Get back to the outer loop with full reset.
 
 
 except Exception as exception:
