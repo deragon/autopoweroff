@@ -218,8 +218,13 @@ class Configuration:
       # Removing whitespaces in list before performing the split.
       if tmphosts == None:
         self.hosts = []
-      else:
+      elif type(tmphosts) == int:
+        # This happens when "Host=" is absent from the configuration file.
+        self.hosts = []
+      elif type(tmphosts) == str:
         self.hosts=re.sub("\s*", "", tmphosts).split(',')
+      else:
+        self.errors = f"Invalid hosts list of type " + type(tmphosts)
 
         # If the configuration files contains a line like "hosts=" with no
         # actual hosts defined, an empty host shows up, which is wrong.
