@@ -42,6 +42,9 @@ class ApoObserverResources(ApoObserverManager, ApoObserverThread):
 
 
     def setCpuUsage(self):
+        # psutil.cpu_percent() documentation found at:
+        #
+        # https://psutil.readthedocs.io/en/latest/#psutil.cpu_percent
         self.cpuUsage = psutil.cpu_percent(interval=1, percpu=False)
         self.logger.debug(f"Sample CPU Usage = {self.cpuUsage}%")
 

@@ -15,6 +15,10 @@ class ApoObserverManager(ABC):
     def terminate(self):
         pass
 
+    def wait_termination(self):
+        if self.is_alive():
+            self.join()
+
 class ApoObserverThread(ABC, threading.Thread):
 
     def __init__(self):

@@ -85,31 +85,41 @@ lockFile.close()
 # ======================================================================
 # SIGTERM Handler
 def sigtermHandler(_signo, _stack_frame):
+
   global pid
+  global apoObserverDeviceManager
+  global apoObserverResources
+  global aoha
+  global apoObserverNoActionTimeRange
+  global apoObserverDisableFile
+  global pidfile
+
   sendmsg(f"Graceful shutdown of process PID #{pid} initiated.  Please wait around 30s.")
 
-  global apoObserverDeviceManager
-  apoObserverDeviceManager.terminate()
+  aoha.terminate() # Must be separated as for the moment, the class 
 
-  global apoObserverResources
-  apoObserverResources.terminate()
-
-  global aoha
-  aoha.terminate()
-
-  global apoObserverNoActionTimeRange
-  apoObserverNoActionTimeRange.terminate()
-
-  global apoObserverDisableFile
-  apoObserverDisableFile.terminate()
+  threads_instances = [
+      apoObserverDeviceManager,
+      apoObserverResources,
+      apoObserverNoActionTimeRange,
+      apoObserverDisableFile
+  ]
 
 
-  # Waiting on all thread by joining them all here.
-  apoObserverResources.join()
-  aoha.join()
-  apoObserverNoActionTimeRange.join()
+  # It is important that the terminate() signal be sent to all of the threads
+  # before any joining (done by calling wait_termination()) is performed so
+  # that terminations can be initiated in parallel.  Doing so improves the
+  # performance.
+  #
+  # This is why we have two distinct loops below, one to send the terminate
+  # signal and the other to perform the joining.
 
-  global pidfile
+  for ti in threads_instances:
+      ti.terminate()
+
+  for ti in threads_instances:
+      ti.wait_termination()
+
   os.remove(pidfile)
 
   sendmsg(f"Shutdown completed.  Process PID #{pid} is no more.")

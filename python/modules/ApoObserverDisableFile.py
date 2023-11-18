@@ -68,3 +68,7 @@ class ApoObserverDisableFile(ApoObserverManager, pyinotify.ProcessEvent):
 
     def terminate(self):
         self.notifier.stop()
+
+
+    def wait_termination(self):
+        pass

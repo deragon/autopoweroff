@@ -170,9 +170,11 @@ class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
     for path, apoDevObs in self.devicesDict.items():
       apoDevObs.terminate()
 
+  def wait_termination(self):
     # Joining with all the threads, waiting for them to end gracefully.
     for path, apoDevObs in self.devicesDict.items():
-      apoDevObs.join()
+      if apoDevObs.is_alive():
+        apoDevObs.join()
 
     self.notifier.stop()  # Stoping the pyinotifier thread.
     self.logger.debug("ApoObserverDeviceManager thread ended.")
