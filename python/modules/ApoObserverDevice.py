@@ -57,46 +57,63 @@ class ApoObserverDeviceManager(ApoObserverManager, pyinotify.ProcessEvent):
       self.logger.debug("process_IN_DELETE() - Input device removed:  %s", event.pathname)
       self.manageDevice(event.pathname, "remove")
 
+  def rejectDevice(self, devicePath):
+
+    # TODO:  Probably missing here are tablets, pens and other
+    #        devices controlled by humans.
+    return not any(item in devicePath for item in [ "mouse", "keyboard", "kbd", "joystick" ])
+
+    # Following code in comment was used to reject specific device but accept
+    # any not listed here, but turns out that this was not a good strategy.
+    # Network USB device could be picked up here and thus would always
+    # generate an event.
+    #
+    # For the moment, this dead code remains here to remind people of this
+    # failed strategy, but it could be removed eventually.
+    #
+    # if "spkr" in devicePath:
+    #   # Ignoring speaker devices.  I do not understand how a device
+    #   # related to a speaker can be considered an input device.  The
+    #   # state of some volume buttons can be read from it?  Maybe
+    #   # microphones show up as "spkr" devices?  Even if it is a
+    #   # microphone, if a user simply leaves it on, it will always
+    #   # receive some ambient sound even if the machine is not use.  We
+    #   # cannot make use of this.
+    #   #
+    #   # This device was shown in Ubuntu 07.04 and 08.10
+    #   # (2.6.24-17-generic).  However, it was not seen showing under
+    #   # 18.04 and 19.10.
+    #   self.logger.warn("devicePath = " + devicePath + " REJECTED because it is a speaker.")
+    #   return
+    #
+    # if "smc" in devicePath:
+    #   # On Macbook 5.5 (maybe others) the SMC is constantly sending events,
+    #   # probably from the light sensor or something so we want to ignore this.
+    #   #
+    #   # The SMC is the system management controller. It's responsible for a
+    #   # number of processes, including the cooling fans, keyboard, and LED
+    #   # lights.
+    #
+    #   self.logger.warn("devicePath = " + devicePath + " REJECTED because it is a SMC")
+    #   return
+    #
+    # # TODO:  Improve catching.  Currently, only one model of an
+    # #        accelerometer is hardcoded here.  This code should made
+    # #        generic and catch all accelerometers.
+    # if "lis3lv02d" in devicePath:
+    #   # lis3lv02d:  https://www.kernel.org/doc/Documentation/misc-devices/lis3lv02d
+    #   #
+    #   # Accelerometers are devices that are way to sensitive for
+    #   # Autopoweroff.  A laptop laying on a stable table with nobody
+    #   # touching it will still have its accelerometer reporting
+    #   # movement.  Thus, it is not reasonable nor necessary to take this
+    #   # devices into account when attempting to figure out if the device
+    #   # is being used or not by a person.
+    #   self.logger.warn("devicePath = " + devicePath + " REJECTED because it is an accelerometer.")
+    #   return
+
   def manageDevice(self, devicePath, operation):
-    if "spkr" in devicePath:
-      # Ignoring speaker devices.  I do not understand how a device
-      # related to a speaker can be considered an input device.  The
-      # state of some volume buttons can be read from it?  Maybe
-      # microphones show up as "spkr" devices?  Even if it is a
-      # microphone, if a user simply leaves it on, it will always
-      # receive some ambient sound even if the machine is not use.  We
-      # cannot make use of this.
-      #
-      # This device was shown in Ubuntu 07.04 and 08.10
-      # (2.6.24-17-generic).  However, it was not seen showing under
-      # 18.04 and 19.10.
-      self.logger.warn("devicePath = " + devicePath + " REJECTED because it is a speaker.")
-      return
-
-    if "smc" in devicePath:
-      # On Macbook 5.5 (maybe others) the SMC is constantly sending events,
-      # probably from the light sensor or something so we want to ignore this.
-      #
-      # The SMC is the system management controller. It's responsible for a
-      # number of processes, including the cooling fans, keyboard, and LED
-      # lights.
-
-      self.logger.warn("devicePath = " + devicePath + " REJECTED because it is a SMC")
-      return
-
-    # TODO:  Improve catching.  Currently, only one model of an
-    #        accelerometer is hardcoded here.  This code should made
-    #        generic and catch all accelerometers.
-    if "lis3lv02d" in devicePath:
-      # lis3lv02d:  https://www.kernel.org/doc/Documentation/misc-devices/lis3lv02d
-      #
-      # Accelerometers are devices that are way to sensitive for
-      # Autopoweroff.  A laptop laying on a stable table with nobody
-      # touching it will still have its accelerometer reporting
-      # movement.  Thus, it is not reasonable nor necessary to take this
-      # devices into account when attempting to figure out if the device
-      # is being used or not by a person.
-      self.logger.warn("devicePath = " + devicePath + " REJECTED because it is an accelerometer.")
+    if self.rejectDevice(devicePath):
       return
 
     if operation == "add":
