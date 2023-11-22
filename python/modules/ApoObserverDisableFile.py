@@ -19,9 +19,9 @@ class ApoObserverDisableFile(ApoObserverManager, pyinotify.ProcessEvent):
     def status(self):
 
         if self.disabled:
-            return ( True, "disabled", "✘ Currently disabled (" + self.disablefile + " exists)." )
+            return ( False, "disabled", "✘ Currently disabled (" + self.disablefile + " exists)." )
         else:
-            return ( False, "disabled", "✓ Currently enabled (" + self.disablefile + " absent)." )
+            return ( True, "disabled", "✓ Currently enabled (" + self.disablefile + " absent)." )
 
 
     def __init__(self, disablefile):
