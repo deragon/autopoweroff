@@ -28,9 +28,10 @@ if not gTestMode:
   modulesdir  = sharedir + '/autopoweroff/python/modules'
   confdir     = "@autopoweroff_confdir@"
   rundir      = "@autopoweroff_rundir@"
+  vardir      = "@autopoweroff_vardir@"
   piddir      = "@autopoweroff_piddir@"
   pidfile     = "@autopoweroff_pidfile@"
-  loggingFile = "autopoweroff-logging.conf"
+  loggingConfFile = "autopoweroff-logging.conf"
 else:
   # We are in test mode.  Using relative values.
   startMsgExtra = " - Test mode enabled"
@@ -40,22 +41,37 @@ else:
   sharedir    = basePathAbs
   modulesdir  = basePathAbs + '/python/modules'
   confdir     = basePathAbs + "/etc/" + programname.lower()
-  rundir      = "/tmp/" + programname.lower() + "-test/var"
+  rundir      = "/tmp/" + programname.lower() + "-test/run"
+  vardir      = "/var"
   piddir      = rundir
   pidfile     = "autopoweroff-test.pid"
-  loggingFile = "autopoweroff-logging-debug.conf"
+  loggingConfFile = "autopoweroff-logging-debug.conf"
 
-logConfigFile = confdir + "/" + loggingFile
+logConfPath = confdir + "/" + loggingConfFile
 
-logging.config.fileConfig(logConfigFile)
+logging.config.fileConfig(logConfPath)
 logger = logging.getLogger(programname)
+
+
+logSystemFile = vardir + "/log/" + programname + ".log"
+logSystemFile = "/tmp/" + programname + ".log"
+
+#logFileHandler = logging.FileHandler(logSystemFile, 'a')
+#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+#logFileHandler.setFormatter(formatter)
+#log.addHandler(logFileHandler)      # set the new handler
+
+
+
+
+
 pid = str(os.getpid())
 logger.info("══════════════════════════════════════════════════════════")
 sys.path.append(modulesdir)
 from ApoLibrary import *
 
 sendmsg(programname + " started with PID '" + pid + "'" + startMsgExtra + ".")
-logger.info("Logging configuration file used:  " + logConfigFile)
+logger.info("Logging configuration file used:  " + logConfPath)
 
 if os.getuid() != 0:
   sendmsg("Must be executed as root.")
