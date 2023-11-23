@@ -11,6 +11,7 @@ import signal
 import sys
 import time
 import traceback
+import subprocess
 
 gTestMode = "@production@" != "true"
 
@@ -238,15 +239,15 @@ try:
       setConditions(apoObserverDeviceManager.status())
       setConditions(apoObserverResources.status())
       setConditions(apoObserverDisableFile.status())
-
       logger.debug("conditionsState:  %s",         str(conditionsState))
       logger.debug("previousConditionsState:  %s", str(previousConditionsState))
 
       if conditionsState != previousConditionsState:
+        sendmsg(f"Conditions have changed.  New conditions:  " + str(conditionsState))
         isThereAnyConditionsNotMet = False
-        sendmsg("Conditions have changed.  New conditions:")
         for key, value in conditionsState.items():
           if(value == False):
+            logger.debug(f"{key} has condition not met:  {value}")
             isThereAnyConditionsNotMet = True
           sendmsg("  " + conditionsDescription[key])
         logger.debug( \
@@ -289,7 +290,6 @@ try:
 
       else:
         sendmsg(f"All the conditions are met.  Running action '{configuration.actioncommand}'.")
-        import subprocess
         subprocess.getstatusoutput(configuration.actioncommand)
 
       break  # Get back to the outer loop with full reset.
