@@ -274,7 +274,7 @@ chmod a+x                           \
   sbin/autopoweroff-gui             \
   sbin/autopoweroff-uninstall       \
   sbin/autopoweroff-upgrade         \
-  etcd/init.d/autopoweroff.lsb      \
+  etc/init.d/autopoweroff.lsb       \
   etc/init.d/autopoweroff.rc-status \
   etc/init.d/autopoweroff.redhat    \
   apoinstall
