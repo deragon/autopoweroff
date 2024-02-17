@@ -5,8 +5,19 @@ The following changes have been incorporated in the below mentioned
 versions:
 
 
-Version 4.2.1 - ????
+Version 4.2.1 - 2024-02-18
 --------------------------------------------------
+
+### New Features
+
+* Logs are now stored into a specific file.
+
+  Logs are now saved under:
+
+    * Normal mode:     /var/log/autopoweroff.log
+    * Debugging mode:  /tmp/autopoweroff.log
+
+  Major logs also continue to by saved into syslog.
 
 ### Under the hood improvements
 
@@ -16,6 +27,15 @@ Version 4.2.1 - ????
 
   The disable file used to be called '/run/autopoweroff/autopoweroff.cancel'
   but now is renamed as '/run/autopoweroff/autopoweroff.disable'.
+
+* Only devices that are part of an "allow" list are now scanned for human
+  activity.  The devices allowed are mice, keyboards and joysticks.
+
+  Previous strategy accepted all devices except some specific ones part of a
+  "deny" list.  This previous strategy was flawed.  For example, network USB
+  device could be picked up thus would always generate events.
+
+* Add better validation for 'Host=' command in the configuration file.
 
 ### Fixes
 
@@ -28,6 +48,12 @@ Version 4.2.1 - ????
   Those *.tmp-c* must be ignored, but the IN_MOVED_TO events must be
   caught as these events show the final, stable device names of the
   devices.
+
+* Fix Mint version.  Thanks to it-jonas for this contribution.
+
+* Fix thread terminations.
+
+* Miscellaneous minor improvements.
 
 
 Version 4.2.0 - 2022-10-01
