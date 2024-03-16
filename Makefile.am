@@ -133,15 +133,6 @@ clean-generic:
 install-data-hook:
 	echo "install-data-hook called."
 	./postinstall
-#   if [ ${INSTALLTYPE} != "RPM" ]; then \
-#     if [ `id -u` != "0" ]; then \
-#       echo -e "\nThe installation can only proceed under the root user.\n"; \
-#       exit 1; \
-#     else \
-#       echo -e "\nProceeding with the installation.\n"; \
-#       #lmwreplica-installer \
-#     fi \
-#   fi
 
 # The following 'export' command must be at the end of the file to work.
 # If moved elsewhere, for some reason the generated Makefile will contain
