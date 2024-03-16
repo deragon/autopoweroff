@@ -3,7 +3,7 @@
 #   automake --add-missing --copy
 #   aclocal
 
-CLEANFILES = *.rpm *.gz *.bz2 aclocal.m4 glade/*.bak configure Makefile.in *.out *.log packages/generated packages/*.log
+CLEANFILES = *.rpm *.gz *.bz2 aclocal.m4 glade/*.bak configure Makefile.in *.out *.log packages/packages packages/generated packages/*.log
 
 DESCRIPTION_SHORT = "Unused:  Defined here so the multi-line defintion will not break 'Makefile'"
 
