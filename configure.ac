@@ -225,7 +225,6 @@ ARCH=noarch
 
 AC_CONFIG_FILES([                             \
   Makefile                                    \
-  packages/rpm/autopoweroff.spec              \
   usr/bin/autopoweroff-gui                    \
   sbin/autopoweroffd                          \
   sbin/autopoweroff-gui                       \

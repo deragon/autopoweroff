@@ -86,9 +86,7 @@ EXTRA_DIST =                            \
 	doc/README.md                         \
 	doc/CHANGELOG.md                      \
 	doc/COPYING                           \
-	packages/rpm/buildrpm                 \
 	postinstall                           \
-	packages/rpm/${PACKAGE}.spec.in       \
 	doc/generate-doc
 
 # Call this target to build *.deb, *.rpm and *.tar.gz files for
