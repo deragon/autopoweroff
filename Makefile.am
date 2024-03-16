@@ -91,26 +91,9 @@ EXTRA_DIST =                            \
 	packages/rpm/${PACKAGE}.spec.in       \
 	doc/generate-doc
 
-
-deb:
-	export PACKAGE=${PACKAGE}; \
-	export VERSION=${VERSION}; \
-	cd packages/deb; \
-	builddeb --make
-
-rpm: dist
-	export PACKAGE=${PACKAGE}; \
-	export VERSION=${VERSION}; \
-	mv ${PACKAGE}-${VERSION}.tar.gz packages/rpm; \
-	cd packages/rpm; \
-	buildrpm --make
-
 # Call this target to build *.deb, *.rpm and *.tar.gz files for
 # distribution.
-build: deb rpm dist
-
-transfer:
-	./ftp-transfer ${PACKAGE} ${VERSION}
+build: dist
 
 clean-generic:
 	-test -z "$(CLEANFILES)" || rm -rf $(CLEANFILES)
