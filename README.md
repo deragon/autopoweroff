@@ -35,7 +35,8 @@ conditions are met:
 * The CPU usage falls below a threshold for a period of at least 1s.
 * The user has not disabled Autopoweroff.
 
-![Python powered](doc/images/python-powered-w-100x40.png) &nbsp; &nbsp; ![Linux powered](doc/images/linux-powered-107x40.png)
+![Python powered](doc/images/python-powered-w-100x40.png) &nbsp; &nbsp;
+![Linux powered](doc/images/linux-powered-107x40.png)
 
 Cloud use
 --------------------------------------------------
@@ -44,8 +45,9 @@ Autopoweroff can be used on a cloud instance which could be shutdown
 automatically as soon as the CPU usage falls below a threshold (after heavy
 processing is over), thus saving cost of keeping the cloud instance up.
 
-![AWS](doc/images/Amazon_Web_Services_Logo-67x40.png) &nbsp; &nbsp; ![Azure](doc/images/Microsoft_Azure_Logo-138x40.png)
-
+![AWS](doc/images/Amazon_Web_Services_Logo-67x40.png) &nbsp; &nbsp;
+![Azure](doc/images/Microsoft_Azure_Logo-138x40.png) &nbsp; &nbsp;
+![Google](doc/images/google/Google_Cloud_logo.png)
 
 Home use
 --------------------------------------------------

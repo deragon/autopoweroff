@@ -1,0 +1,18 @@
+#!/bin/bash
+
+for FILE in *.svg; do
+
+  EXTENSION="${FILE##*.}"
+  if [ "${EXTENSION}" == "${FILE}" ]; then
+    # No extension found.
+    EXTENSION=""
+    FILENAME="${FILE}"
+  else
+    # An extension was found.  Stripping it from ${FILE}.
+    FILENAME="${FILE%.*}"
+  fi
+
+  set -x
+  inkscape -h 40 "${FILENAME}.svg" -o "${FILENAME}.png"
+  set +x
+done
