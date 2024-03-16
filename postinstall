@@ -2,9 +2,9 @@
 
 if [ "${INSTALLTYPE}" != "rpm" ]; then
   echo -e "\n$0:  Proceeding with the installation.\n";
-  if [ ! -e ${gladedir}/autopoweroff.png ]; then
-    cd ${gladedir}
-    ln -s ../pixmaps/autopoweroff.png .
+  if [ ! -e "${gladedir}/autopoweroff.png" ]; then
+    cd "${gladedir}"
+    ln -s "../pixmaps/autopoweroff.png" .
     cd -
   fi
 
@@ -20,9 +20,9 @@ if [ "${INSTALLTYPE}" != "rpm" ]; then
   # This is why we install the consolehelper symlink only if
   # ${sysconfdir} is set to /etc.
   if [ "${sysconfidr}" = "/etc" -a "${consolehelperpath}" != "not found" ]; then
-    mkdir -p ${bindir}
-    cd ${bindir}
-    ln -s ${consolehelperpath} autopoweroff
+    mkdir -p "${bindir}"
+    cd "${bindir}"
+    ln -s "${consolehelperpath}" autopoweroff
   fi
 fi
 
