@@ -158,7 +158,7 @@ class Configuration:
       sendmsg("Reading configuration file:  " + conffile,
               tosyslog=self.tosyslog)
       fd=open(conffile)
-      self.configParser.readfp(fd)
+      self.configParser.read_file(fd)
       fd.close()
       #print self.configParser.sections()
 
