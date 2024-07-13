@@ -5,6 +5,20 @@ The following changes have been incorporated in the below mentioned
 versions:
 
 
+Version 4.2.2 - 2024-07-14
+--------------------------------------------------
+
+### Fixes
+
+* Catch when device file has already disappeared in ApoObserverDevice.py.
+
+  This can happen when a device is removed.  The fix prevents
+  a useless exception to be thrown.
+
+* Replace deprecated 'ConfigParser.readfp()', with 'ConfigParser.read_file()'
+  in ApoConfig.py.
+
+
 Version 4.2.1 - 2024-02-18
 --------------------------------------------------
 
