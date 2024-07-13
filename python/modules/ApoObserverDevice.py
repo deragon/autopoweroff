@@ -207,47 +207,57 @@ class ApoObserverDevice(ApoObserverThread):
     self.logger = logging.getLogger("apo.observer.device.thread")
 
   def run(self):
-    fd = open(self.sDevice, 'rb')
-    os.set_blocking(fd.fileno(), False)  # Set no blocking
-    self.logger.info("ApoObserverDevice.run():  Check on " +
-                     self.sDevice + " started.")
-    self.running = True
-    lastEventTime = 0.0
-    while self.running:
-      time.sleep(5)
-      try:
-        # Blocks until there is something to read.  This is why we
-        # do not need to setup a time.sleep(5) in this loop.
-        data = fd.read()
-        if data == None:
-          continue  # No activity, relooping.
-      except IOError as ioerror:
-        if ioerror.errno == errno.ENODEV:
-          # At this point, this means that the device was removed, but
-          # ApoObserverDeviceManager.process_IN_DELETE() has not been called
-          # yet.  This is caused by a harmless race condition.  We terminate
-          # this thread anyway.  ApoObserverDeviceManager.process_IN_DELETE() will
-          # eventually be called and will again call terminate() of this thread,
-          # but this will be harmless.  All is good.
-          self.running = False
-          continue
-        else:
-          raise
-      currentTime = time.time()
-      self.apoObserverDeviceManager.setLastInputEventTime(currentTime)
+    try:
+      fd = open(self.sDevice, 'rb')
+    except FileNotFoundError:
+      # It seams that this can happen, some race condition.  If the file is
+      # not there anymore, then we can do nothing more and we pass.
+      self.logger.debug("ApoObserverDevice.run():  Device " +
+                        self.sDevice + " disappeared.  Nothing left to scan.")
+      pass
+    else:
+      with fd:
+        os.set_blocking(fd.fileno(), False)  # Set no blocking
+        self.logger.info("ApoObserverDevice.run():  Check on " +
+                         self.sDevice + " started.")
+        self.running = True
+        lastEventTime = 0.0
+        while self.running:
+          time.sleep(5)
+          try:
+            # Blocks until there is something to read.  This is why we
+            # do not need to setup a time.sleep(5) in this loop.
+            data = fd.read()
+            if data == None:
+              continue  # No activity, relooping.
+          except IOError as ioerror:
+            if ioerror.errno == errno.ENODEV:
+              # At this point, this means that the device was removed, but
+              # ApoObserverDeviceManager.process_IN_DELETE() has not been called
+              # yet.  This is caused by a harmless race condition.  We terminate
+              # this thread anyway.
+              # ApoObserverDeviceManager.process_IN_DELETE() will eventually be
+              # called and will again call terminate() of this thread, but this
+              # will be harmless.  All is good.
+              self.running = False
+              continue
+            else:
+              raise
+          currentTime = time.time()
+          self.apoObserverDeviceManager.setLastInputEventTime(currentTime)
 
-      # print currentTime-lastEventTime
-      # To reduce the quantity of output, we print only a few
-      # of the events, for logger.debugging purposes.  Else, it is simply
-      # to much.
-      if currentTime > lastEventTime + 0.01:
-        self.logger.debug(
-            "ApoObserverDevice.run():  Activity detected on " + \
-            self.sDevice + " at " + str(currentTime))
-      lastEventTime = currentTime
-    fd.close()
-    self.logger.debug("ApoObserverDevice.run():  Ended for " +
-                      self.sDevice + " started.")
+          # print currentTime-lastEventTime
+          # To reduce the quantity of output, we print only a few
+          # of the events, for logger.debugging purposes.  Else, it is simply
+          # to much.
+          if currentTime > lastEventTime + 0.01:
+            self.logger.debug(
+                "ApoObserverDevice.run():  Activity detected on " + \
+                self.sDevice + " at " + str(currentTime))
+          lastEventTime = currentTime
+        fd.close()
+      self.logger.debug("ApoObserverDevice.run():  Ended for " +
+                        self.sDevice + " started.")
 
 
   def terminate(self):
