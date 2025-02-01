@@ -3,7 +3,7 @@
 
 
 
-Status as of 2024 - Fully supported.
+Status as of 2025 - Fully supported.
 ==================================================
 
 This program is actively supported, but is simply not being developed much
